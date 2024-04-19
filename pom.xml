@@ -48,64 +48,73 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <slf4j.version>2.0.13</slf4j.version>
+        <mockito.version>5.11.0</mockito.version>
+        <hamcrest.version>2.2</hamcrest.version>
+        <junit-jupiter-api.version>5.10.2</junit-jupiter-api.version>
+        <commons-lang.version>2.6</commons-lang.version>
+        <jgoodies-forms.version>1.7.1</jgoodies-forms.version>
+        <commons-io.version>2.7</commons-io.version>
+        <httpclient.version>4.5.13</httpclient.version>
+        <simple-xml.version>2.7.1</simple-xml.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.simpleframework</groupId>
             <artifactId>simple-xml</artifactId>
-            <version>2.7.1</version>
+            <version>${simple-xml.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.5.13</version>
+            <version>${httpclient.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.25</version>
+            <version>${slf4j.version}</version>
         </dependency>
 
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.7</version>
+            <version>${commons-io.version}</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.jgoodies/jgoodies-forms -->
         <dependency>
             <groupId>com.jgoodies</groupId>
             <artifactId>jgoodies-forms</artifactId>
-            <version>1.7.1</version>
+            <version>${jgoodies-forms.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/commons-lang/commons-lang -->
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
-            <version>2.6</version>
+            <version>${commons-lang.version}</version>
         </dependency>
 
         <!--  Unit Tests  -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.10.2</version>
+            <version>${junit-jupiter-api.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
-            <version>2.2</version>
+            <version>${hamcrest.version}</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
-            <version>1.7.25</version>
+            <version>${slf4j.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
