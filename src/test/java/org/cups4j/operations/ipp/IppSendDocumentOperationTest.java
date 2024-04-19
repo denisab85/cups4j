@@ -37,6 +37,44 @@ public class IppSendDocumentOperationTest extends AbstractIppOperationTest {
     private static final Logger LOG = LoggerFactory.getLogger(IppSendDocumentOperationTest.class);
     private final IppSendDocumentOperation operation = new IppSendDocumentOperation(4711);
 
+    private static void checkIppRequest(byte[] header) throws IOException {
+        IppResult ippResult = new IppResponse().getResponse(ByteBuffer.wrap(header));
+        Set<String> groupTagNames = new HashSet<String>();
+        for (AttributeGroup group : ippResult.getAttributeGroupList()) {
+            String tagName = group.getTagName();
+            assertThat("duplicate tag name", groupTagNames, not(hasItem(tagName)));
+            groupTagNames.add(tagName);
+        }
+    }
+
+    private static void checkIppRequestAttributes(byte[] header) throws IOException {
+        IppResponse ippResponse = new IppResponse();
+        IppResult ippResult = new IppResponse().getResponse(ByteBuffer.wrap(header));
+        IppResult ref = ippResponse.getResponse(
+                ByteBuffer.wrap(FileUtils.readFileToByteArray(new File("src/test/resources/ipp/Send-Document.ipp"))));
+        for (AttributeGroup group : ref.getAttributeGroupList()) {
+            checkAttributeGroupList(group, ippResult.getAttributeGroup(group.getTagName()));
+        }
+    }
+
+    private static void checkAttributeGroupList(AttributeGroup ref, AttributeGroup attributeGroup) {
+        Set<String> attributeNames = new HashSet<String>();
+        for (Attribute attr : attributeGroup.getAttribute()) {
+            attributeNames.add(attr.getName());
+        }
+        for (Attribute attr : ref.getAttribute()) {
+            if (!attributeNames.contains(attr.getName())) {
+                fail("attribute '" + attr.getName() + "' is missing in " + attributeGroup);
+            }
+        }
+    }
+
+    private static byte[] toByteArray(ByteBuffer buffer) {
+        byte[] bytes = new byte[buffer.limit()];
+        buffer.get(bytes);
+        return bytes;
+    }
+
     /**
      * This is only a basic test to see if the operation tag is set coorect.
      *
@@ -86,38 +124,6 @@ public class IppSendDocumentOperationTest extends AbstractIppOperationTest {
         assertEquals("true", attribute.getValue());
     }
 
-    private static void checkIppRequest(byte[] header) throws IOException {
-        IppResult ippResult = new IppResponse().getResponse(ByteBuffer.wrap(header));
-        Set<String> groupTagNames = new HashSet<String>();
-        for (AttributeGroup group : ippResult.getAttributeGroupList()) {
-            String tagName = group.getTagName();
-            assertThat("duplicate tag name", groupTagNames, not(hasItem(tagName)));
-            groupTagNames.add(tagName);
-        }
-    }
-
-    private static void checkIppRequestAttributes(byte[] header) throws IOException {
-        IppResponse ippResponse = new IppResponse();
-        IppResult ippResult = new IppResponse().getResponse(ByteBuffer.wrap(header));
-        IppResult ref = ippResponse.getResponse(
-                ByteBuffer.wrap(FileUtils.readFileToByteArray(new File("src/test/resources/ipp/Send-Document.ipp"))));
-        for (AttributeGroup group : ref.getAttributeGroupList()) {
-            checkAttributeGroupList(group, ippResult.getAttributeGroup(group.getTagName()));
-        }
-    }
-
-    private static void checkAttributeGroupList(AttributeGroup ref, AttributeGroup attributeGroup) {
-        Set<String> attributeNames = new HashSet<String>();
-        for (Attribute attr : attributeGroup.getAttribute()) {
-            attributeNames.add(attr.getName());
-        }
-        for (Attribute attr : ref.getAttribute()) {
-            if (!attributeNames.contains(attr.getName())) {
-                fail("attribute '" + attr.getName() + "' is missing in " + attributeGroup);
-            }
-        }
-    }
-
     /**
      * We should see the login user in the header. Otherwise we may get a
      * 401-response (forbidden).
@@ -132,12 +138,6 @@ public class IppSendDocumentOperationTest extends AbstractIppOperationTest {
         byte[] header = toByteArray(buffer);
         String user = System.getProperty("user.name", "anonymous");
         assertThat(new String(header), containsString(user));
-    }
-
-    private static byte[] toByteArray(ByteBuffer buffer) {
-        byte[] bytes = new byte[buffer.limit()];
-        buffer.get(bytes);
-        return bytes;
     }
 
     @Test

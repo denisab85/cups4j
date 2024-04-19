@@ -18,13 +18,6 @@ import static org.junit.Assert.assertEquals;
  */
 public class PrintRequestResultTest {
 
-    @Test
-    public void testGetResultCode() {
-        IppResult ippResult = createIppResult401();
-        PrintRequestResult result = new PrintRequestResult(ippResult);
-        assertEquals("0x401", result.getResultCode());
-    }
-
     private static IppResult createIppResult401() {
         IppResult ippResult = readIppResponse("error401.html");
         ippResult.setHttpStatusResponse("HTTP/1.1 401 Nicht autorisiert");
@@ -39,6 +32,13 @@ public class PrintRequestResultTest {
         } catch (IOException ioe) {
             throw new IllegalArgumentException("cannot load '" + filename + "'", ioe);
         }
+    }
+
+    @Test
+    public void testGetResultCode() {
+        IppResult ippResult = createIppResult401();
+        PrintRequestResult result = new PrintRequestResult(ippResult);
+        assertEquals("0x401", result.getResultCode());
     }
 
 }

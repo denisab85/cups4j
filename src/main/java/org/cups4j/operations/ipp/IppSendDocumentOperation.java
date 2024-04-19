@@ -41,7 +41,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.ByteBuffer;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -55,8 +54,8 @@ import java.util.Map;
 public class IppSendDocumentOperation extends IppPrintJobOperation {
 
     private static final Logger LOG = LoggerFactory.getLogger(IppSendDocumentOperation.class);
-    private int jobId;
-    private boolean lastDocument;
+    private final int jobId;
+    private final boolean lastDocument;
 
     public IppSendDocumentOperation(int jobId) {
         this(CupsClient.DEFAULT_PORT, jobId, true);
@@ -69,8 +68,27 @@ public class IppSendDocumentOperation extends IppPrintJobOperation {
         this.lastDocument = lastDocument;
     }
 
-    public IppResult request(CupsPrinter printer, URL printerURL, 
-    		PrintJob printJob, CupsAuthentication creds) {
+    private static IppResult getIppResult(CloseableHttpResponse httpResponse) throws IOException {
+        InputStream istream = httpResponse.getEntity().getContent();
+        try {
+            byte[] result = IOUtils.toByteArray(istream);
+            IppResponse ippResponse = new IppResponse();
+            IppResult ippResult = ippResponse.getResponse(ByteBuffer.wrap(result));
+            ippResult.setHttpStatusCode(httpResponse.getStatusLine().getStatusCode());
+            if (ippResult.getHttpStatusCode() == 426) {
+                ippResult.setHttpStatusResponse(new String(result));
+                LOG.warn("Received {} after send-document.", ippResult);
+            } else {
+                ippResult.setHttpStatusResponse(httpResponse.getStatusLine().toString());
+            }
+            return ippResult;
+        } finally {
+            istream.close();
+        }
+    }
+
+    public IppResult request(CupsPrinter printer, URL printerURL,
+                             PrintJob printJob, CupsAuthentication creds) {
         InputStream document = printJob.getDocument();
         String userName = printJob.getUserName();
         String jobName = printJob.getJobName();
@@ -172,8 +190,8 @@ public class IppSendDocumentOperation extends IppPrintJobOperation {
     }
 
     @Override
-    public IppResult request(CupsPrinter printer, URL url, Map<String, String> map, 
-    		InputStream document, CupsAuthentication creds) throws IOException {
+    public IppResult request(CupsPrinter printer, URL url, Map<String, String> map,
+                             InputStream document, CupsAuthentication creds) throws IOException {
         ByteBuffer ippHeader = getIppHeader(url, map);
         try {
             IppResult ippResult = sendRequest(printer, url.toURI(), ippHeader, document, creds);
@@ -198,7 +216,7 @@ public class IppSendDocumentOperation extends IppPrintJobOperation {
      */
     @Override
     public ByteBuffer getIppHeader(URL url, Map<String, String> map) throws UnsupportedEncodingException {
-        assert(url != null);
+        assert (url != null);
         ByteBuffer ippBuf = ByteBuffer.allocateDirect(bufferSize);
         ippBuf = IppTag.getOperation(ippBuf, operationID);
         ippBuf = IppTag.getUri(ippBuf, "printer-uri", url.toString());
@@ -213,10 +231,7 @@ public class IppSendDocumentOperation extends IppPrintJobOperation {
         ippBuf = IppTag.getNameWithoutLanguage(ippBuf, "job-name", map.get("job-name"));
 
         if (map.get("ipp-attribute-fidelity") != null) {
-            boolean value = false;
-            if (map.get("ipp-attribute-fidelity").equals("true")) {
-                value = true;
-            }
+            boolean value = map.get("ipp-attribute-fidelity").equals("true");
             ippBuf = IppTag.getBoolean(ippBuf, "ipp-attribute-fidelity", value);
         }
 
@@ -259,11 +274,11 @@ public class IppSendDocumentOperation extends IppPrintJobOperation {
         return ippBuf;
     }
 
-    private IppResult sendRequest(CupsPrinter printer, URI uri, ByteBuffer ippBuf, 
-    		InputStream documentStream, CupsAuthentication creds) throws IOException {
+    private IppResult sendRequest(CupsPrinter printer, URI uri, ByteBuffer ippBuf,
+                                  InputStream documentStream, CupsAuthentication creds) throws IOException {
         HttpPost httpPost = new HttpPost(uri);
         httpPost.setConfig(RequestConfig.custom().setSocketTimeout(10000).setConnectTimeout(10000).build());
-        
+
         byte[] bytes = new byte[ippBuf.limit()];
         ippBuf.get(bytes);
         ByteArrayInputStream headerStream = new ByteArrayInputStream(bytes);
@@ -281,25 +296,6 @@ public class IppSendDocumentOperation extends IppPrintJobOperation {
             return getIppResult(httpResponse);
         } finally {
             client.close();
-        }
-    }
-
-    private static IppResult getIppResult(CloseableHttpResponse httpResponse) throws IOException {
-        InputStream istream = httpResponse.getEntity().getContent();
-        try {
-            byte[] result = IOUtils.toByteArray(istream);
-            IppResponse ippResponse = new IppResponse();
-            IppResult ippResult = ippResponse.getResponse(ByteBuffer.wrap(result));
-            ippResult.setHttpStatusCode(httpResponse.getStatusLine().getStatusCode());
-            if (ippResult.getHttpStatusCode() == 426) {
-                ippResult.setHttpStatusResponse(new String(result));
-                LOG.warn("Received {} after send-document.", ippResult);
-            } else {
-                ippResult.setHttpStatusResponse(httpResponse.getStatusLine().toString());
-            }
-            return ippResult;
-        } finally {
-            istream.close();
         }
     }
 
