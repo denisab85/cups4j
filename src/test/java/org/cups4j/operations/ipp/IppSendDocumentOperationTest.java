@@ -7,8 +7,8 @@ import org.cups4j.CupsPrinter;
 import org.cups4j.CupsPrinterTest;
 import org.cups4j.ipp.attributes.Attribute;
 import org.cups4j.ipp.attributes.AttributeGroup;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +24,8 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit-Tests fuer {@link IppSendDocumentOperation}-Klasse.
@@ -141,7 +142,7 @@ public class IppSendDocumentOperationTest extends AbstractIppOperationTest {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testRequest() throws Exception {
         CupsPrinter printer = CupsPrinterTest.getPrinter();
         if (printer == null) {

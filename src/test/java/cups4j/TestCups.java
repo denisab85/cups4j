@@ -2,15 +2,15 @@ package cups4j;
 
 import org.cups4j.CupsClient;
 import org.cups4j.CupsPrinter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 public class TestCups {
     /**
      * If you have no CUPS running on your local machine you must set the
-     * envrionment variables 'host' and 'port' to your CUPS server in the
-     * network. Otherwise the test fails.
+     * environment variables 'host' and 'port' to your CUPS server in the
+     * network. Otherwise, the test fails.
      *
      * @return your CupsClient for testing
      */

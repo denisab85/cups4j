@@ -3,9 +3,9 @@ package org.cups4j;
 import cups4j.TestCups;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +14,8 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit tests for {@link CupsPrinter} class.
@@ -74,7 +75,7 @@ public final class CupsPrinterTest {
         return basename + new String(epochTime).substring(2);
     }
 
-    @Before
+    @BeforeEach
     public void setUpPrinter() throws Exception {
         printer = getPrinter();
         assertNotNull(printer);
@@ -82,13 +83,13 @@ public final class CupsPrinterTest {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testPrintPDF() {
         print(printer, new File("src/test/resources/test.pdf"));
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testPrintText() {
         print(printer, new File("src/test/resources/test.txt"));
     }
@@ -104,17 +105,18 @@ public final class CupsPrinterTest {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testPrintList() {
         File file = new File("src/test/resources/test.txt");
         printer.print(createPrintJob(file), createPrintJob(file));
     }
 
-    @Test(expected = IllegalStateException.class)
-    @Ignore
+    @Test
+    @Disabled
     public void testPrintListWithDifferentUsers() {
         File file = new File("src/test/resources/test.txt");
-        printer.print(createPrintJob(file, "oli"), createPrintJob(file, "stan"));
+        assertThrows(IllegalStateException.class,
+                () -> printer.print(createPrintJob(file, "oli"), createPrintJob(file, "stan")));
     }
 
     private PrintJob createPrintJob(File file) {
@@ -122,7 +124,7 @@ public final class CupsPrinterTest {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void testPrintListWithNoUser() {
         PrintJob job = new PrintJob.Builder("secret".getBytes()).jobName("testPrintListWithNoUser").build();
         printer.print(job, job);
