@@ -8,10 +8,6 @@ import java.util.List;
 
 public class TestCups {
     /**
-     * If you have no CUPS running on your local machine you must set the
-     * environment variables 'host' and 'port' to your CUPS server in the
-     * network. Otherwise, the test fails.
-     *
      * @return your CupsClient for testing
      */
     public static CupsClient getCupsClient() {
