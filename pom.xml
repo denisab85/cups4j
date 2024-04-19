@@ -9,7 +9,7 @@
 
     <name>cups4j</name>
     <description>Java printing library for CUPS/IPP</description>
-    <url>http://cups4j.org</url>
+    <url>https://github.com/harwey/cups4j</url>
 
     <licenses>
         <license>
@@ -30,7 +30,7 @@
     <scm>
         <connection>scm:git:git://github.com/harwey/cups4j</connection>
         <developerConnection>scm:git:ssh://github.com:harwey/cups4j</developerConnection>
-        <url>http://github.com/harwey/cups4j/tree/master</url>
+        <url>https://github.com/harwey/cups4j/tree/master</url>
     </scm>
 
     <distributionManagement>
