@@ -16,45 +16,19 @@ import org.simpleframework.xml.Root;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 @Root(name = "attribute-list")
 public class AttributeList {
+
+    @ElementList(entry = "attribute-group", inline = true)
+    protected List<AttributeGroup> attributeGroups = new ArrayList<>();
+
+    @Setter
     @Attribute
     protected String schemaLocation;
 
-    @ElementList(entry = "attribute-group", inline = true)
-    protected List<AttributeGroup> attributeGroup;
-
     @Setter
-    @Getter
     @Attribute(required = false)
     protected String description;
-
-    /**
-     * Gets the value of the attributeGroup property.
-     *
-     * <p>
-     * This accessor method returns a reference to the live list, not a snapshot.
-     * Therefore any modification you make to the returned list will be present
-     * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
-     * for the attributeGroup property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     *
-     * <pre>
-     * getAttributeGroup().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link AttributeGroup }
-     */
-    public List<AttributeGroup> getAttributeGroup() {
-        if (attributeGroup == null) {
-            attributeGroup = new ArrayList<>();
-        }
-        return this.attributeGroup;
-    }
 
 }

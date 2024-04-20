@@ -31,6 +31,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 @Slf4j
 public class CupsGetPrintersOperation extends IppOperation {
@@ -55,7 +58,7 @@ public class CupsGetPrintersOperation extends IppOperation {
         // map.put("requested-attributes", "all");
         this.ippPort = port;
 
-        IppResult result = request(null, new URL("http://" + hostname + ":" + port + "/printers"), map, creds);
+        IppResult result = request(null, new URL("http://" + hostname + ':' + port + "/printers"), map, creds);
 
         for (AttributeGroup group : result.getAttributeGroupList()) {
             if (group.getTagName().equals("printer-attributes-tag")) {
@@ -78,13 +81,13 @@ public class CupsGetPrintersOperation extends IppOperation {
                 String deviceURI = null;
                 String printerMakeAndModel = null;
 
-                for (Attribute attr : group.getAttribute()) {
+                for (Attribute attr : group.getAttributes()) {
                     switch (attr.getName()) {
                         case "printer-uri-supported":
                             printerURI = getAttributeValue(attr).replace("ipp://", "http://");
                             printerURI = StringUtils.remove(printerURI, "http://");
                             printerURI = StringUtils.substringAfter(printerURI, "/");
-                            printerURI = "http://" + hostname + ":" + port + "/" + printerURI;
+                            printerURI = "http://" + hostname + ':' + port + "/" + printerURI;
                             break;
                         case "printer-name":
                             printerName = getAttributeValue(attr);
@@ -143,10 +146,9 @@ public class CupsGetPrintersOperation extends IppOperation {
                 try {
                     printerUrl = new URL(printerURI);
                 } catch (Throwable t) {
-                    t.printStackTrace();
-                    log.error("Error encountered building URL from printer uri of printer " + printerName
-                            + ", uri returned was [" + printerURI + "].  Attribute group tag/description: [" + group.getTagName()
-                            + "/" + group.getDescription());
+                    log.error("Error encountered building URL from printer uri of printer {}," +
+                                    " uri returned was [{}].  Attribute group tag/description: [{}/{}]",
+                            printerName, printerURI, group.getTagName(), group.getDescription(), t);
                     throw new Exception(t);
                 }
 
@@ -176,19 +178,16 @@ public class CupsGetPrintersOperation extends IppOperation {
     }
 
     protected List<String> getAttributeValues(Attribute attr) {
-        List<String> values = new ArrayList<>();
-        if (attr.getAttributeValue() != null && !attr.getAttributeValue().isEmpty()) {
-            for (AttributeValue value : attr.getAttributeValue()) {
-                values.add(value.getValue());
-            }
+        if (attr.getAttributeValues() == null) {
+            return new ArrayList<>();
         }
-        return values;
+        return attr.getAttributeValues().stream().map(AttributeValue::getValue).collect(Collectors.toList());
     }
 
     protected String getAttributeValue(Attribute attr) {
         String result = null;
-        if (attr.getAttributeValue() != null && attr.getAttributeValue().size() > 0) {
-            result = attr.getAttributeValue().get(0).getValue();
+        if (isNotEmpty(attr.getAttributeValues())) {
+            result = attr.getAttributeValues().get(0).getValue();
         }
         return result;
     }

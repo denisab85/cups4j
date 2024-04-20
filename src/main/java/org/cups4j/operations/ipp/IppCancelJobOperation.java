@@ -68,16 +68,16 @@ public class IppCancelJobOperation extends IppOperation {
             return ippBuf;
         }
 
-        if (map.get("job-id") == null) {
-            ippBuf = IppTag.getUri(ippBuf, "job-uri", stripPortNumber(uri));
-        } else {
+        if (map.containsKey("job-id")) {
             ippBuf = IppTag.getUri(ippBuf, "printer-uri", stripPortNumber(uri));
             int jobId = Integer.parseInt(map.get("job-id"));
             ippBuf = IppTag.getInteger(ippBuf, "job-id", jobId);
+        } else {
+            ippBuf = IppTag.getUri(ippBuf, "job-uri", stripPortNumber(uri));
         }
         ippBuf = IppTag.getNameWithoutLanguage(ippBuf, "requesting-user-name", map.get("requesting-user-name"));
 
-        if (map.get("message") != null) {
+        if (map.containsKey("message")) {
             ippBuf = IppTag.getTextWithoutLanguage(ippBuf, "message", map.get("message"));
         }
 
@@ -107,7 +107,7 @@ public class IppCancelJobOperation extends IppOperation {
         map.put("requesting-user-name", userName);
 
         URL url = new URL("http://" + hostname + "/jobs/" + jobID);
-        URL urlService = new URL("http://" + hostname + ":" + ippPort + "/jobs/" + jobID);
+        URL urlService = new URL("http://" + hostname + ':' + ippPort + "/jobs/" + jobID);
 
         map.put("job-uri", url.toString());
 

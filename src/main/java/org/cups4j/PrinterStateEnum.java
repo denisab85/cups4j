@@ -3,6 +3,8 @@ package org.cups4j;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Arrays;
+
 @Getter
 @RequiredArgsConstructor
 public enum PrinterStateEnum {
@@ -15,25 +17,19 @@ public enum PrinterStateEnum {
 
 
     public static PrinterStateEnum fromInteger(Integer value) {
-        if (value != null) {
-            for (PrinterStateEnum printerState : PrinterStateEnum.values()) {
-                if (value.equals(printerState.getValue())) {
-                    return printerState;
-                }
-            }
-        }
-        return null;
+        return value == null ? null :
+                Arrays.stream(PrinterStateEnum.values())
+                        .filter(printerState -> value.equals(printerState.getValue()))
+                        .findFirst()
+                        .orElse(null);
     }
 
     public static PrinterStateEnum fromStringInteger(String value) {
-        if (value != null) {
-            for (PrinterStateEnum printerState : PrinterStateEnum.values()) {
-                if (value.equalsIgnoreCase(printerState.getValue().toString())) {
-                    return printerState;
-                }
-            }
-        }
-        return null;
+        return value == null ? null :
+                Arrays.stream(PrinterStateEnum.values())
+                        .filter(printerState -> value.equalsIgnoreCase(printerState.getValue().toString()))
+                        .findFirst()
+                        .orElse(null);
     }
 
     @Override

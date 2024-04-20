@@ -1,7 +1,6 @@
 package org.cups4j.operations;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
@@ -12,6 +11,8 @@ import org.cups4j.CupsAuthentication;
 import org.cups4j.CupsPrinter;
 
 import java.nio.charset.StandardCharsets;
+
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 public final class IppHttp {
 
@@ -39,18 +40,12 @@ public final class IppHttp {
         return client;
     }
 
-    public static void setHttpHeaders(HttpPost httpPost, CupsPrinter targetPrinter,
-                                      CupsAuthentication creds) {
-        if (targetPrinter == null) {
-            httpPost.addHeader("target-group", "local");
-        } else {
-            httpPost.addHeader("target-group", targetPrinter.getName());
-        }
+    public static void setHttpHeaders(HttpPost httpPost, CupsPrinter targetPrinter, CupsAuthentication creds) {
+        httpPost.addHeader("target-group", targetPrinter == null ? "local" : targetPrinter.getName());
         httpPost.setConfig(requestConfig);
 
-        if (creds != null && StringUtils.isNotBlank(creds.getUserid())
-                && StringUtils.isNotBlank(creds.getPassword())) {
-            String auth = creds.getUserid() + ":" + creds.getPassword();
+        if (creds != null && isNotBlank(creds.getUserid()) && isNotBlank(creds.getPassword())) {
+            String auth = creds.getUserid() + ':' + creds.getPassword();
             byte[] encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.ISO_8859_1));
             String authHeader = "Basic " + new String(encodedAuth);
             httpPost.setHeader(HttpHeaders.AUTHORIZATION, authHeader);

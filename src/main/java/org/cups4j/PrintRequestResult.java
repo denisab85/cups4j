@@ -16,11 +16,15 @@ package org.cups4j;
  */
 
 import ch.ethz.vppserver.ippclient.IppResult;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Setter;
 import org.cups4j.ipp.attributes.AttributeGroup;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static org.apache.commons.lang.StringUtils.isBlank;
 
 /**
  * Result of a print request
@@ -28,6 +32,7 @@ import java.util.regex.Pattern;
 public class PrintRequestResult {
     private final IppResult ippResult;
     @Getter
+    @Setter(AccessLevel.PROTECTED)
     private int jobId;
     private String resultCode = "";
     @Getter
@@ -63,11 +68,11 @@ public class PrintRequestResult {
     }
 
     private boolean isNullOrEmpty(String string) {
-        return (string == null) || ("".equals(string.trim()));
+        return isBlank(string);
     }
 
     public boolean isSuccessfulResult() {
-        return (resultCode != null) && getResultCode().startsWith("0x00");
+        return resultCode != null && getResultCode().startsWith("0x00");
     }
 
     public String getResultCode() {
@@ -81,14 +86,10 @@ public class PrintRequestResult {
     public String getResultMessage() {
         if (ippResult.hasAttributeGroup("operation-attributes-tag")) {
             AttributeGroup attributeGroup = ippResult.getAttributeGroup("operation-attributes-tag");
-            return attributeGroup.getAttribute("status-message").getValue();
+            return attributeGroup.getAttributes("status-message").getValue();
         } else {
             return ippResult.getHttpStatusResponse();
         }
-    }
-
-    protected void setJobId(int jobId) {
-        this.jobId = jobId;
     }
 
 }

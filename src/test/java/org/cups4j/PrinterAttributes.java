@@ -66,7 +66,7 @@ public class PrinterAttributes {
         JTabbedPane tab = new JTabbedPane();
 
         for (AttributeGroup group : result.getAttributeGroupList()) {
-            if (group.getAttribute().size() > 0) {
+            if (group.getAttributes().size() > 0) {
                 tab.add(gatAttributeTab(group), group.getTagName());
             }
         }
@@ -84,7 +84,7 @@ public class PrinterAttributes {
         DefaultFormBuilder builder = new DefaultFormBuilder(layout);
         builder.setLeadingColumnOffset(1);
 
-        Collections.sort(group.getAttribute(), new Comparator<Attribute>() {
+        Collections.sort(group.getAttributes(), new Comparator<Attribute>() {
 
             @Override
             public int compare(Attribute a1, Attribute a2) {
@@ -92,12 +92,12 @@ public class PrinterAttributes {
             }
         });
 
-        for (Attribute att : group.getAttribute()) {
+        for (Attribute att : group.getAttributes()) {
             JComponent valueComponent;
-            if (att.getAttributeValue().size() > 0) {
+            if (att.getAttributeValues().size() > 0) {
                 JPanel panel = new JPanel(new BorderLayout());
 
-                AttributeValueTable table = new AttributeValueTable((getAttributeTableModel(att.getAttributeValue())));
+                AttributeValueTable table = new AttributeValueTable((getAttributeTableModel(att.getAttributeValues())));
                 panel.add(table.getTableHeader(), BorderLayout.NORTH);
                 panel.add(table, BorderLayout.CENTER);
                 valueComponent = panel;

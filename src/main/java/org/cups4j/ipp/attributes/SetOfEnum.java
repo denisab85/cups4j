@@ -13,45 +13,18 @@ import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
+@Getter
 @Root(name = "set-of-enum")
 public class SetOfEnum {
 
     @ElementList(entry = "enum", inline = true)
-    protected List<Enum> _enum;
+    protected Set<Enum> enums = new LinkedHashSet<>();
 
     @Setter
-    @Getter
     @Attribute(required = false)
     protected String description;
-
-    /**
-     * Gets the value of the enum property.
-     *
-     * <p>
-     * This accessor method returns a reference to the live list, not a snapshot.
-     * Therefore any modification you make to the returned list will be present
-     * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
-     * for the enum property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     *
-     * <pre>
-     * getEnum().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list {@link Enum }
-     */
-    public List<Enum> getEnum() {
-        if (_enum == null) {
-            _enum = new ArrayList<>();
-        }
-        return this._enum;
-    }
 
 }

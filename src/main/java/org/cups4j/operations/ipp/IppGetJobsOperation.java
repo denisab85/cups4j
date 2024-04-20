@@ -59,12 +59,12 @@ public class IppGetJobsOperation extends IppOperation {
 
         ippBuf = IppTag.getNameWithoutLanguage(ippBuf, "requesting-user-name", map.get("requesting-user-name"));
 
-        if (map.get("limit") != null) {
+        if (map.containsKey("limit")) {
             int value = Integer.parseInt(map.get("limit"));
             ippBuf = IppTag.getInteger(ippBuf, "limit", value);
         }
 
-        if (map.get("requested-attributes") != null) {
+        if (map.containsKey("requested-attributes")) {
             String[] sta = map.get("requested-attributes").split(" ");
             ippBuf = IppTag.getKeyword(ippBuf, "requested-attributes", sta[0]);
             int l = sta.length;
@@ -73,11 +73,11 @@ public class IppGetJobsOperation extends IppOperation {
             }
         }
 
-        if (map.get("which-jobs") != null) {
+        if (map.containsKey("which-jobs")) {
             ippBuf = IppTag.getKeyword(ippBuf, "which-jobs", map.get("which-jobs"));
         }
 
-        if (map.get("my-jobs") != null) {
+        if (map.containsKey("my-jobs")) {
             boolean value = map.get("my-jobs").equals("true");
             ippBuf = IppTag.getBoolean(ippBuf, "my-jobs", value);
         }
@@ -93,10 +93,10 @@ public class IppGetJobsOperation extends IppOperation {
         PrintJobAttributes jobAttributes;
         Map<String, String> map = new HashMap<>();
 
-        if (userName == null)
+        if (userName == null) {
             userName = CupsClient.DEFAULT_USER;
+        }
         map.put("requesting-user-name", userName);
-        //
         map.put("which-jobs", whichJobs.getValue());
         if (myJobs) {
             map.put("my-jobs", "true");
@@ -111,29 +111,34 @@ public class IppGetJobsOperation extends IppOperation {
         for (AttributeGroup group : result.getAttributeGroupList()) {
             if ("job-attributes-tag".equals(group.getTagName())) {
                 jobAttributes = new PrintJobAttributes();
-                for (Attribute attr : group.getAttribute()) {
-                    if (attr.getAttributeValue() != null && !attr.getAttributeValue().isEmpty()) {
+                for (Attribute attr : group.getAttributes()) {
+                    if (attr.getAttributeValues() != null && !attr.getAttributeValues().isEmpty()) {
                         String attValue = getAttributeValue(attr);
-
-                        if ("job-uri".equals(attr.getName())) {
-                            jobAttributes.setJobURL(new URL(attValue.replace("ipp://", "http://")));
-                        } else if ("job-id".equals(attr.getName())) {
-                            jobAttributes.setJobID(Integer.parseInt(attValue));
-                        } else if ("job-state".equals(attr.getName())) {
-                            jobAttributes.setJobState(JobStateEnum.fromString(attValue));
-                        } else if ("job-printer-uri".equals(attr.getName())) {
-                            jobAttributes.setPrinterURL(new URL(attValue.replace("ipp://", "http://")));
-                        } else if ("job-name".equals(attr.getName())) {
-                            jobAttributes.setJobName(attValue);
-                        } else if ("job-originating-user-name".equals(attr.getName())) {
-                            jobAttributes.setUserName(attValue);
+                        switch (attr.getName()) {
+                            case "job-uri":
+                                jobAttributes.setJobURL(new URL(attValue.replace("ipp://", "http://")));
+                                break;
+                            case "job-id":
+                                jobAttributes.setJobID(Integer.parseInt(attValue));
+                                break;
+                            case "job-state":
+                                jobAttributes.setJobState(JobStateEnum.fromString(attValue));
+                                break;
+                            case "job-printer-uri":
+                                jobAttributes.setPrinterURL(new URL(attValue.replace("ipp://", "http://")));
+                                break;
+                            case "job-name":
+                                jobAttributes.setJobName(attValue);
+                                break;
+                            case "job-originating-user-name":
+                                jobAttributes.setUserName(attValue);
+                                break;
                         }
                     }
                 }
                 jobs.add(jobAttributes);
             }
         }
-
         return jobs;
     }
 

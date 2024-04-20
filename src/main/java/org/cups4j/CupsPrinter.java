@@ -12,6 +12,9 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
+
 /**
  * Represents a printer on your IPP server
  */
@@ -49,7 +52,6 @@ public class CupsPrinter {
         this.creds = creds;
         this.printerURL = printerURL;
         this.name = printerName;
-        updateClassAttribute();
     }
 
     private static void verifyUser(String userName, PrintJob[] printJobs) {
@@ -62,10 +64,8 @@ public class CupsPrinter {
         }
     }
 
-    private void updateClassAttribute() {
-        if (printerURL != null && printerURL.toString().contains("class")) {
-            printerClass = true;
-        }
+    public boolean isPrinterClass() {
+        return printerClass || (printerURL != null && printerURL.toString().contains("class"));
     }
 
     public PrintRequestResult print(PrintJob printJob) throws Exception {
@@ -91,32 +91,23 @@ public class CupsPrinter {
         attributes.put("job-name", jobName);
 
         String copiesString;
-        StringBuffer rangesString = new StringBuffer();
-        if (copies > 0) {// other values are considered bad value by CUPS
+        StringBuilder rangesString = new StringBuilder();
+        if (copies > 0) { // other values are considered bad value by CUPS
             copiesString = "copies:integer:" + copies;
             addAttribute(attributes, "job-attributes", copiesString);
         }
-        if (portrait) {
-            addAttribute(attributes, "job-attributes", "orientation-requested:enum:3");
-        } else {
-            addAttribute(attributes, "job-attributes", "orientation-requested:enum:4");
-        }
+        addAttribute(attributes, "job-attributes", portrait ? "orientation-requested:enum:3" : "orientation-requested:enum:4");
+        addAttribute(attributes, "job-attributes", color ? "output-mode:keyword:color" : "output-mode:keyword:monochrome");
 
-        if (color) {
-            addAttribute(attributes, "job-attributes", "output-mode:keyword:color");
-        } else {
-            addAttribute(attributes, "job-attributes", "output-mode:keyword:monochrome");
-        }
-
-        if (pageFormat != null && !"".equals(pageFormat)) {
+        if (isNotEmpty(pageFormat)) {
             addAttribute(attributes, "job-attributes", "media:keyword:" + pageFormat);
         }
 
-        if (resolution != null && !"".equals(resolution)) {
+        if (isNotEmpty(resolution)) {
             addAttribute(attributes, "job-attributes", "printer-resolution:resolution:" + resolution);
         }
 
-        if (pageRanges != null && !"".equals(pageRanges.trim()) && !"1-".equals(pageRanges.trim())) {
+        if (isNotBlank(pageRanges) && !"1-".equals(pageRanges.trim())) {
             String[] ranges = pageRanges.split(",");
 
             String delimeter = "";
@@ -147,9 +138,9 @@ public class CupsPrinter {
 
         for (AttributeGroup group : ippResult.getAttributeGroupList()) {
             if (group.getTagName().equals("job-attributes-tag")) {
-                for (Attribute attr : group.getAttribute()) {
+                for (Attribute attr : group.getAttributes()) {
                     if (attr.getName().equals("job-id")) {
-                        ippJobID = Integer.parseInt(attr.getAttributeValue().get(0).getValue());
+                        ippJobID = Integer.parseInt(attr.getAttributeValues().get(0).getValue());
                     }
                 }
             }
@@ -236,10 +227,10 @@ public class CupsPrinter {
         IppCreateJobOperation command = new IppCreateJobOperation(printerURL.getPort());
         IppResult ippResult = command.request(this, printerURL, attributes, creds);
         if (ippResult.isPrintQueueUnavailable()) {
-            throw new IllegalStateException("The print queueu is not available: " + ippResult.getIppStatusResponse());
+            throw new IllegalStateException("The print queue is not available: " + ippResult.getIppStatusResponse());
         }
         AttributeGroup attrGroup = ippResult.getAttributeGroup("job-attributes-tag");
-        return Integer.parseInt(attrGroup.getAttribute("job-id").getValue());
+        return Integer.parseInt(attrGroup.getAttributes("job-id").getValue());
     }
 
     /**
@@ -263,13 +254,11 @@ public class CupsPrinter {
 
     private void addAttribute(Map<String, String> map, String name, String value) {
         if (value != null && name != null) {
-            String attribute = map.get(name);
-            if (attribute == null) {
-                attribute = value;
+            if (map.containsKey(name)) {
+                map.put(name, map.get(name) + "#" + value);
             } else {
-                attribute += "#" + value;
+                map.put(name, value);
             }
-            map.put(name, attribute);
         }
     }
 
@@ -286,7 +275,6 @@ public class CupsPrinter {
 
     public List<PrintJobAttributes> getJobs(WhichJobsEnum whichJobs, String user, boolean myJobs) throws Exception {
         IppGetJobsOperation command = new IppGetJobsOperation(printerURL.getPort());
-
         return command.getPrintJobs(this, whichJobs, user, myJobs, creds);
     }
 
@@ -311,15 +299,8 @@ public class CupsPrinter {
      */
     public JobStateEnum getJobStatus(String userName, int jobID) throws Exception {
         IppGetJobAttributesOperation command = new IppGetJobAttributesOperation(printerURL.getPort());
-        PrintJobAttributes job = command.getPrintJobAttributes(printerURL.getHost(), userName,
-                jobID, creds);
-
+        PrintJobAttributes job = command.getPrintJobAttributes(printerURL.getHost(), userName, jobID, creds);
         return job.getJobState();
-    }
-
-    public void setPrinterURL(URL printerURL) {
-        this.printerURL = printerURL;
-        updateClassAttribute();
     }
 
     /**

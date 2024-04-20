@@ -59,10 +59,10 @@ public class IppSendDocumentOperationTest extends AbstractIppOperationTest {
 
     private static void checkAttributeGroupList(AttributeGroup ref, AttributeGroup attributeGroup) {
         Set<String> attributeNames = new HashSet<>();
-        for (Attribute attr : attributeGroup.getAttribute()) {
+        for (Attribute attr : attributeGroup.getAttributes()) {
             attributeNames.add(attr.getName());
         }
-        for (Attribute attr : ref.getAttribute()) {
+        for (Attribute attr : ref.getAttributes()) {
             if (!attributeNames.contains(attr.getName())) {
                 fail("attribute '" + attr.getName() + "' is missing in " + attributeGroup);
             }
@@ -119,7 +119,7 @@ public class IppSendDocumentOperationTest extends AbstractIppOperationTest {
         byte[] header = toByteArray(buffer);
         IppResult ippResult = new IppResponse().getResponse(ByteBuffer.wrap(header));
         AttributeGroup group = ippResult.getAttributeGroupList().get(0);
-        Attribute attribute = group.getAttribute("last-document");
+        Attribute attribute = group.getAttributes("last-document");
         assertNotNull(attribute);
         assertEquals("true", attribute.getValue());
     }

@@ -29,8 +29,8 @@ public class IppResponseTest {
         assertThat(statusResponse, containsString("client-error-bad-request"));
         AttributeGroup attributeGroup =
                 ippResult.getAttributeGroup("operation-attributes-tag");
-        Attribute attr = attributeGroup.getAttribute("status-message");
-        assertEquals("Got a printer-uri attribute but no job-id.", attr.getAttributeValue().get(0).getValue());
+        Attribute attr = attributeGroup.getAttributes("status-message");
+        assertEquals("Got a printer-uri attribute but no job-id.", attr.getAttributeValues().get(0).getValue());
     }
 
     /**

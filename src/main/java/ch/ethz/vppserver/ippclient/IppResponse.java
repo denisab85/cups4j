@@ -1,6 +1,7 @@
 package ch.ethz.vppserver.ippclient;
 
 import lombok.extern.slf4j.Slf4j;
+import org.cups4j.ipp.attributes.Enum;
 import org.cups4j.ipp.attributes.*;
 
 import java.io.IOException;
@@ -8,6 +9,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Copyright (C) 2008 ITS of ETH Zurich, Switzerland, Sarah Windler Burri
@@ -29,19 +31,18 @@ import java.util.List;
 public class IppResponse {
     private final static String CRLF = "\r\n";
     private static final int BYTEBUFFER_CAPACITY = 8192;
-    private static IIppAttributeProvider ippAttributeProvider = null;
-    // read IPP response in global buffer
-    ByteBuffer _buf = null;
     // Saved list of elements of 'TAG_LIST_FILENAME' and 'ATTRIBUTE_LIST_FILENAME'
-    private List<Tag> _tagList = null;
-    private List<AttributeGroup> _attributeGroupList = null;
+    private final List<Tag> _tagList;
+    private final List<AttributeGroup> _attributeGroupList;
+    private final List<AttributeGroup> _result;
+    // read IPP response in global buffer
+    ByteBuffer _buf;
     // Saved response of printer
     private AttributeGroup _attributeGroupResult = null;
     private Attribute _attributeResult = null;
-    private List<AttributeGroup> _result = null;
 
     public IppResponse() {
-        ippAttributeProvider = IppAttributeProviderFactory.createIppAttributeProvider();
+        IIppAttributeProvider ippAttributeProvider = IppAttributeProviderFactory.createIppAttributeProvider();
 
         _tagList = ippAttributeProvider.getTagList();
         _attributeGroupList = ippAttributeProvider.getAttributeGroupList();
@@ -174,7 +175,7 @@ public class IppResponse {
      */
     private String getHTTPHeader() {
         String endOf = CRLF + CRLF;
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         while (sb.indexOf(endOf) == -1) {
             int b = _buf.get();
             int ival = b & 0xff;
@@ -191,15 +192,15 @@ public class IppResponse {
      * @return
      */
     private String getIPPHeader() {
-        StringBuffer sb = new StringBuffer();
-        sb.append("Major Version:" + IppUtil.toHexWithMarker(_buf.get()));
-        sb.append(" Minor Version:" + IppUtil.toHexWithMarker(_buf.get()));
+        StringBuilder sb = new StringBuilder();
+        sb.append("Major Version:").append(IppUtil.toHexWithMarker(_buf.get()));
+        sb.append(" Minor Version:").append(IppUtil.toHexWithMarker(_buf.get()));
 
         String statusCode = IppUtil.toHexWithMarker(_buf.get()) + IppUtil.toHex(_buf.get());
         String statusMessage = getEnumName(statusCode, "status-code");
 
-        sb.append(" Request Id:" + _buf.getInt() + "\n");
-        sb.append("Status Code:" + statusCode + "(" + statusMessage + ")");
+        sb.append(" Request Id:").append(_buf.getInt()).append("\n");
+        sb.append("Status Code:").append(statusCode).append("(").append(statusMessage).append(")");
 
         if (sb.length() != 0) {
             return sb.toString();
@@ -261,7 +262,7 @@ public class IppResponse {
                     setAttributeGroup(tag); // event-notification-attributes
                     continue;
                 case 0x13:
-                    setNoValueAttribute(tag); // no-value
+                    setNoValueAttribute(); // no-value
                     continue;
                 case 0x21:
                     setIntegerAttribute(tag); // integer
@@ -327,7 +328,7 @@ public class IppResponse {
     private void setAttributeGroup(byte tag) {
         if (_attributeGroupResult != null) {
             if (_attributeResult != null) {
-                _attributeGroupResult.getAttribute().add(_attributeResult);
+                _attributeGroupResult.getAttributes().add(_attributeResult);
             }
             _result.add(_attributeGroupResult);
         }
@@ -343,7 +344,7 @@ public class IppResponse {
     private void closeAttributeGroup() {
         if (_attributeGroupResult != null) {
             if (_attributeResult != null) {
-                _attributeGroupResult.getAttribute().add(_attributeResult);
+                _attributeGroupResult.getAttributes().add(_attributeResult);
             }
             _result.add(_attributeGroupResult);
         }
@@ -375,7 +376,7 @@ public class IppResponse {
             String tagName = getTagName(hex);
             attrValue.setTagName(tagName);
             attrValue.setValue(value);
-            _attributeResult.getAttributeValue().add(attrValue);
+            _attributeResult.getAttributeValues().add(attrValue);
         }
 
     }
@@ -408,7 +409,7 @@ public class IppResponse {
             String tagName = getTagName(hex);
             attrValue.setTagName(tagName);
             attrValue.setValue(value);
-            _attributeResult.getAttributeValue().add(attrValue);
+            _attributeResult.getAttributeValues().add(attrValue);
 
             // set value
             length = _buf.getShort();
@@ -418,7 +419,7 @@ public class IppResponse {
                 value = IppUtil.toString(dst);
                 attrValue = new AttributeValue();
                 attrValue.setValue(value);
-                _attributeResult.getAttributeValue().add(attrValue);
+                _attributeResult.getAttributeValues().add(attrValue);
             }
         }
     }
@@ -451,7 +452,7 @@ public class IppResponse {
             String tagName = getTagName(hex);
             attrValue.setTagName(tagName);
             attrValue.setValue(value);
-            _attributeResult.getAttributeValue().add(attrValue);
+            _attributeResult.getAttributeValues().add(attrValue);
 
             // set value
             length = _buf.getShort();
@@ -461,7 +462,7 @@ public class IppResponse {
                 value = IppUtil.toString(dst);
                 attrValue = new AttributeValue();
                 attrValue.setValue(value);
-                _attributeResult.getAttributeValue().add(attrValue);
+                _attributeResult.getAttributeValues().add(attrValue);
             }
         }
     }
@@ -488,7 +489,7 @@ public class IppResponse {
             String tagName = getTagName(hex);
             attrValue.setTagName(tagName);
             attrValue.setValue(IppUtil.toBoolean(value));
-            _attributeResult.getAttributeValue().add(attrValue);
+            _attributeResult.getAttributeValues().add(attrValue);
         }
     }
 
@@ -516,7 +517,7 @@ public class IppResponse {
             String tagName = getTagName(hex);
             attrValue.setTagName(tagName);
             attrValue.setValue(value);
-            _attributeResult.getAttributeValue().add(attrValue);
+            _attributeResult.getAttributeValues().add(attrValue);
         }
     }
 
@@ -541,14 +542,14 @@ public class IppResponse {
             String tagName = getTagName(hex);
             attrValue.setTagName(tagName);
             attrValue.setValue(Integer.toString(value));
-            _attributeResult.getAttributeValue().add(attrValue);
+            _attributeResult.getAttributeValues().add(attrValue);
         }
     }
 
     /**
-     * @param tag
+     *
      */
-    private void setNoValueAttribute(byte tag) {
+    private void setNoValueAttribute() {
         short length = _buf.getShort();
         if ((length != 0) && (_buf.remaining() >= length)) {
             setAttributeName(length);
@@ -577,7 +578,7 @@ public class IppResponse {
             String tagName = getTagName(hex);
             attrValue.setTagName(tagName);
             attrValue.setValue(value1 + "," + value2);
-            _attributeResult.getAttributeValue().add(attrValue);
+            _attributeResult.getAttributeValues().add(attrValue);
         }
     }
 
@@ -605,7 +606,7 @@ public class IppResponse {
             String tagName = getTagName(hex);
             attrValue.setTagName(tagName);
             attrValue.setValue(value1 + "," + value2 + "," + Integer.toString(value3));
-            _attributeResult.getAttributeValue().add(attrValue);
+            _attributeResult.getAttributeValues().add(attrValue);
         }
     }
 
@@ -641,7 +642,7 @@ public class IppResponse {
                 attrValue.setValue(Integer.toString(value));
             }
 
-            _attributeResult.getAttributeValue().add(attrValue);
+            _attributeResult.getAttributeValues().add(attrValue);
         }
     }
 
@@ -656,7 +657,7 @@ public class IppResponse {
         _buf.get(dst);
         String name = IppUtil.toString(dst);
         if (_attributeResult != null) {
-            _attributeGroupResult.getAttribute().add(_attributeResult);
+            _attributeGroupResult.getAttributes().add(_attributeResult);
         }
         _attributeResult = new Attribute();
         _attributeResult.setName(name);
@@ -672,9 +673,9 @@ public class IppResponse {
             return null;
         }
         int l = _tagList.size();
-        for (int i = 0; i < l; i++) {
-            if (tag.equals(_tagList.get(i).getValue())) {
-                return _tagList.get(i).getName();
+        for (Tag value : _tagList) {
+            if (tag.equals(value.getValue())) {
+                return value.getName();
             }
         }
         return "no name found for tag:" + tag;
@@ -695,7 +696,7 @@ public class IppResponse {
             return null;
         }
 
-        int enumValue = 0;
+        int enumValue;
         if (value.contains("0x")) {
             value = value.replace("0x", "");
             enumValue = Integer.parseInt(value, 16);
@@ -716,26 +717,19 @@ public class IppResponse {
             return null;
         }
         int l = _attributeGroupList.size();
-        for (int i = 0; i < l; i++) {
-            AttributeGroup attributeGroup = _attributeGroupList.get(i);
-            List<Attribute> attributeList = attributeGroup.getAttribute();
-            int ll = attributeList.size();
-            for (int j = 0; j < ll; j++) {
-                Attribute attribute = attributeList.get(j);
+        for (AttributeGroup attributeGroup : _attributeGroupList) {
+            List<Attribute> attributeList = attributeGroup.getAttributes();
+            for (Attribute attribute : attributeList) {
                 String attributeName = attribute.getName();
                 if ((attributeName != null) && (attributeName.equals(nameOfAttribute))) {
-                    List<AttributeValue> attributeValueList = attribute.getAttributeValue();
-                    int lll = attributeValueList.size();
-                    for (int z = 0; z < lll; z++) {
-                        AttributeValue attributeValue = attributeValueList.get(z);
+                    List<AttributeValue> attributeValueList = attribute.getAttributeValues();
+                    for (AttributeValue attributeValue : attributeValueList) {
                         if (attributeValue.getSetOfEnum() != null) {
                             SetOfEnum setOfEnum = attributeValue.getSetOfEnum();
-                            List<org.cups4j.ipp.attributes.Enum> enumList = setOfEnum.getEnum();
-                            int llll = enumList.size();
-                            for (int w = 0; w < llll; w++) {
-                                org.cups4j.ipp.attributes.Enum enumEntry = enumList.get(w);
+                            Set<Enum> enumList = setOfEnum.getEnums();
+                            for (org.cups4j.ipp.attributes.Enum enumEntry : enumList) {
                                 String enumValueString = enumEntry.getValue();
-                                int enumValue = 0;
+                                int enumValue;
                                 // some IPP enumerations are in hex, other decimal
                                 // see http://www.iana.org/assignments/ipp-registrations for
                                 // reference

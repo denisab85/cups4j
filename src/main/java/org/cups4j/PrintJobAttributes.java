@@ -31,7 +31,8 @@ import java.util.Date;
 @Getter
 public class PrintJobAttributes {
 
-    private final DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.MEDIUM);
+    private static final DateFormat DATE_FORMAT = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.MEDIUM);
+
     private URL jobURL = null;
     private URL printerURL = null;
     private int jobID = -1;
@@ -47,13 +48,12 @@ public class PrintJobAttributes {
 
     @Override
     public String toString() {
-        String buff = "job name/job id : [" + getJobName() + "/" + getJobID() + "]\n" +
+        return "job name/job id : [" + getJobName() + "/" + getJobID() + "]\n" +
                 "user name : [" + getUserName() + "]\n" +
                 "job state : [" + getJobState() + "]\n" +
                 "job URL : [" + getJobURL() + "]\n" +
                 "printer URL : [" + getPrinterURL() + "]\n" +
                 "job size/pages printed : [" + getSize() + "kB/" + getPagesPrinted() + "]\n";
-        return buff;
     }
 
     public URL getJobURL(CupsClient client) throws Exception {
@@ -69,11 +69,11 @@ public class PrintJobAttributes {
     }
 
     public String getCreateDate(CupsClient client) throws Exception {
-        return this.dateFormat.format(client.getJobAttributes(getJobID()).getJobCreateTime());
+        return DATE_FORMAT.format(client.getJobAttributes(getJobID()).getJobCreateTime());
     }
 
     public String getCompleteDate(CupsClient client) throws Exception {
-        return this.dateFormat.format(client.getJobAttributes(getJobID()).getJobCompleteTime());
+        return DATE_FORMAT.format(client.getJobAttributes(getJobID()).getJobCompleteTime());
     }
 
     public String toString(CupsClient client) {
@@ -87,8 +87,8 @@ public class PrintJobAttributes {
                 createDate = client.getJobAttributes(getJobID()).getJobCreateTime();
                 completeDate = client.getJobAttributes(getJobID()).getJobCompleteTime();
 
-                buff.append("job creation time : [").append(dateFormat.format(createDate.getTime())).append("]\n");
-                buff.append("job completion time : [").append(dateFormat.format(completeDate.getTime())).append("]\n");
+                buff.append("job creation time : [").append(DATE_FORMAT.format(createDate.getTime())).append("]\n");
+                buff.append("job completion time : [").append(DATE_FORMAT.format(completeDate.getTime())).append("]\n");
             }
 
             return buff.toString();
@@ -96,6 +96,6 @@ public class PrintJobAttributes {
             log.error("Unable to get creation and/or completion time for job " + getJobID(), ex);
             return toString();
         }
-
     }
+
 }

@@ -681,8 +681,7 @@ public class IppTag {
      * @return
      * @throws UnsupportedEncodingException
      */
-    public static ByteBuffer getMimeMediaType(ByteBuffer ippBuf, String attributeName)
-            throws UnsupportedEncodingException {
+    public static ByteBuffer getMimeMediaType(ByteBuffer ippBuf, String attributeName) throws UnsupportedEncodingException {
         return getMimeMediaType(ippBuf, attributeName, null);
     }
 

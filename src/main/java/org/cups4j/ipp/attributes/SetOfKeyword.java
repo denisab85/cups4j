@@ -13,45 +13,18 @@ import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
+@Getter
 @Root(name = "set-of-keyword")
 public class SetOfKeyword {
 
     @ElementList(entry = "keyword", inline = true)
-    protected List<Keyword> keyword;
+    protected Set<Keyword> keywords = new LinkedHashSet<>();
 
     @Setter
-    @Getter
     @Attribute(required = false)
     protected String description;
-
-    /**
-     * Gets the value of the keyword property.
-     *
-     * <p>
-     * This accessor method returns a reference to the live list, not a snapshot.
-     * Therefore any modification you make to the returned list will be present
-     * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
-     * for the keyword property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     *
-     * <pre>
-     * getKeyword().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list {@link Keyword }
-     */
-    public List<Keyword> getKeyword() {
-        if (keyword == null) {
-            keyword = new ArrayList<>();
-        }
-        return this.keyword;
-    }
 
 }

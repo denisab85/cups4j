@@ -67,7 +67,7 @@ public class IppGetPrinterAttributesOperation extends IppOperation {
         }
 
         ippBuf = IppTag.getNameWithoutLanguage(ippBuf, "requesting-user-name", map.get("requesting-user-name"));
-        if (map.get("requested-attributes") != null) {
+        if (map.containsKey("requested-attributes")) {
             String[] sta = map.get("requested-attributes").split(" ");
             ippBuf = IppTag.getKeyword(ippBuf, "requested-attributes", sta[0]);
             int l = sta.length;

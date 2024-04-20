@@ -43,6 +43,9 @@ import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Map;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
+
 /**
  * The class IppSendDocumentOperation represents the operation for sending
  * a document.
@@ -68,8 +71,7 @@ public class IppSendDocumentOperation extends IppPrintJobOperation {
     }
 
     private static IppResult getIppResult(CloseableHttpResponse httpResponse) throws IOException {
-        InputStream istream = httpResponse.getEntity().getContent();
-        try {
+        try (InputStream istream = httpResponse.getEntity().getContent()) {
             byte[] result = IOUtils.toByteArray(istream);
             IppResponse ippResponse = new IppResponse();
             IppResult ippResult = ippResponse.getResponse(ByteBuffer.wrap(result));
@@ -81,13 +83,10 @@ public class IppSendDocumentOperation extends IppPrintJobOperation {
                 ippResult.setHttpStatusResponse(httpResponse.getStatusLine().toString());
             }
             return ippResult;
-        } finally {
-            istream.close();
         }
     }
 
-    public IppResult request(CupsPrinter printer, URL printerURL,
-                             PrintJob printJob, CupsAuthentication creds) {
+    public IppResult request(CupsPrinter printer, URL printerURL, PrintJob printJob, CupsAuthentication creds) {
         InputStream document = printJob.getDocument();
         String userName = printJob.getUserName();
         String jobName = printJob.getJobName();
@@ -109,32 +108,23 @@ public class IppSendDocumentOperation extends IppPrintJobOperation {
         attributes.put("job-name", jobName);
 
         String copiesString;
-        StringBuffer rangesString = new StringBuffer();
-        if (copies > 0) {// other values are considered bad value by CUPS
+        StringBuilder rangesString = new StringBuilder();
+        if (copies > 0) { // other values are considered bad value by CUPS
             copiesString = "copies:integer:" + copies;
             addAttribute(attributes, "job-attributes", copiesString);
         }
-        if (portrait) {
-            addAttribute(attributes, "job-attributes", "orientation-requested:enum:3");
-        } else {
-            addAttribute(attributes, "job-attributes", "orientation-requested:enum:4");
-        }
+        addAttribute(attributes, "job-attributes", portrait ? "orientation-requested:enum:3" : "orientation-requested:enum:4");
+        addAttribute(attributes, "job-attributes", color ? "output-mode:keyword:color" : "output-mode:keyword:monochrome");
 
-        if (color) {
-            addAttribute(attributes, "job-attributes", "output-mode:keyword:color");
-        } else {
-            addAttribute(attributes, "job-attributes", "output-mode:keyword:monochrome");
-        }
-
-        if (pageFormat != null && !"".equals(pageFormat)) {
+        if (isNotEmpty(pageFormat)) {
             addAttribute(attributes, "job-attributes", "media:keyword:" + pageFormat);
         }
 
-        if (resolution != null && !"".equals(resolution)) {
+        if (isNotEmpty(resolution)) {
             addAttribute(attributes, "job-attributes", "printer-resolution:resolution:" + resolution);
         }
 
-        if (pageRanges != null && !"".equals(pageRanges.trim()) && !"1-".equals(pageRanges.trim())) {
+        if (isNotBlank(pageRanges) && !"1-".equals(pageRanges.trim())) {
             String[] ranges = pageRanges.split(",");
 
             String delimeter = "";
@@ -164,7 +154,7 @@ public class IppSendDocumentOperation extends IppPrintJobOperation {
                 String msg = "";
                 List<AttributeGroup> attributeGroupList = ippResult.getAttributeGroupList();
                 if (!attributeGroupList.isEmpty()) {
-                    msg = " (" + attributeGroupList.get(0).getAttribute("status-message").getValue() + ")";
+                    msg = " (" + attributeGroupList.get(0).getAttributes("status-message").getValue() + ")";
                 }
                 throw new IllegalStateException(
                         "IPP request to " + printerURL + " was not successful: " + ippResult.getHttpStatusResponse() +
@@ -178,13 +168,11 @@ public class IppSendDocumentOperation extends IppPrintJobOperation {
 
     private void addAttribute(Map<String, String> map, String name, String value) {
         if (value != null && name != null) {
-            String attribute = map.get(name);
-            if (attribute == null) {
-                attribute = value;
+            if (map.containsKey(name)) {
+                map.put(name, map.get(name) + "#" + value);
             } else {
-                attribute += "#" + value;
+                map.put(name, value);
             }
-            map.put(name, attribute);
         }
     }
 
@@ -229,38 +217,31 @@ public class IppSendDocumentOperation extends IppPrintJobOperation {
         ippBuf = IppTag.getNameWithoutLanguage(ippBuf, "requesting-user-name", userName);
         ippBuf = IppTag.getNameWithoutLanguage(ippBuf, "job-name", map.get("job-name"));
 
-        if (map.get("ipp-attribute-fidelity") != null) {
+        if (map.containsKey("ipp-attribute-fidelity")) {
             boolean value = map.get("ipp-attribute-fidelity").equals("true");
             ippBuf = IppTag.getBoolean(ippBuf, "ipp-attribute-fidelity", value);
         }
-
-        if (map.get("document-name") != null) {
+        if (map.containsKey("document-name")) {
             ippBuf = IppTag.getNameWithoutLanguage(ippBuf, "document-name", map.get("document-name"));
         }
-
-        if (map.get("compression") != null) {
+        if (map.containsKey("compression")) {
             ippBuf = IppTag.getKeyword(ippBuf, "compression", map.get("compression"));
         }
-
-        if (map.get("document-format") != null) {
+        if (map.containsKey("document-format")) {
             ippBuf = IppTag.getMimeMediaType(ippBuf, "document-format", map.get("document-format"));
         }
-
-        if (map.get("document-natural-language") != null) {
+        if (map.containsKey("document-natural-language")) {
             ippBuf = IppTag.getNaturalLanguage(ippBuf, "document-natural-language", map.get("document-natural-language"));
         }
-
-        if (map.get("job-k-octets") != null) {
+        if (map.containsKey("job-k-octets")) {
             int value = Integer.parseInt(map.get("job-k-octets"));
             ippBuf = IppTag.getInteger(ippBuf, "job-k-octets", value);
         }
-
-        if (map.get("job-impressions") != null) {
+        if (map.containsKey("job-impressions")) {
             int value = Integer.parseInt(map.get("job-impressions"));
             ippBuf = IppTag.getInteger(ippBuf, "job-impressions", value);
         }
-
-        if (map.get("job-media-sheets") != null) {
+        if (map.containsKey("job-media-sheets")) {
             int value = Integer.parseInt(map.get("job-media-sheets"));
             ippBuf = IppTag.getInteger(ippBuf, "job-media-sheets", value);
         }
@@ -288,13 +269,10 @@ public class IppSendDocumentOperation extends IppPrintJobOperation {
         httpPost.setEntity(requestEntity);
         IppHttp.setHttpHeaders(httpPost, printer, creds);
 
-        CloseableHttpClient client = HttpClients.custom().build();
-        try {
+        try (CloseableHttpClient client = HttpClients.custom().build()) {
             CloseableHttpResponse httpResponse = client.execute(httpPost);
             log.debug("Received from {}: {}", uri, httpResponse);
             return getIppResult(httpResponse);
-        } finally {
-            client.close();
         }
     }
 

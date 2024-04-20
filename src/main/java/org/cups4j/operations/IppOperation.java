@@ -45,6 +45,21 @@ public abstract class IppOperation {
     protected int ippPort = CupsClient.DEFAULT_PORT;
 
     /**
+     * Removes the port number in the submitted URL
+     *
+     * @param url
+     * @return url without port number
+     */
+    protected static String stripPortNumber(URL url) {
+        String protocol = url.getProtocol();
+        if ("ipp".equals(protocol)) {
+            protocol = "http";
+        }
+
+        return protocol + "://" + url.getHost() + url.getPath();
+    }
+
+    /**
      * Gets the IPP header
      *
      * @param url
@@ -55,8 +70,8 @@ public abstract class IppOperation {
         return getIppHeader(url, null);
     }
 
-    public IppResult request(CupsPrinter printer, URL url, Map<String, String> map,
-                             CupsAuthentication creds) throws Exception {
+    public IppResult request(CupsPrinter printer, URL url, Map<String, String> map, CupsAuthentication creds)
+            throws Exception {
         return sendRequest(printer, url, getIppHeader(url, map), creds);
     }
 
@@ -91,12 +106,12 @@ public abstract class IppOperation {
 
         ippBuf = IppTag.getNameWithoutLanguage(ippBuf, "requesting-user-name", map.get("requesting-user-name"));
 
-        if (map.get("limit") != null) {
+        if (map.containsKey("limit")) {
             int value = Integer.parseInt(map.get("limit"));
             ippBuf = IppTag.getInteger(ippBuf, "limit", value);
         }
 
-        if (map.get("requested-attributes") != null) {
+        if (map.containsKey("requested-attributes")) {
             String[] sta = map.get("requested-attributes").split(" ");
             ippBuf = IppTag.getKeyword(ippBuf, "requested-attributes", sta[0]);
             int l = sta.length;
@@ -118,8 +133,7 @@ public abstract class IppOperation {
      * @return result
      * @throws Exception
      */
-    private IppResult sendRequest(CupsPrinter printer, URL url, ByteBuffer ippBuf,
-                                  CupsAuthentication creds) throws Exception {
+    private IppResult sendRequest(CupsPrinter printer, URL url, ByteBuffer ippBuf, CupsAuthentication creds) throws Exception {
         IppResult result = sendRequest(printer, url, ippBuf, null, creds);
         if (result.getHttpStatusCode() >= 300) {
             throw new IOException("HTTP error! Status code:  " + result.getHttpStatusResponse());
@@ -136,19 +150,15 @@ public abstract class IppOperation {
      * @return result
      * @throws Exception
      */
-    private IppResult sendRequest(CupsPrinter printer, URL url, ByteBuffer ippBuf, InputStream documentStream, CupsAuthentication creds) throws Exception {
-        IppResult ippResult;
-        if (ippBuf == null) {
-            return null;
-        }
-
-        if (url == null) {
+    private IppResult sendRequest(CupsPrinter printer, URL url, ByteBuffer ippBuf, InputStream documentStream,
+                                  CupsAuthentication creds) throws Exception {
+        if (ippBuf == null || url == null) {
             return null;
         }
 
         CloseableHttpClient client = IppHttp.createHttpClient();
 
-        HttpPost httpPost = new HttpPost(new URI("http://" + url.getHost() + ":" + ippPort) + url.getPath());
+        HttpPost httpPost = new HttpPost(new URI("http://" + url.getHost() + ':' + ippPort) + url.getPath());
         IppHttp.setHttpHeaders(httpPost, printer, creds);
 
         byte[] bytes = new byte[ippBuf.limit()];
@@ -188,30 +198,15 @@ public abstract class IppOperation {
 
         IppResponse ippResponse = new IppResponse();
 
-        ippResult = ippResponse.getResponse(ByteBuffer.wrap(result));
+        IppResult ippResult = ippResponse.getResponse(ByteBuffer.wrap(result));
         ippResult.setHttpStatusResponse(ippHttpResult.getStatusLine());
         ippResult.setHttpStatusCode(ippHttpResult.getStatusCode());
 
         return ippResult;
     }
 
-    /**
-     * Removes the port number in the submitted URL
-     *
-     * @param url
-     * @return url without port number
-     */
-    protected String stripPortNumber(URL url) {
-        String protocol = url.getProtocol();
-        if ("ipp".equals(protocol)) {
-            protocol = "http";
-        }
-
-        return protocol + "://" + url.getHost() + url.getPath();
-    }
-
     protected String getAttributeValue(Attribute attr) {
-        return attr.getAttributeValue().get(0).getValue();
+        return attr.getAttributeValues().get(0).getValue();
     }
 
 }

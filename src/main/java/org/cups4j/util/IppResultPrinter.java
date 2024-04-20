@@ -45,13 +45,10 @@ public class IppResultPrinter {
     }
 
     private static void printAttributeGroupList(List<AttributeGroup> list) {
-        if (list == null) {
-            return;
-        }
-        int l = list.size();
-        for (int i = 0; i < l; i++) {
-            AttributeGroup attributeGroup = list.get(i);
-            printAttributeGroup(attributeGroup);
+        if (list != null) {
+            for (AttributeGroup attributeGroup : list) {
+                printAttributeGroup(attributeGroup);
+            }
         }
     }
 
@@ -59,19 +56,16 @@ public class IppResultPrinter {
         if (attributeGroup == null) {
             return;
         }
-        log.info("\r\nAttribute Group: " + attributeGroup.getTagName());
-        List<Attribute> attributeList = attributeGroup.getAttribute();
+        log.info("\nAttribute Group: {}", attributeGroup.getTagName());
+        List<Attribute> attributeList = attributeGroup.getAttributes();
         printAttributeList(attributeList);
     }
 
     private static void printAttributeList(List<Attribute> list) {
-        if (list == null) {
-            return;
-        }
-        int l = list.size();
-        for (int i = 0; i < l; i++) {
-            Attribute attr = list.get(i);
-            printAttribute(attr);
+        if (list != null) {
+            for (Attribute attr : list) {
+                printAttribute(attr);
+            }
         }
     }
 
@@ -79,20 +73,16 @@ public class IppResultPrinter {
         if (attr == null) {
             return;
         }
-        log.info("\tAttribute Name: " + attr.getName());
-        List<AttributeValue> attributeValueList = attr.getAttributeValue();
+        log.info("\tAttribute Name: {}", attr.getName());
+        List<AttributeValue> attributeValueList = attr.getAttributeValues();
         printAttributeValueList(attributeValueList);
     }
 
     private static void printAttributeValueList(List<AttributeValue> list) {
-        if (list == null) {
-            return;
-        }
-        int l = list.size();
-        for (int i = 0; i < l; i++) {
-            AttributeValue attrValue = list.get(i);
-            log.info(
-                    "\t\tAttribute Value: (" + attrValue.getTagName() + "[" + attrValue.getTag() + "] " + attrValue.getValue());
+        if (list != null) {
+            for (AttributeValue attrValue : list) {
+                log.info("\t\tAttribute Value: {}[{}] {}", attrValue.getTagName(), attrValue.getTag(), attrValue.getValue());
+            }
         }
     }
 

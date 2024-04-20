@@ -57,9 +57,8 @@ public class IppPrintJobOperation extends IppOperation {
 
         ippBuf = IppTag.getJobAttributesTag(ippBuf);
 
-        int l = attributeBlocks.length;
-        for (int i = 0; i < l; i++) {
-            String[] attr = attributeBlocks[i].split(":");
+        for (String attributeBlock : attributeBlocks) {
+            String[] attr = attributeBlock.split(":");
             if (attr.length != 3) {
                 return ippBuf;
             }
@@ -67,50 +66,54 @@ public class IppPrintJobOperation extends IppOperation {
             String tagName = attr[1];
             String value = attr[2];
 
-            if (tagName.equals("boolean")) {
-                if (value.equals("true")) {
-                    ippBuf = IppTag.getBoolean(ippBuf, name, true);
-                } else {
-                    ippBuf = IppTag.getBoolean(ippBuf, name, false);
-                }
-            } else if (tagName.equals("integer")) {
-                ippBuf = IppTag.getInteger(ippBuf, name, Integer.parseInt(value));
-            } else if (tagName.equals("rangeOfInteger")) {
-                String[] range = value.split("-");
-                int low = Integer.parseInt(range[0]);
-                int high = Integer.parseInt(range[1]);
-                ippBuf = IppTag.getRangeOfInteger(ippBuf, name, low, high);
-            } else if (tagName.equals("setOfRangeOfInteger")) {
-                String[] ranges = value.split(",");
+            switch (tagName) {
+                case "boolean":
+                    ippBuf = IppTag.getBoolean(ippBuf, name, value.equals("true"));
+                    break;
+                case "integer":
+                    ippBuf = IppTag.getInteger(ippBuf, name, Integer.parseInt(value));
+                    break;
+                case "rangeOfInteger":
+                    String[] range = value.split("-");
+                    int low = Integer.parseInt(range[0]);
+                    int high = Integer.parseInt(range[1]);
+                    ippBuf = IppTag.getRangeOfInteger(ippBuf, name, low, high);
+                    break;
+                case "setOfRangeOfInteger":
+                    String[] ranges = value.split(",");
+                    for (String r : ranges) {
+                        r = r.trim();
+                        String[] values = r.split("-");
 
-                for (String range : ranges) {
-                    range = range.trim();
-                    String[] values = range.split("-");
+                        int value1 = Integer.parseInt(values[0]);
+                        int value2 = value1;
+                        // two values provided?
+                        if (values.length == 2) {
+                            value2 = Integer.parseInt(values[1]);
+                        }
 
-                    int value1 = Integer.parseInt(values[0]);
-                    int value2 = value1;
-                    // two values provided?
-                    if (values.length == 2) {
-                        value2 = Integer.parseInt(values[1]);
+                        // first attribute value needs name, additional values need to get the
+                        // "null" name
+                        ippBuf = IppTag.getRangeOfInteger(ippBuf, name, value1, value2);
+                        name = null;
                     }
-
-                    // first attribute value needs name, additional values need to get the
-                    // "null" name
-                    ippBuf = IppTag.getRangeOfInteger(ippBuf, name, value1, value2);
-                    name = null;
-                }
-            } else if (tagName.equals("keyword")) {
-                ippBuf = IppTag.getKeyword(ippBuf, name, value);
-            } else if (tagName.equals("name")) {
-                ippBuf = IppTag.getNameWithoutLanguage(ippBuf, name, value);
-            } else if (tagName.equals("enum")) {
-                ippBuf = IppTag.getEnum(ippBuf, name, Integer.parseInt(value));
-            } else if (tagName.equals("resolution")) {
-                String[] resolution = value.split(",");
-                int value1 = Integer.parseInt(resolution[0]);
-                int value2 = Integer.parseInt(resolution[1]);
-                byte value3 = Byte.parseByte(resolution[2]);
-                ippBuf = IppTag.getResolution(ippBuf, name, value1, value2, value3);
+                    break;
+                case "keyword":
+                    ippBuf = IppTag.getKeyword(ippBuf, name, value);
+                    break;
+                case "name":
+                    ippBuf = IppTag.getNameWithoutLanguage(ippBuf, name, value);
+                    break;
+                case "enum":
+                    ippBuf = IppTag.getEnum(ippBuf, name, Integer.parseInt(value));
+                    break;
+                case "resolution":
+                    String[] resolution = value.split(",");
+                    int value1 = Integer.parseInt(resolution[0]);
+                    int value2 = Integer.parseInt(resolution[1]);
+                    byte value3 = Byte.parseByte(resolution[2]);
+                    ippBuf = IppTag.getResolution(ippBuf, name, value1, value2, value3);
+                    break;
             }
         }
         return ippBuf;
@@ -144,47 +147,38 @@ public class IppPrintJobOperation extends IppOperation {
 
         ippBuf = IppTag.getNameWithoutLanguage(ippBuf, "requesting-user-name", map.get("requesting-user-name"));
 
-        if (map.get("job-name") != null) {
+        if (map.containsKey("job-name")) {
             ippBuf = IppTag.getNameWithoutLanguage(ippBuf, "job-name", map.get("job-name"));
         }
-
-        if (map.get("ipp-attribute-fidelity") != null) {
+        if (map.containsKey("ipp-attribute-fidelity")) {
             boolean value = map.get("ipp-attribute-fidelity").equals("true");
             ippBuf = IppTag.getBoolean(ippBuf, "ipp-attribute-fidelity", value);
         }
-
-        if (map.get("document-name") != null) {
+        if (map.containsKey("document-name")) {
             ippBuf = IppTag.getNameWithoutLanguage(ippBuf, "document-name", map.get("document-name"));
         }
-
-        if (map.get("compression") != null) {
+        if (map.containsKey("compression")) {
             ippBuf = IppTag.getKeyword(ippBuf, "compression", map.get("compression"));
         }
-
-        if (map.get("document-format") != null) {
+        if (map.containsKey("document-format")) {
             ippBuf = IppTag.getMimeMediaType(ippBuf, "document-format", map.get("document-format"));
         }
-
-        if (map.get("document-natural-language") != null) {
+        if (map.containsKey("document-natural-language")) {
             ippBuf = IppTag.getNaturalLanguage(ippBuf, "document-natural-language", map.get("document-natural-language"));
         }
-
-        if (map.get("job-k-octets") != null) {
+        if (map.containsKey("job-k-octets")) {
             int value = Integer.parseInt(map.get("job-k-octets"));
             ippBuf = IppTag.getInteger(ippBuf, "job-k-octets", value);
         }
-
-        if (map.get("job-impressions") != null) {
+        if (map.containsKey("job-impressions")) {
             int value = Integer.parseInt(map.get("job-impressions"));
             ippBuf = IppTag.getInteger(ippBuf, "job-impressions", value);
         }
-
-        if (map.get("job-media-sheets") != null) {
+        if (map.containsKey("job-media-sheets")) {
             int value = Integer.parseInt(map.get("job-media-sheets"));
             ippBuf = IppTag.getInteger(ippBuf, "job-media-sheets", value);
         }
-
-        if (map.get("job-attributes") != null) {
+        if (map.containsKey("job-attributes")) {
             String[] attributeBlocks = map.get("job-attributes").split("#");
             ippBuf = getJobAttributes(ippBuf, attributeBlocks);
         }

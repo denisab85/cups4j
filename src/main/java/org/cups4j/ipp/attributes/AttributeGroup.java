@@ -15,52 +15,24 @@ import org.simpleframework.xml.Root;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 @Root(name = "attribute-group")
 public class AttributeGroup {
+
     @ElementList(entry = "attribute", inline = true)
-    protected List<Attribute> attribute;
+    protected List<Attribute> attributes = new ArrayList<>();
 
     @Setter
-    @Getter
     @org.simpleframework.xml.Attribute
     protected String tag;
 
     @Setter
-    @Getter
     @org.simpleframework.xml.Attribute(name = "tag-name")
     protected String tagName;
 
     @Setter
-    @Getter
     @org.simpleframework.xml.Attribute(required = false)
     protected String description;
-
-    /**
-     * Gets the value of the attribute property.
-     *
-     * <p>
-     * This accessor method returns a reference to the live list, not a snapshot.
-     * Therefore any modification you make to the returned list will be present
-     * inside the JAXB object. This is why there is not a <CODE>set</CODE> method
-     * for the attribute property.
-     *
-     * <p>
-     * For example, to add a new item, do as follows:
-     *
-     * <pre>
-     * getAttribute().add(newItem);
-     * </pre>
-     *
-     *
-     * <p>
-     * Objects of the following type(s) are allowed in the list {@link Attribute }
-     */
-    public List<Attribute> getAttribute() {
-        if (attribute == null) {
-            attribute = new ArrayList<>();
-        }
-        return this.attribute;
-    }
 
     /**
      * Gets the attribute with the given name.
@@ -68,13 +40,11 @@ public class AttributeGroup {
      * @param name name of the attribute
      * @return attribute with the given name
      */
-    public Attribute getAttribute(String name) {
-        for (Attribute attr : getAttribute()) {
-            if (name.equals(attr.getName())) {
-                return attr;
-            }
-        }
-        return new Attribute();
+    public Attribute getAttributes(String name) {
+        return getAttributes().stream()
+                .filter(attr -> name.equals(attr.getName()))
+                .findFirst()
+                .orElse(new Attribute());
     }
 
 }

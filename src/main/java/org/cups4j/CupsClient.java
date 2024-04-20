@@ -124,8 +124,7 @@ public class CupsClient {
      * @throws Exception
      */
     public CupsPrinter getPrinter(URL printerURL) throws Exception {
-        List<CupsPrinter> printers = getPrinters();
-        for (CupsPrinter printer : printers) {
+        for (CupsPrinter printer : getPrinters()) {
             if (printer.getPrinterURL().toString().equals(printerURL.toString()))
                 return printer;
         }
@@ -140,8 +139,7 @@ public class CupsClient {
      * @throws Exception
      */
     public CupsPrinter getPrinter(String printerName) throws Exception {
-        List<CupsPrinter> printers = getPrinters();
-        for (CupsPrinter printer : printers) {
+        for (CupsPrinter printer : getPrinters()) {
             if (printer.getName().equals(printerName))
                 return printer;
         }
@@ -166,7 +164,7 @@ public class CupsClient {
      * @throws Exception
      */
     public CupsPrinter getPrinterOnCurrentHost(String printerURL) throws Exception {
-        return getPrinter(new URL("http://" + host + ":" + port + printerURL));
+        return getPrinter(new URL("http://" + host + ':' + port + printerURL));
     }
 
     /**
@@ -277,7 +275,6 @@ public class CupsClient {
     public boolean moveJob(int jobID, String userName, CupsPrinter currentPrinter, CupsPrinter targetPrinter)
             throws Exception {
         String currentHost = currentPrinter.getPrinterURL().getHost();
-
         return new CupsMoveJobOperation(port).moveJob(currentPrinter, currentHost, userName, jobID,
                 targetPrinter.getPrinterURL(), creds);
     }

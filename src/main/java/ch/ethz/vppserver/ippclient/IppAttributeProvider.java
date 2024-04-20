@@ -43,10 +43,10 @@ public class IppAttributeProvider implements IIppAttributeProvider {
 
             Serializer serializer = new Persister();
             TagList tList = serializer.read(TagList.class, tagListStream);
-            tagList = tList.getTag();
+            tagList = tList.getTags();
 
             AttributeList aList = serializer.read(AttributeList.class, attListStream);
-            attributeGroupList = aList.getAttributeGroup();
+            attributeGroupList = aList.getAttributeGroups();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

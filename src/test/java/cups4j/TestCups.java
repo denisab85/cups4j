@@ -16,7 +16,7 @@ public class TestCups {
         try {
             return new CupsClient(host, port);
         } catch (Exception ex) {
-            throw new IllegalStateException("cannot get CUPS client for " + host + ":" + port);
+            throw new IllegalStateException("cannot get CUPS client for " + host + ':' + port);
         }
     }
 

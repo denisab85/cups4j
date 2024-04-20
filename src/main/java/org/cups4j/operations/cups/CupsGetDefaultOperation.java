@@ -25,6 +25,8 @@ import org.cups4j.operations.IppOperation;
 import java.net.URL;
 import java.util.HashMap;
 
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
+
 public class CupsGetDefaultOperation extends IppOperation {
     public CupsGetDefaultOperation() {
         operationID = 0x4001;
@@ -49,15 +51,19 @@ public class CupsGetDefaultOperation extends IppOperation {
                 String printerURL = null;
                 String printerName = null;
                 String location = null;
-                for (Attribute attr : group.getAttribute()) {
-                    if (attr.getName().equals("printer-uri-supported")) {
-                        printerURL = attr.getAttributeValue().get(0).getValue().replace("ipp://", "http://");
-                    } else if (attr.getName().equals("printer-name")) {
-                        printerName = attr.getAttributeValue().get(0).getValue();
-                    } else if (attr.getName().equals("printer-location")) {
-                        if (attr.getAttributeValue() != null && attr.getAttributeValue().size() > 0) {
-                            location = attr.getAttributeValue().get(0).getValue();
-                        }
+                for (Attribute attr : group.getAttributes()) {
+                    switch (attr.getName()) {
+                        case "printer-uri-supported":
+                            printerURL = attr.getAttributeValues().get(0).getValue().replace("ipp://", "http://");
+                            break;
+                        case "printer-name":
+                            printerName = attr.getAttributeValues().get(0).getValue();
+                            break;
+                        case "printer-location":
+                            if (isNotEmpty(attr.getAttributeValues())) {
+                                location = attr.getAttributeValues().get(0).getValue();
+                            }
+                            break;
                     }
                 }
                 defaultPrinter = new CupsPrinter(creds, new URL(printerURL), printerName);

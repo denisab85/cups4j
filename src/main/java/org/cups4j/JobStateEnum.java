@@ -16,6 +16,7 @@
  */
 package org.cups4j;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -31,12 +32,13 @@ public enum JobStateEnum {
     ABORTED("aborted"),
     COMPLETED("completed");
 
-    private final String value;
+    @Getter
+    private final String text;
 
     public static JobStateEnum fromString(String value) {
         if (value != null) {
             for (JobStateEnum jobState : JobStateEnum.values()) {
-                if (value.equalsIgnoreCase(jobState.value)) {
+                if (value.equalsIgnoreCase(jobState.text)) {
                     return jobState;
                 }
             }
@@ -46,10 +48,7 @@ public enum JobStateEnum {
 
     @Override
     public String toString() {
-        return value;
+        return text;
     }
 
-    public String getText() {
-        return value;
-    }
 }

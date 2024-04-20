@@ -161,10 +161,8 @@ public class IppUtil {
      * @return String representation
      */
     static String toString(byte[] dst) {
-        int l = dst.length;
-        StringBuilder sb = new StringBuilder(l);
-        for (int i = 0; i < l; i++) {
-            int b = dst[i];
+        StringBuilder sb = new StringBuilder(dst.length);
+        for (int b : dst) {
             int ival = b & 0xff;
             char c = (char) ival;
             sb.append(c);
@@ -180,7 +178,7 @@ public class IppUtil {
      * @return String representation of dateTime
      */
     static String toDateTime(byte[] dst) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         short year = toShort(dst[0], dst[1]);
         sb.append(year).append("-");
         byte month = dst[2];

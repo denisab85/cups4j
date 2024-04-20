@@ -78,7 +78,7 @@ public abstract class AbstractIppOperationTest {
             buffer.rewind();
             IppResult ippResult = ippResponse.getResponse(buffer);
             for (AttributeGroup group : ippResult.getAttributeGroupList()) {
-                for (Attribute attr : group.getAttribute()) {
+                for (Attribute attr : group.getAttributes()) {
                     if (name.equals(attr.getName())) {
                         String value = attr.getValue();
                         assertEquals(expectedValue, value);

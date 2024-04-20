@@ -12,10 +12,13 @@ public class Tag {
 
     @Attribute
     protected String value;
+
     @Attribute
     protected String name;
+
     @Attribute(required = false)
     protected String description;
+
     @Attribute(required = false)
     protected Short max;
 

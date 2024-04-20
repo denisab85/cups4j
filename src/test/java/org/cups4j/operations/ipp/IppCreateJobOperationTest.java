@@ -37,7 +37,7 @@ public class IppCreateJobOperationTest extends AbstractIppOperationTest {
 
     private static void checkAttribute(IppResult ippResult, String name) {
         for (AttributeGroup attributeGroup : ippResult.getAttributeGroupList()) {
-            if (hasAttribute(attributeGroup.getAttribute(), name)) {
+            if (hasAttribute(attributeGroup.getAttributes(), name)) {
                 log.info("Attribute '{}' was found in {}.", name, ippResult.getAttributeGroupList());
                 return;
             }
@@ -48,7 +48,7 @@ public class IppCreateJobOperationTest extends AbstractIppOperationTest {
     private static boolean hasAttribute(List<Attribute> attributes, String name) {
         for (Attribute attr : attributes) {
             if (name.equals(attr.getName())) {
-                log.info("{} = {}", name, attr.getAttributeValue());
+                log.info("{} = {}", name, attr.getAttributeValues());
                 return true;
             }
         }

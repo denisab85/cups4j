@@ -69,12 +69,12 @@ public class IppHoldJobOperation extends IppOperation {
             return ippBuf;
         }
 
-        if (map.get("job-id") == null) {
-            ippBuf = IppTag.getUri(ippBuf, "job-uri", stripPortNumber(uri));
-        } else {
+        if (map.containsKey("job-id")) {
             ippBuf = IppTag.getUri(ippBuf, "printer-uri", stripPortNumber(uri));
             int jobId = Integer.parseInt(map.get("job-id"));
             ippBuf = IppTag.getInteger(ippBuf, "job-id", jobId);
+        } else {
+            ippBuf = IppTag.getUri(ippBuf, "job-uri", stripPortNumber(uri));
         }
         ippBuf = IppTag.getNameWithoutLanguage(ippBuf, "requesting-user-name", map.get("requesting-user-name"));
 
