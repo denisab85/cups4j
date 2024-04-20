@@ -68,24 +68,25 @@ public class IppCreateJobOperation extends IppOperation {
 
     private static IppResult sendRequest(CupsPrinter printer, URI uri, ByteBuffer ippBuf,
                                          CupsAuthentication creds) throws IOException {
-        CloseableHttpClient client = IppHttp.createHttpClient();
         IppResult result;
-        HttpPost httpPost = new HttpPost(uri);
-        IppHttp.setHttpHeaders(httpPost, printer, creds);
+        try (CloseableHttpClient client = IppHttp.createHttpClient()) {
+            HttpPost httpPost = new HttpPost(uri);
+            IppHttp.setHttpHeaders(httpPost, printer, creds);
 
-        byte[] bytes = new byte[ippBuf.limit()];
-        ippBuf.get(bytes);
+            byte[] bytes = new byte[ippBuf.limit()];
+            ippBuf.get(bytes);
 
-        try (ByteArrayInputStream headerStream = new ByteArrayInputStream(bytes)) {
-            // set length to -1 to advice the entity to read until EOF
-            InputStreamEntity requestEntity = new InputStreamEntity(headerStream, -1);
+            try (ByteArrayInputStream headerStream = new ByteArrayInputStream(bytes)) {
+                // set length to -1 to advice the entity to read until EOF
+                InputStreamEntity requestEntity = new InputStreamEntity(headerStream, -1);
 
-            requestEntity.setContentType(IPP_MIME_TYPE);
-            httpPost.setEntity(requestEntity);
-            try (CloseableHttpResponse httpResponse = client.execute(httpPost)) {
-                //System.out.println("Response body");
-                //System.out.println(Base64.getEncoder().encodeToString(IOUtils.toString(httpResponse.getEntity().getContent()).getBytes()));
-                result = toIppResult(httpResponse);
+                requestEntity.setContentType(IPP_MIME_TYPE);
+                httpPost.setEntity(requestEntity);
+                try (CloseableHttpResponse httpResponse = client.execute(httpPost)) {
+                    //System.out.println("Response body");
+                    //System.out.println(Base64.getEncoder().encodeToString(IOUtils.toString(httpResponse.getEntity().getContent()).getBytes()));
+                    result = toIppResult(httpResponse);
+                }
             }
         }
         return result;

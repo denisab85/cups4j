@@ -72,8 +72,7 @@ public class IppResponse {
         boolean httpResponse = false;
         boolean ippHeaderResponse = false;
 
-        // be careful: HTTP and IPP could be transmitted in different set of
-        // buffers.
+        // be careful: HTTP and IPP could be transmitted in different set of buffers.
         // see RFC2910, http://www.ietf.org/rfc/rfc2910, page 19
 
         ByteBuffer tmpBuffer = ByteBuffer.allocate(BYTEBUFFER_CAPACITY);
@@ -95,8 +94,7 @@ public class IppResponse {
                 ippHeaderResponse = true;
             }
 
-            // read the IPP-answer - this can be large, so take to read all
-            // information
+            // read the IPP-answer - this can be large, so take to read all information
             if (tmpBuffer.hasRemaining()) {
                 bufferList.add(tmpBuffer);
             }
@@ -672,7 +670,6 @@ public class IppResponse {
             log.error("IppResponse.getTagName(): no tag given");
             return null;
         }
-        int l = _tagList.size();
         for (Tag value : _tagList) {
             if (tag.equals(value.getValue())) {
                 return value.getName();
@@ -716,7 +713,6 @@ public class IppResponse {
             log.error("IppResponse.getEnumName(int,String): nameOfAttribute is null");
             return null;
         }
-        int l = _attributeGroupList.size();
         for (AttributeGroup attributeGroup : _attributeGroupList) {
             List<Attribute> attributeList = attributeGroup.getAttributes();
             for (Attribute attribute : attributeList) {

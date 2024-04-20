@@ -125,8 +125,7 @@ public class IppSendDocumentOperationTest extends AbstractIppOperationTest {
     }
 
     /**
-     * We should see the login user in the header. Otherwise we may get a
-     * 401-response (forbidden).
+     * We should see the login user in the header. Otherwise, we may get a 401-response (forbidden).
      *
      * @throws UnsupportedEncodingException in case of encoding problemss
      */

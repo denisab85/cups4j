@@ -3,6 +3,7 @@ package org.cups4j;
 import ch.ethz.vppserver.ippclient.IppResult;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.layout.FormLayout;
+import lombok.extern.slf4j.Slf4j;
 import org.cups4j.ipp.attributes.Attribute;
 import org.cups4j.ipp.attributes.AttributeGroup;
 import org.cups4j.ipp.attributes.AttributeValue;
@@ -16,13 +17,13 @@ import java.awt.*;
 import java.util.List;
 import java.util.*;
 
+import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
+
+@Slf4j
 public class PrinterAttributes {
     private final JTabbedPane mainTab = new JTabbedPane();
     private String hostname = "localhost";
 
-    /**
-     * @param args
-     */
     public PrinterAttributes(String host) {
         try {
             if (host != null)
@@ -47,8 +48,7 @@ public class PrinterAttributes {
 
             frame.setVisible(true);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            log.error("Startup failure", e);
         }
     }
 
@@ -66,7 +66,7 @@ public class PrinterAttributes {
         JTabbedPane tab = new JTabbedPane();
 
         for (AttributeGroup group : result.getAttributeGroupList()) {
-            if (group.getAttributes().size() > 0) {
+            if (isNotEmpty(group.getAttributes())) {
                 tab.add(gatAttributeTab(group), group.getTagName());
             }
         }
@@ -82,19 +82,13 @@ public class PrinterAttributes {
 
         FormLayout layout = new FormLayout("12dlu, pref, 6dlu, 30dlu:grow, 3dlu");
         DefaultFormBuilder builder = new DefaultFormBuilder(layout);
-        builder.setLeadingColumnOffset(1);
+        builder.leadingColumnOffset(1);
 
-        Collections.sort(group.getAttributes(), new Comparator<Attribute>() {
-
-            @Override
-            public int compare(Attribute a1, Attribute a2) {
-                return a1.getName().compareTo(a2.getName());
-            }
-        });
+        group.getAttributes().sort(Comparator.comparing(Attribute::getName));
 
         for (Attribute att : group.getAttributes()) {
             JComponent valueComponent;
-            if (att.getAttributeValues().size() > 0) {
+            if (isNotEmpty(att.getAttributeValues())) {
                 JPanel panel = new JPanel(new BorderLayout());
 
                 AttributeValueTable table = new AttributeValueTable((getAttributeTableModel(att.getAttributeValues())));
@@ -138,7 +132,7 @@ public class PrinterAttributes {
         return values;
     }
 
-    public class AttributeValueTable extends JTable {
+    public static class AttributeValueTable extends JTable {
         private static final long serialVersionUID = -9079318497719930285L;
 
         public AttributeValueTable(TableModel model) {

@@ -62,9 +62,7 @@ public class IppTag {
 
     private final static short NULL_LENGTH = 0;
 
-    private static int requestID = 0; // required attribute within operations
-    // (will increase with
-    // every request)
+    private static int requestID = 0; // required attribute within operations (will increase with every request)
 
     /**
      * @param ippBuf

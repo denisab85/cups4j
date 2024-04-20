@@ -20,7 +20,6 @@ import ch.ethz.vppserver.ippclient.IppResult;
 import ch.ethz.vppserver.ippclient.IppTag;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.InputStreamEntity;
@@ -156,6 +155,8 @@ public abstract class IppOperation {
             return null;
         }
 
+        final IppHttpResult ippHttpResult;
+        byte[] result;
         CloseableHttpClient client = IppHttp.createHttpClient();
 
         HttpPost httpPost = new HttpPost(new URI("http://" + url.getHost() + ':' + ippPort) + url.getPath());
@@ -164,6 +165,35 @@ public abstract class IppOperation {
         byte[] bytes = new byte[ippBuf.limit()];
         ippBuf.get(bytes);
 
+        InputStreamEntity requestEntity = getInputStreamEntity(documentStream, bytes);
+        httpPost.setEntity(requestEntity);
+
+        ippHttpResult = new IppHttpResult();
+        ippHttpResult.setStatusCode(-1);
+
+        ResponseHandler<byte[]> handler = response -> {
+            HttpEntity entity = response.getEntity();
+            ippHttpResult.setStatusLine(response.getStatusLine().toString());
+            ippHttpResult.setStatusCode(response.getStatusLine().getStatusCode());
+            if (entity != null) {
+                return EntityUtils.toByteArray(entity);
+            } else {
+                return null;
+            }
+        };
+
+        result = client.execute(httpPost, handler);
+
+        IppResponse ippResponse = new IppResponse();
+
+        IppResult ippResult = ippResponse.getResponse(ByteBuffer.wrap(result));
+        ippResult.setHttpStatusResponse(ippHttpResult.getStatusLine());
+        ippResult.setHttpStatusCode(ippHttpResult.getStatusCode());
+
+        return ippResult;
+    }
+
+    private static InputStreamEntity getInputStreamEntity(InputStream documentStream, byte[] bytes) {
         ByteArrayInputStream headerStream = new ByteArrayInputStream(bytes);
 
         // If we need to send a document, concatenate InputStreams
@@ -176,33 +206,7 @@ public abstract class IppOperation {
         InputStreamEntity requestEntity = new InputStreamEntity(inputStream, -1);
 
         requestEntity.setContentType(IPP_MIME_TYPE);
-        httpPost.setEntity(requestEntity);
-
-        final IppHttpResult ippHttpResult = new IppHttpResult();
-        ippHttpResult.setStatusCode(-1);
-
-        ResponseHandler<byte[]> handler = new ResponseHandler<byte[]>() {
-            public byte[] handleResponse(HttpResponse response) throws IOException {
-                HttpEntity entity = response.getEntity();
-                ippHttpResult.setStatusLine(response.getStatusLine().toString());
-                ippHttpResult.setStatusCode(response.getStatusLine().getStatusCode());
-                if (entity != null) {
-                    return EntityUtils.toByteArray(entity);
-                } else {
-                    return null;
-                }
-            }
-        };
-
-        byte[] result = client.execute(httpPost, handler);
-
-        IppResponse ippResponse = new IppResponse();
-
-        IppResult ippResult = ippResponse.getResponse(ByteBuffer.wrap(result));
-        ippResult.setHttpStatusResponse(ippHttpResult.getStatusLine());
-        ippResult.setHttpStatusCode(ippHttpResult.getStatusCode());
-
-        return ippResult;
+        return requestEntity;
     }
 
     protected String getAttributeValue(Attribute attr) {

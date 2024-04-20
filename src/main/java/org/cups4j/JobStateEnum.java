@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 /**
  * State of print jobs
  */
+@Getter
 @RequiredArgsConstructor
 public enum JobStateEnum {
     PENDING("pending"),
@@ -32,7 +33,6 @@ public enum JobStateEnum {
     ABORTED("aborted"),
     COMPLETED("completed");
 
-    @Getter
     private final String text;
 
     public static JobStateEnum fromString(String value) {
