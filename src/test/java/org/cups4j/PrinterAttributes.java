@@ -22,14 +22,14 @@ import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 @Slf4j
 public class PrinterAttributes {
     private final JTabbedPane mainTab = new JTabbedPane();
-    private String hostname = "localhost";
 
     public PrinterAttributes(String host) {
         try {
+            String hostname = "localhost";
             if (host != null)
                 hostname = host;
 
-            JFrame frame = new JFrame("Drucker auf " + hostname);
+            JFrame frame = new JFrame("Printer at " + hostname);
             frame.setSize(800, 600);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setContentPane(mainTab);
