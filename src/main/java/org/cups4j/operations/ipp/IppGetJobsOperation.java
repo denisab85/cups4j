@@ -43,12 +43,9 @@ public class IppGetJobsOperation extends IppOperation {
     }
 
     /**
-     *
-     * @param url
-     *          printer-uri
-     * @param map
-     *          attributes i.e. requesting-user-name,limit,which-jobs,my-jobs,
-     *          requested-attributes
+     * @param url printer-uri
+     * @param map attributes i.e. requesting-user-name,limit,which-jobs,my-jobs,
+     *            requested-attributes
      * @return IPP header
      * @throws UnsupportedEncodingException
      */

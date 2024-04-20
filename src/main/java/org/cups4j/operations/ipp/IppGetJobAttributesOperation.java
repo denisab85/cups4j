@@ -44,11 +44,8 @@ public class IppGetJobAttributesOperation extends IppOperation {
     }
 
     /**
-     *
-     * @param uri
-     *          printer-uri or job-uri
-     * @param map
-     *          attributes i.e. job-id,requesting-user-name,requested-attributes
+     * @param uri printer-uri or job-uri
+     * @param map attributes i.e. job-id,requesting-user-name,requested-attributes
      * @return ByteBuffer IPP header
      * @throws UnsupportedEncodingException
      */

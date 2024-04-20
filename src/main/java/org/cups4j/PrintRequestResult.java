@@ -24,8 +24,6 @@ import java.util.regex.Pattern;
 
 /**
  * Result of a print request
- *
- *
  */
 public class PrintRequestResult {
     private final IppResult ippResult;

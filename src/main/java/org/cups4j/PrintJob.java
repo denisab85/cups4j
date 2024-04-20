@@ -32,10 +32,14 @@ public class PrintJob {
     @Getter
     private final String pageRanges;
     @Getter
+    private final String jobName;
+    @Getter
+    private final String pageFormat;
+    @Getter
+    private final String resolution;
+    @Getter
     @Builder.Default
     private String userName = CupsClient.DEFAULT_USER;
-    @Getter
-    private final String jobName;
     @Getter
     private boolean duplex;
     @Getter
@@ -43,11 +47,6 @@ public class PrintJob {
     private boolean portrait = true;
     @Getter
     private boolean color;
-    @Getter
-    private final String pageFormat;
-    @Getter
-    private final String resolution;
-
     /**
      * Additional attributes for the print operation and the print job
      * <p>
@@ -71,7 +70,6 @@ public class PrintJob {
      * take a look config/ippclient/list-of-attributes.xml for more
      * information
      * </p>
-     *
      */
     @Setter
     private Map<String, String> attributes;

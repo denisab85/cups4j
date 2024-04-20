@@ -33,9 +33,8 @@ public class CupsClient {
 
     private final String host;
     private final int port;
-    private String user = null;
-
     private final CupsAuthentication creds;
+    private String user = null;
 
     /**
      * Creates a CupsClient for localhost port 631 with user anonymous

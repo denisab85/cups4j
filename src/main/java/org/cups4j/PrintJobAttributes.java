@@ -31,6 +31,7 @@ import java.util.Date;
 @Getter
 public class PrintJobAttributes {
 
+    private final DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.MEDIUM);
     private URL jobURL = null;
     private URL printerURL = null;
     private int jobID = -1;
@@ -43,8 +44,6 @@ public class PrintJobAttributes {
     // Size of the job in kb (this value is rounded up by the IPP server)
     // This value is optional and might not be reported by your IPP server
     private int size = -1;
-
-    private final DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.MEDIUM);
 
     @Override
     public String toString() {
