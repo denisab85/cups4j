@@ -53,7 +53,14 @@ public class PrinterAttributes {
     }
 
     public static void main(String[] args) {
-        new PrinterAttributes((args.length > 0) ? args[0] : null);
+        EventQueue.invokeLater(() -> {
+            try {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                new PrinterAttributes((args.length > 0) ? args[0] : null);
+            } catch (Exception e) {
+                log.error("Error setting up application", e);
+            }
+        });
     }
 
     private void addPrinterPanel(String name, IppResult result) {
