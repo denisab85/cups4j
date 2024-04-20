@@ -269,8 +269,8 @@ public class IppSendDocumentOperation extends IppPrintJobOperation {
         httpPost.setEntity(requestEntity);
         IppHttp.setHttpHeaders(httpPost, printer, creds);
 
-        try (CloseableHttpClient client = HttpClients.custom().build()) {
-            CloseableHttpResponse httpResponse = client.execute(httpPost);
+        try (CloseableHttpClient client = HttpClients.custom().build();
+             CloseableHttpResponse httpResponse = client.execute(httpPost)) {
             log.debug("Received from {}: {}", uri, httpResponse);
             return getIppResult(httpResponse);
         }
