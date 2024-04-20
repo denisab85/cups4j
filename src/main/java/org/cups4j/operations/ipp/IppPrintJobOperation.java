@@ -16,19 +16,16 @@ package org.cups4j.operations.ipp;
  */
 
 import ch.ethz.vppserver.ippclient.IppTag;
+import lombok.extern.slf4j.Slf4j;
 import org.cups4j.operations.IppOperation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.util.Map;
 
+@Slf4j
 public class IppPrintJobOperation extends IppOperation {
-
-
-    private static final Logger LOG = LoggerFactory.getLogger(IppPrintJobOperation.class);
 
     public IppPrintJobOperation() {
         operationID = 0x0002;
@@ -51,7 +48,7 @@ public class IppPrintJobOperation extends IppOperation {
     protected static ByteBuffer getJobAttributes(ByteBuffer ippBuf, String[] attributeBlocks)
             throws UnsupportedEncodingException {
         if (ippBuf == null) {
-            LOG.error("IppPrintJobOperation.getJobAttributes(): ippBuf is null");
+            log.error("IppPrintJobOperation.getJobAttributes(): ippBuf is null");
             return null;
         }
         if (attributeBlocks == null) {
@@ -120,21 +117,18 @@ public class IppPrintJobOperation extends IppOperation {
     }
 
     /**
-     *
-     * @param url
-     *          printer-uri
-     * @param map
-     *          attributes
-     *          i.e.job-name,ipp-attribute-fidelity,document-name,compression,
-     *          document -format,document-natural-language,job-impressions
-     *          ,job-media-sheets, job-template-attributes
+     * @param url printer-uri
+     * @param map attributes
+     *            i.e.job-name,ipp-attribute-fidelity,document-name,compression,
+     *            document -format,document-natural-language,job-impressions
+     *            ,job-media-sheets, job-template-attributes
      * @return IPP header
      * @throws UnsupportedEncodingException
      */
 
     public ByteBuffer getIppHeader(URL url, Map<String, String> map) throws UnsupportedEncodingException {
         if (url == null) {
-            LOG.error("IppPrintJobOperation.getIppHeader(): uri is null");
+            log.error("IppPrintJobOperation.getIppHeader(): uri is null");
             return null;
         }
 

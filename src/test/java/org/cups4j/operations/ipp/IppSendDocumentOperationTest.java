@@ -2,6 +2,7 @@ package org.cups4j.operations.ipp;
 
 import ch.ethz.vppserver.ippclient.IppResponse;
 import ch.ethz.vppserver.ippclient.IppResult;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.cups4j.CupsPrinter;
 import org.cups4j.CupsPrinterTest;
@@ -9,8 +10,6 @@ import org.cups4j.ipp.attributes.Attribute;
 import org.cups4j.ipp.attributes.AttributeGroup;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -33,9 +32,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author oboehm
  * @since 0.7.2 (23.03.2018)
  */
+@Slf4j
 public class IppSendDocumentOperationTest extends AbstractIppOperationTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(IppSendDocumentOperationTest.class);
     private final IppSendDocumentOperation operation = new IppSendDocumentOperation(4711);
 
     private static void checkIppRequest(byte[] header) throws IOException {
@@ -146,8 +145,8 @@ public class IppSendDocumentOperationTest extends AbstractIppOperationTest {
     public void testRequest() throws Exception {
         CupsPrinter printer = CupsPrinterTest.getPrinter();
         if (printer == null) {
-            LOG.info("You must set system property 'printer' to activate this test!");
-            LOG.info("testRequest() is SKIPPED.");
+            log.info("You must set system property 'printer' to activate this test!");
+            log.info("testRequest() is SKIPPED.");
         } else {
             checkRequest(printer, printer.getPrinterURL());
         }

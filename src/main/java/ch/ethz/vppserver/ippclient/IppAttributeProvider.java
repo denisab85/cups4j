@@ -15,6 +15,7 @@ package ch.ethz.vppserver.ippclient;
  * <http://www.gnu.org/licenses/>.
  */
 
+import lombok.Getter;
 import org.cups4j.ipp.attributes.AttributeGroup;
 import org.cups4j.ipp.attributes.AttributeList;
 import org.cups4j.ipp.attributes.Tag;
@@ -26,10 +27,13 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public class IppAttributeProvider implements IIppAttributeProvider {
 
     private static final IppAttributeProvider INSTANCE = new IppAttributeProvider();
+
     private List<Tag> tagList = new ArrayList<Tag>();
+
     private List<AttributeGroup> attributeGroupList = new ArrayList<AttributeGroup>();
 
     private IppAttributeProvider() {
@@ -51,22 +55,6 @@ public class IppAttributeProvider implements IIppAttributeProvider {
 
     public static IppAttributeProvider getInstance() {
         return INSTANCE;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public List<Tag> getTagList() {
-        return tagList;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public List<AttributeGroup> getAttributeGroupList() {
-        return attributeGroupList;
     }
 
 }

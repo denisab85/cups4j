@@ -20,6 +20,7 @@ package org.cups4j.operations.ipp;
 import ch.ethz.vppserver.ippclient.IppResponse;
 import ch.ethz.vppserver.ippclient.IppResult;
 import ch.ethz.vppserver.ippclient.IppTag;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -33,8 +34,6 @@ import org.cups4j.CupsPrinter;
 import org.cups4j.PrintJob;
 import org.cups4j.ipp.attributes.AttributeGroup;
 import org.cups4j.operations.IppHttp;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.URI;
@@ -51,9 +50,9 @@ import java.util.Map;
  * @author oboehm
  * @since 0.7.2 (23.03.2018)
  */
+@Slf4j
 public class IppSendDocumentOperation extends IppPrintJobOperation {
 
-    private static final Logger LOG = LoggerFactory.getLogger(IppSendDocumentOperation.class);
     private final int jobId;
     private final boolean lastDocument;
 
@@ -77,7 +76,7 @@ public class IppSendDocumentOperation extends IppPrintJobOperation {
             ippResult.setHttpStatusCode(httpResponse.getStatusLine().getStatusCode());
             if (ippResult.getHttpStatusCode() == 426) {
                 ippResult.setHttpStatusResponse(new String(result));
-                LOG.warn("Received {} after send-document.", ippResult);
+                log.warn("Received {} after send-document.", ippResult);
             } else {
                 ippResult.setHttpStatusResponse(httpResponse.getStatusLine().toString());
             }
@@ -197,7 +196,7 @@ public class IppSendDocumentOperation extends IppPrintJobOperation {
             IppResult ippResult = sendRequest(printer, url.toURI(), ippHeader, document, creds);
             if ((ippResult.getHttpStatusCode() == 426) && "http".equalsIgnoreCase(url.getProtocol())) {
                 URI https = URI.create(url.toURI().toString().replace("http", "https"));
-                LOG.warn("Access with {} failed - will try now {} as printerURL.", url, https);
+                log.warn("Access with {} failed - will try now {} as printerURL.", url, https);
                 ippResult = sendRequest(printer, https, getIppHeader(url, map), document, creds);
             }
             return ippResult;
@@ -292,7 +291,7 @@ public class IppSendDocumentOperation extends IppPrintJobOperation {
         CloseableHttpClient client = HttpClients.custom().build();
         try {
             CloseableHttpResponse httpResponse = client.execute(httpPost);
-            LOG.debug("Received from {}: {}", uri, httpResponse);
+            log.debug("Received from {}: {}", uri, httpResponse);
             return getIppResult(httpResponse);
         } finally {
             client.close();

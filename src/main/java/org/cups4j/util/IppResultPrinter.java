@@ -16,29 +16,29 @@ package org.cups4j.util;
  */
 
 import ch.ethz.vppserver.ippclient.IppResult;
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import org.cups4j.ipp.attributes.Attribute;
 import org.cups4j.ipp.attributes.AttributeGroup;
 import org.cups4j.ipp.attributes.AttributeValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+@Slf4j
+@UtilityClass
 public class IppResultPrinter {
 
-    private static final Logger LOG = LoggerFactory.getLogger(IppResultPrinter.class);
-
     public static void print(IppResult result) {
-        LOG.info(result.getHttpStatusResponse());
-        LOG.info(result.getIppStatusResponse());
+        log.info(result.getHttpStatusResponse());
+        log.info(result.getIppStatusResponse());
         List<AttributeGroup> attributeGroupList = result.getAttributeGroupList();
         printAttributeGroupList(attributeGroupList);
     }
 
     public static void print(IppResult result, boolean nurHeader) {
         if (nurHeader) {
-            LOG.info(result.getHttpStatusResponse());
-            LOG.info(result.getIppStatusResponse());
+            log.info(result.getHttpStatusResponse());
+            log.info(result.getIppStatusResponse());
         } else {
             print(result);
         }
@@ -59,7 +59,7 @@ public class IppResultPrinter {
         if (attributeGroup == null) {
             return;
         }
-        LOG.info("\r\nAttribute Group: " + attributeGroup.getTagName());
+        log.info("\r\nAttribute Group: " + attributeGroup.getTagName());
         List<Attribute> attributeList = attributeGroup.getAttribute();
         printAttributeList(attributeList);
     }
@@ -79,7 +79,7 @@ public class IppResultPrinter {
         if (attr == null) {
             return;
         }
-        LOG.info("\tAttribute Name: " + attr.getName());
+        log.info("\tAttribute Name: " + attr.getName());
         List<AttributeValue> attributeValueList = attr.getAttributeValue();
         printAttributeValueList(attributeValueList);
     }
@@ -91,7 +91,7 @@ public class IppResultPrinter {
         int l = list.size();
         for (int i = 0; i < l; i++) {
             AttributeValue attrValue = list.get(i);
-            LOG.info(
+            log.info(
                     "\t\tAttribute Value: (" + attrValue.getTagName() + "[" + attrValue.getTag() + "] " + attrValue.getValue());
         }
     }

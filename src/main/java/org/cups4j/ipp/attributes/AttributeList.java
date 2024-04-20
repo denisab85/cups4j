@@ -7,6 +7,8 @@
 
 package org.cups4j.ipp.attributes;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
@@ -22,6 +24,8 @@ public class AttributeList {
     @ElementList(entry = "attribute-group", inline = true, required = true)
     protected List<AttributeGroup> attributeGroup;
 
+    @Setter
+    @Getter
     @org.simpleframework.xml.Attribute(required = false)
     protected String description;
 
@@ -51,24 +55,6 @@ public class AttributeList {
             attributeGroup = new ArrayList<AttributeGroup>();
         }
         return this.attributeGroup;
-    }
-
-    /**
-     * Gets the value of the description property.
-     *
-     * @return possible object is {@link String }
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Sets the value of the description property.
-     *
-     * @param value allowed object is {@link String }
-     */
-    public void setDescription(String value) {
-        this.description = value;
     }
 
 }

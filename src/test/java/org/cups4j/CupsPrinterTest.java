@@ -1,17 +1,18 @@
 package org.cups4j;
 
 import cups4j.TestCups;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
+import java.nio.file.Files;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -22,9 +23,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  *
  * @author oboehm
  */
+@Slf4j
 public final class CupsPrinterTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CupsPrinterTest.class);
     private CupsPrinter printer;
 
     /**
@@ -37,7 +38,7 @@ public final class CupsPrinterTest {
     public static CupsPrinter getPrinter() throws Exception {
         String name = System.getProperty("printer", new CupsClient().getDefaultPrinter().getName());
         if (name == null) {
-            LOG.info("To specify printer please set system property 'printer'.");
+            log.info("To specify printer please set system property 'printer'.");
         } else {
 
         }
@@ -79,7 +80,7 @@ public final class CupsPrinterTest {
     public void setUpPrinter() throws Exception {
         printer = getPrinter();
         assertNotNull(printer);
-        LOG.info("Printer {} was choosen for testing.", printer);
+        log.info("Printer {} was choosen for testing.", printer);
     }
 
     @Test
@@ -96,7 +97,7 @@ public final class CupsPrinterTest {
 
     private PrintRequestResult print(CupsPrinter printer, File file) {
         PrintJob job = createPrintJob(file);
-        LOG.info("Print job '{}' will be sent to {}.", job, printer);
+        log.info("Print job '{}' will be sent to {}.", job, printer);
         try {
             return printer.print(job);
         } catch (Exception ex) {
@@ -126,15 +127,15 @@ public final class CupsPrinterTest {
     @Test
     @Disabled
     public void testPrintListWithNoUser() {
-        PrintJob job = new PrintJob.Builder("secret".getBytes()).jobName("testPrintListWithNoUser").build();
+        PrintJob job = PrintJob.builder().document(new ByteArrayInputStream("secret".getBytes()))
+                .jobName("testPrintListWithNoUser").build();
         printer.print(job, job);
     }
 
     private PrintJob createPrintJob(File file, String userName) {
-        String jobname = generateJobnameFor(file);
-        try {
-            byte[] content = FileUtils.readFileToByteArray(file);
-            return new PrintJob.Builder(content).jobName(jobname).userName(userName).build();
+        String jobName = generateJobnameFor(file);
+        try (InputStream content = Files.newInputStream(file.toPath())) {
+            return PrintJob.builder().document(content).jobName(jobName).userName(userName).build();
         } catch (IOException ioe) {
             throw new IllegalArgumentException("cannot read '" + file + "'", ioe);
         }

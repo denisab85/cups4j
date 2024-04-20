@@ -7,6 +7,8 @@
 
 package org.cups4j.ipp.attributes;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
@@ -15,8 +17,12 @@ import java.util.List;
 
 @Root(name = "set-of-keyword")
 public class SetOfKeyword {
+
     @ElementList(entry = "keyword", inline = true)
     protected List<Keyword> keyword;
+
+    @Setter
+    @Getter
     @org.simpleframework.xml.Attribute(required = false)
     protected String description;
 
@@ -45,24 +51,6 @@ public class SetOfKeyword {
             keyword = new ArrayList<Keyword>();
         }
         return this.keyword;
-    }
-
-    /**
-     * Gets the value of the description property.
-     *
-     * @return possible object is {@link String }
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Sets the value of the description property.
-     *
-     * @param value allowed object is {@link String }
-     */
-    public void setDescription(String value) {
-        this.description = value;
     }
 
 }

@@ -1,8 +1,7 @@
 package ch.ethz.vppserver.ippclient;
 
+import lombok.extern.slf4j.Slf4j;
 import org.cups4j.ipp.attributes.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -26,9 +25,8 @@ import java.util.List;
  * received a copy of the GNU Lesser General Public License along with this
  * program; if not, see <http://www.gnu.org/licenses/>.
  */
+@Slf4j
 public class IppResponse {
-    private static final Logger LOG = LoggerFactory.getLogger(IppResponse.class);
-
     private final static String CRLF = "\r\n";
     private static final int BYTEBUFFER_CAPACITY = 8192;
     private static IIppAttributeProvider ippAttributeProvider = null;
@@ -59,7 +57,7 @@ public class IppResponse {
      */
     public IppResult getResponse(SocketChannel channel) throws IOException {
         if (channel == null) {
-            LOG.error("IppResponse.getResponse(): no channel given");
+            log.error("IppResponse.getResponse(): no channel given");
             return null;
         }
 
@@ -222,7 +220,7 @@ public class IppResponse {
         } else {
             result.setIppStatusResponse("unknown");
         }
-        LOG.warn(errorText);
+        log.warn(errorText);
         return result;
     }
 
@@ -673,7 +671,7 @@ public class IppResponse {
      */
     private String getTagName(String tag) {
         if (tag == null) {
-            LOG.error("IppResponse.getTagName(): no tag given");
+            log.error("IppResponse.getTagName(): no tag given");
             return null;
         }
         int l = _tagList.size();
@@ -692,11 +690,11 @@ public class IppResponse {
      */
     private String getEnumName(String value, String nameOfAttribute) {
         if (value == null) {
-            LOG.error("IppResponse.getEnumName(String,String): value is null");
+            log.error("IppResponse.getEnumName(String,String): value is null");
             return null;
         }
         if (nameOfAttribute == null) {
-            LOG.error("IppResponse.getEnumName(String,String): nameOfAttribute is null");
+            log.error("IppResponse.getEnumName(String,String): nameOfAttribute is null");
             return null;
         }
 
@@ -717,7 +715,7 @@ public class IppResponse {
      */
     private String getEnumName(int value, String nameOfAttribute) {
         if (nameOfAttribute == null) {
-            LOG.error("IppResponse.getEnumName(int,String): nameOfAttribute is null");
+            log.error("IppResponse.getEnumName(int,String): nameOfAttribute is null");
             return null;
         }
         int l = _attributeGroupList.size();
@@ -755,7 +753,7 @@ public class IppResponse {
                                 }
                             }
                         } else {
-                            LOG.error("IPPResponse.getEnumName(): " + "set-of-enum is null for attribute " + attributeName
+                            log.error("IPPResponse.getEnumName(): " + "set-of-enum is null for attribute " + attributeName
                                     + ". Please control " + "the enumeration list in the XML file");
                             return null;
                         }

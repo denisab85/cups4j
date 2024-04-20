@@ -18,9 +18,9 @@ package org.cups4j.operations;
 import ch.ethz.vppserver.ippclient.IppResponse;
 import ch.ethz.vppserver.ippclient.IppResult;
 import ch.ethz.vppserver.ippclient.IppTag;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.InputStreamEntity;
@@ -30,8 +30,6 @@ import org.cups4j.CupsAuthentication;
 import org.cups4j.CupsClient;
 import org.cups4j.CupsPrinter;
 import org.cups4j.ipp.attributes.Attribute;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.URI;
@@ -39,9 +37,9 @@ import java.net.URL;
 import java.nio.ByteBuffer;
 import java.util.Map;
 
+@Slf4j
 public abstract class IppOperation {
     protected final static String IPP_MIME_TYPE = "application/ipp";
-    private static final Logger LOG = LoggerFactory.getLogger(IppOperation.class);
     protected short operationID = -1; // IPP operation ID
     protected short bufferSize = 8192; // BufferSize for this operation
     protected int ippPort = CupsClient.DEFAULT_PORT;
@@ -77,7 +75,7 @@ public abstract class IppOperation {
      */
     public ByteBuffer getIppHeader(URL url, Map<String, String> map) throws UnsupportedEncodingException {
         if (url == null) {
-            LOG.error("IppGetJObsOperation.getIppHeader(): uri is null");
+            log.error("IppGetJObsOperation.getIppHeader(): uri is null");
             return null;
         }
 
@@ -119,7 +117,6 @@ public abstract class IppOperation {
      *
      * @param url
      * @param ippBuf
-     *
      * @return result
      * @throws Exception
      */
@@ -137,7 +134,6 @@ public abstract class IppOperation {
      *
      * @param url
      * @param ippBuf
-     *
      * @param documentStream
      * @return result
      * @throws Exception

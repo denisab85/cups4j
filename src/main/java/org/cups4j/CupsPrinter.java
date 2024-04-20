@@ -1,10 +1,13 @@
 package org.cups4j;
 
 import ch.ethz.vppserver.ippclient.IppResult;
+import lombok.Getter;
+import lombok.Setter;
 import org.cups4j.ipp.attributes.Attribute;
 import org.cups4j.ipp.attributes.AttributeGroup;
 import org.cups4j.operations.ipp.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
@@ -12,11 +15,13 @@ import java.util.*;
 /**
  * Represents a printer on your IPP server
  */
-
+@Setter
+@Getter
 public class CupsPrinter {
+
     private final CupsAuthentication creds;
-    private URL printerURL = null;
-    private String name = null;
+    private final String name;
+    private URL printerURL;
     private PrinterStateEnum state = null;
     private String description = null;
     private String location = null;
@@ -26,26 +31,19 @@ public class CupsPrinter {
     private String resolutionDefault = null;
     private String colorModeDefault = null;
     private String sidesDefault = null;
-    private String deviceURI = null;
     private String deviceUri = null;
     private String printerState = null;
     private String printerStateMessage = null;
     private String printerStateReasons = null;
     private String numberUpDefault = null;
-    private List<String> numberUpSupported = new ArrayList<String>();
-    private List<String> mediaSupported = new ArrayList<String>();
-    private List<String> resolutionSupported = new ArrayList<String>();
-    private List<String> colorModeSupported = new ArrayList<String>();
-    private List<String> mimeTypesSupported = new ArrayList<String>();
-    private List<String> sidesSupported = new ArrayList<String>();
+    private List<String> numberUpSupported = new ArrayList<>();
+    private List<String> mediaSupported = new ArrayList<>();
+    private List<String> resolutionSupported = new ArrayList<>();
+    private List<String> colorModeSupported = new ArrayList<>();
+    private List<String> mimeTypesSupported = new ArrayList<>();
+    private List<String> sidesSupported = new ArrayList<>();
     private String makeAndModel = null;
 
-    /**
-     * Constructor
-     *
-     * @param printerURL
-     * @param printerName
-     */
     public CupsPrinter(CupsAuthentication creds, URL printerURL, String printerName) {
         super();
         this.creds = creds;
@@ -70,13 +68,6 @@ public class CupsPrinter {
         }
     }
 
-    /**
-     * Print method
-     *
-     * @param printJob
-     * @return PrintRequestResult
-     * @throws Exception
-     */
     public PrintRequestResult print(PrintJob printJob) throws Exception {
         int ippJobID = -1;
         InputStream document = printJob.getDocument();
@@ -224,7 +215,8 @@ public class CupsPrinter {
      * @since 0.7.4
      */
     public int createJob(String jobName, String userName) {
-        return createJob(new PrintJob.Builder(new byte[0]).jobName(jobName).userName(userName).build());
+        return createJob(PrintJob.builder().document(new ByteArrayInputStream(new byte[0]))
+                .jobName(jobName).userName(userName).build());
     }
 
     /**
@@ -269,11 +261,6 @@ public class CupsPrinter {
         return result;
     }
 
-    /**
-     * @param map
-     * @param name
-     * @param value
-     */
     private void addAttribute(Map<String, String> map, String name, String value) {
         if (value != null && name != null) {
             String attribute = map.get(name);
@@ -330,31 +317,9 @@ public class CupsPrinter {
         return job.getJobState();
     }
 
-    /**
-     * Get the URL for this printer
-     *
-     * @return printer URL
-     */
-    public URL getPrinterURL() {
-        return printerURL;
-    }
-
     public void setPrinterURL(URL printerURL) {
         this.printerURL = printerURL;
         updateClassAttribute();
-    }
-
-    /**
-     * Is this the default printer
-     *
-     * @return true if this is the default printer false otherwise
-     */
-    public boolean isDefault() {
-        return isDefault;
-    }
-
-    public void setDefault(boolean isDefault) {
-        this.isDefault = isDefault;
     }
 
     /**
@@ -367,219 +332,4 @@ public class CupsPrinter {
         return name;
     }
 
-    /**
-     * Get name of this printer.
-     * <p>
-     * For a printer http://localhost:631/printers/printername 'printername' will
-     * be returned.
-     * </p>
-     *
-     * @return printer name
-     */
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * Get make-and-model attribute for this printer
-     *
-     * @return make and model
-     */
-    public String getMakeAndModel() {
-        return makeAndModel;
-    }
-
-    public void setMakeAndModel(String makeAndModel) {
-        this.makeAndModel = makeAndModel;
-    }
-
-    /**
-     * Get state of this printer.
-     * <p>
-     * For a printer http://localhost:631/printers/printername 'printer-state' will
-     * be returned.
-     * </p>
-     *
-     * @return printer state
-     */
-    public PrinterStateEnum getState() {
-        return state;
-    }
-
-    public void setState(PrinterStateEnum state) {
-        this.state = state;
-    }
-
-    /**
-     * Get location attribute for this printer
-     *
-     * @return location
-     */
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    /**
-     * Get description attribute for this printer
-     *
-     * @return description
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public List<String> getMediaSupported() {
-        return mediaSupported;
-    }
-
-    public void setMediaSupported(List<String> mediaSupportedList) {
-        this.mediaSupported = mediaSupportedList;
-
-    }
-
-    public String getMediaDefault() {
-        return mediaDefault;
-    }
-
-    public void setMediaDefault(String mediaDefault) {
-        this.mediaDefault = mediaDefault;
-
-    }
-
-    public String getResolutionDefault() {
-        return resolutionDefault;
-    }
-
-    public void setResolutionDefault(String resolutionDefault) {
-        this.resolutionDefault = resolutionDefault;
-
-    }
-
-    public String getColorModeDefault() {
-        return colorModeDefault;
-    }
-
-    public void setColorModeDefault(String colorModeDefault) {
-        this.colorModeDefault = colorModeDefault;
-
-    }
-
-    public List<String> getResolutionSupported() {
-        return resolutionSupported;
-    }
-
-    public void setResolutionSupported(List<String> resolutionSupported) {
-        this.resolutionSupported = resolutionSupported;
-
-    }
-
-    public List<String> getColorModeSupported() {
-        return colorModeSupported;
-    }
-
-    public void setColorModeSupported(List<String> colorModeSupported) {
-        this.colorModeSupported = colorModeSupported;
-
-    }
-
-    public List<String> getMimeTypesSupported() {
-        return mimeTypesSupported;
-    }
-
-    public void setMimeTypesSupported(List<String> mimeTypesSupported) {
-        this.mimeTypesSupported = mimeTypesSupported;
-
-    }
-
-    public String getDeviceUri() {
-        return deviceUri;
-    }
-
-    public void setDeviceUri(final String deviceUri) {
-        this.deviceUri = deviceUri;
-    }
-
-    public String getPrinterState() {
-        return printerState;
-    }
-
-    public void setPrinterState(final String printerState) {
-        this.printerState = printerState;
-    }
-
-    public String getPrinterStateMessage() {
-        return printerStateMessage;
-    }
-
-    public void setPrinterStateMessage(final String printerStateMessage) {
-        this.printerStateMessage = printerStateMessage;
-    }
-
-    public String getPrinterStateReasons() {
-        return printerStateReasons;
-    }
-
-    public void setPrinterStateReasons(final String printerStateReasons) {
-        this.printerStateReasons = printerStateReasons;
-    }
-
-    public String getSidesDefault() {
-        return sidesDefault;
-    }
-
-    public void setSidesDefault(String sidesDefault) {
-        this.sidesDefault = sidesDefault;
-    }
-
-    public List<String> getSidesSupported() {
-        return sidesSupported;
-    }
-
-    public void setSidesSupported(List<String> sidesSupported) {
-        this.sidesSupported = sidesSupported;
-    }
-
-    public String getNumberUpDefault() {
-        return numberUpDefault;
-    }
-
-    public void setNumberUpDefault(String numberUpDefault) {
-        this.numberUpDefault = numberUpDefault;
-    }
-
-    public List<String> getNumberUpSupported() {
-        return numberUpSupported;
-    }
-
-    public void setNumberUpSupported(List<String> numberUpSupported) {
-        this.numberUpSupported = numberUpSupported;
-    }
-
-    public boolean isPrinterClass() {
-        return printerClass;
-    }
-
-    public void setPrinterClass(boolean printerClass) {
-        this.printerClass = printerClass;
-    }
-
-    public String getDeviceURI() {
-        return this.deviceURI;
-    }
-
-    public void setDeviceURI(String deviceURI) {
-        this.deviceURI = deviceURI;
-    }
 }

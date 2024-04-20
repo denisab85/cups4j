@@ -7,6 +7,8 @@
 
 package org.cups4j.ipp.attributes;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
@@ -17,10 +19,19 @@ import java.util.List;
 public class AttributeGroup {
     @ElementList(entry = "attribute", inline = true)
     protected List<Attribute> attribute;
+
+    @Setter
+    @Getter
     @org.simpleframework.xml.Attribute(required = true)
     protected String tag;
+
+    @Setter
+    @Getter
     @org.simpleframework.xml.Attribute(name = "tag-name", required = true)
     protected String tagName;
+
+    @Setter
+    @Getter
     @org.simpleframework.xml.Attribute(required = false)
     protected String description;
 
@@ -64,60 +75,6 @@ public class AttributeGroup {
             }
         }
         return new Attribute();
-    }
-
-    /**
-     * Gets the value of the tag property.
-     *
-     * @return possible object is {@link String }
-     */
-    public String getTag() {
-        return tag;
-    }
-
-    /**
-     * Sets the value of the tag property.
-     *
-     * @param value allowed object is {@link String }
-     */
-    public void setTag(String value) {
-        this.tag = value;
-    }
-
-    /**
-     * Gets the value of the tagName property.
-     *
-     * @return possible object is {@link String }
-     */
-    public String getTagName() {
-        return tagName;
-    }
-
-    /**
-     * Sets the value of the tagName property.
-     *
-     * @param value allowed object is {@link String }
-     */
-    public void setTagName(String value) {
-        this.tagName = value;
-    }
-
-    /**
-     * Gets the value of the description property.
-     *
-     * @return possible object is {@link String }
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Sets the value of the description property.
-     *
-     * @param value allowed object is {@link String }
-     */
-    public void setDescription(String value) {
-        this.description = value;
     }
 
 }

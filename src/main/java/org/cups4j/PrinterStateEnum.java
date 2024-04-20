@@ -1,20 +1,23 @@
 package org.cups4j;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
 public enum PrinterStateEnum {
-    IDLE(3, "idle"), PRINTING(4, "printing"), STOPPED(5, "stopped");
+    IDLE(3, "idle"),
+    PRINTING(4, "printing"),
+    STOPPED(5, "stopped");
 
     private final Integer value;
     private final String stateName;
 
-    PrinterStateEnum(Integer value, String stateName) {
-        this.value = value;
-        this.stateName = stateName;
-    }
 
     public static PrinterStateEnum fromInteger(Integer value) {
         if (value != null) {
             for (PrinterStateEnum printerState : PrinterStateEnum.values()) {
-                if (value == printerState.getValue()) {
+                if (value.equals(printerState.getValue())) {
                     return printerState;
                 }
             }
@@ -35,14 +38,7 @@ public enum PrinterStateEnum {
 
     @Override
     public String toString() {
-        return this.stateName;
-    }
-
-    public Integer getValue() {
-        return value;
-    }
-
-    public String getStateName() {
         return stateName;
     }
+
 }

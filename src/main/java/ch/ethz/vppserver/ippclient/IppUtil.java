@@ -1,5 +1,7 @@
 package ch.ethz.vppserver.ippclient;
 
+import lombok.experimental.UtilityClass;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
@@ -22,8 +24,9 @@ import java.util.ArrayList;
  * <p>
  * See the GNU Lesser General Public License for more details. You should have
  * received a copy of the GNU Lesser General Public License along with this
- * program; if not, see http://www.gnu.org/licenses.
+ * program; if not, see https://www.gnu.org/licenses.
  */
+@UtilityClass
 public class IppUtil {
 
     private final static String DEFAULT_CHARSET = "UTF-8";

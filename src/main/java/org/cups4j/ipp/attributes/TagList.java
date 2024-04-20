@@ -1,5 +1,7 @@
 package org.cups4j.ipp.attributes;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
@@ -9,6 +11,8 @@ import java.util.List;
 
 @Root(name = "tag-list")
 public class TagList {
+    @Setter
+    @Getter
     @Attribute
     protected String schemaLocation;
     @ElementList(entry = "tag", inline = true, required = true)
@@ -19,14 +23,6 @@ public class TagList {
             tag = new ArrayList<Tag>();
         }
         return this.tag;
-    }
-
-    public String getSchemaLocation() {
-        return schemaLocation;
-    }
-
-    public void setSchemaLocation(String schemaLocation) {
-        this.schemaLocation = schemaLocation;
     }
 
 }

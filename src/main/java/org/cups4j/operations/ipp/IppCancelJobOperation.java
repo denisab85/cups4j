@@ -17,13 +17,12 @@ package org.cups4j.operations.ipp;
 
 import ch.ethz.vppserver.ippclient.IppResult;
 import ch.ethz.vppserver.ippclient.IppTag;
+import lombok.extern.slf4j.Slf4j;
 import org.cups4j.CupsAuthentication;
 import org.cups4j.CupsClient;
 import org.cups4j.CupsPrinter;
 import org.cups4j.PrintRequestResult;
 import org.cups4j.operations.IppOperation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -31,8 +30,8 @@ import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 public class IppCancelJobOperation extends IppOperation {
-    private static final Logger LOG = LoggerFactory.getLogger(IppCancelJobOperation.class);
 
     public IppCancelJobOperation() {
         operationID = 0x0008;
@@ -45,21 +44,18 @@ public class IppCancelJobOperation extends IppOperation {
     }
 
     /**
-     *
-     * @param url
-     *          printer-uri
-     * @param map
-     *          attributes
-     *          i.e.job-name,ipp-attribute-fidelity,document-name,compression,
-     *          document -format,document-natural-language,job-impressions
-     *          ,job-media-sheets, job-template-attributes
+     * @param url printer-uri
+     * @param map attributes
+     *            i.e.job-name,ipp-attribute-fidelity,document-name,compression,
+     *            document -format,document-natural-language,job-impressions
+     *            ,job-media-sheets, job-template-attributes
      * @return IPP header
      * @throws UnsupportedEncodingException
      */
 
     public ByteBuffer getIppHeader(URL uri, Map<String, String> map) throws UnsupportedEncodingException {
         if (uri == null) {
-            LOG.error("IppCancelJobOperation.getIppHeader(): uri is null");
+            log.error("IppCancelJobOperation.getIppHeader(): uri is null");
             return null;
         }
 

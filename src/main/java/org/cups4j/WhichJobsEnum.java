@@ -16,19 +16,18 @@
  */
 package org.cups4j;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
 /**
  * Used when querying print jobs to define which jobs should be returned.
  */
+@Getter
+@RequiredArgsConstructor
 public enum WhichJobsEnum {
-    COMPLETED("completed"), NOT_COMPLETED("not-completed"), ALL("all");
+    COMPLETED("completed"),
+    NOT_COMPLETED("not-completed"),
+    ALL("all");
 
     private final String value;
-
-    WhichJobsEnum(String value) {
-        this.value = value;
-    }
-
-    public String getValue() {
-        return value;
-    }
 }

@@ -15,8 +15,9 @@ package org.cups4j;
  * <http://www.gnu.org/licenses/>.
  */
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.URL;
 import java.text.DateFormat;
@@ -24,105 +25,26 @@ import java.util.Date;
 
 /**
  * Holds print job attributes
- *
- *
  */
+@Slf4j
+@Setter
+@Getter
 public class PrintJobAttributes {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PrintJobAttributes.class);
-    URL jobURL = null;
-    URL printerURL = null;
-    int jobID = -1;
-    JobStateEnum jobState = null;
-    String jobName = null;
-    String userName = null;
-    Date jobCreateTime;
-    Date jobCompleteTime;
-    int pagesPrinted = 0;
+    private URL jobURL = null;
+    private URL printerURL = null;
+    private int jobID = -1;
+    private JobStateEnum jobState = null;
+    private String jobName = null;
+    private String userName = null;
+    private Date jobCreateTime;
+    private Date jobCompleteTime;
+    private int pagesPrinted = 0;
     // Size of the job in kb (this value is rounded up by the IPP server)
     // This value is optional and might not be reported by your IPP server
-    int size = -1;
+    private int size = -1;
+
     private final DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.MEDIUM);
-
-    public URL getJobURL() {
-        return jobURL;
-    }
-
-    public void setJobURL(URL jobURL) {
-        this.jobURL = jobURL;
-    }
-
-    public URL getPrinterURL() {
-        return printerURL;
-    }
-
-    public void setPrinterURL(URL printerURL) {
-        this.printerURL = printerURL;
-    }
-
-    public int getJobID() {
-        return jobID;
-    }
-
-    public void setJobID(int jobID) {
-        this.jobID = jobID;
-    }
-
-    public JobStateEnum getJobState() {
-        return jobState;
-    }
-
-    public void setJobState(JobStateEnum jobState) {
-        this.jobState = jobState;
-    }
-
-    public String getJobName() {
-        return jobName;
-    }
-
-    public void setJobName(String jobName) {
-        this.jobName = jobName;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public Date getJobCreateTime() {
-        return jobCreateTime;
-    }
-
-    public void setJobCreateTime(Date jobCreateTime) {
-        this.jobCreateTime = jobCreateTime;
-    }
-
-    public Date getJobCompleteTime() {
-        return jobCompleteTime;
-    }
-
-    public void setJobCompleteTime(Date jobCompleteTime) {
-        this.jobCompleteTime = jobCompleteTime;
-    }
-
-    public int getPagesPrinted() {
-        return pagesPrinted;
-    }
-
-    public void setPagesPrinted(int pagesPrinted) {
-        this.pagesPrinted = pagesPrinted;
-    }
-
-    public int getSize() {
-        return size;
-    }
-
-    public void setSize(int size) {
-        this.size = size;
-    }
 
     @Override
     public String toString() {
@@ -172,7 +94,7 @@ public class PrintJobAttributes {
 
             return buff.toString();
         } catch (Exception ex) {
-            LOG.error("Unable to get creation and/or completion time for job " + getJobID(), ex);
+            log.error("Unable to get creation and/or completion time for job " + getJobID(), ex);
             return toString();
         }
 

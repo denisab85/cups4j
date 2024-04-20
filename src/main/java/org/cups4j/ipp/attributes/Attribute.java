@@ -7,6 +7,8 @@
 
 package org.cups4j.ipp.attributes;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
@@ -18,8 +20,14 @@ public class Attribute {
 
     @ElementList(entry = "attribute-value", inline = true)
     protected List<AttributeValue> attributeValue;
+
+    @Setter
+    @Getter
     @org.simpleframework.xml.Attribute(required = true)
     protected String name;
+
+    @Setter
+    @Getter
     @org.simpleframework.xml.Attribute(required = false)
     protected String description;
 
@@ -46,7 +54,7 @@ public class Attribute {
      */
     public List<AttributeValue> getAttributeValue() {
         if (attributeValue == null) {
-            attributeValue = new ArrayList<AttributeValue>();
+            attributeValue = new ArrayList<>();
         }
         return this.attributeValue;
     }
@@ -64,42 +72,6 @@ public class Attribute {
         }
         buf.append(' ');
         return buf.substring(1).trim();
-    }
-
-    /**
-     * Gets the value of the name property.
-     *
-     * @return possible object is {@link String }
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Sets the value of the name property.
-     *
-     * @param value allowed object is {@link String }
-     */
-    public void setName(String value) {
-        this.name = value;
-    }
-
-    /**
-     * Gets the value of the description property.
-     *
-     * @return possible object is {@link String }
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * Sets the value of the description property.
-     *
-     * @param value allowed object is {@link String }
-     */
-    public void setDescription(String value) {
-        this.description = value;
     }
 
 }

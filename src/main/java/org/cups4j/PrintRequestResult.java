@@ -16,6 +16,7 @@ package org.cups4j;
  */
 
 import ch.ethz.vppserver.ippclient.IppResult;
+import lombok.Getter;
 import org.cups4j.ipp.attributes.AttributeGroup;
 
 import java.util.regex.Matcher;
@@ -28,8 +29,10 @@ import java.util.regex.Pattern;
  */
 public class PrintRequestResult {
     private final IppResult ippResult;
+    @Getter
     private int jobId;
     private String resultCode = "";
+    @Getter
     private String resultDescription = "";
 
     public PrintRequestResult(IppResult ippResult) {
@@ -77,10 +80,6 @@ public class PrintRequestResult {
         }
     }
 
-    public String getResultDescription() {
-        return resultDescription;
-    }
-
     public String getResultMessage() {
         if (ippResult.hasAttributeGroup("operation-attributes-tag")) {
             AttributeGroup attributeGroup = ippResult.getAttributeGroup("operation-attributes-tag");
@@ -88,10 +87,6 @@ public class PrintRequestResult {
         } else {
             return ippResult.getHttpStatusResponse();
         }
-    }
-
-    public int getJobId() {
-        return jobId;
     }
 
     protected void setJobId(int jobId) {

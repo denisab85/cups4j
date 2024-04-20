@@ -1,7 +1,6 @@
 package ch.ethz.vppserver.ippclient;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
@@ -22,8 +21,8 @@ import java.nio.ByteBuffer;
  * received a copy of the GNU Lesser General Public License along with this
  * program; if not, see <http://www.gnu.org/licenses/>.
  */
+@Slf4j
 public class IppTag {
-    private static final Logger LOG = LoggerFactory.getLogger(IppTag.class);
 
     private final static byte MAJOR_VERSION = 0x01;
     private final static byte MINOR_VERSION = 0x01;
@@ -88,7 +87,7 @@ public class IppTag {
     public static ByteBuffer getOperation(ByteBuffer ippBuf, short operation, String charset, String naturalLanguage)
             throws UnsupportedEncodingException {
         if (ippBuf == null) {
-            LOG.error("IppTag.getOperation(): ippBuf is null");
+            log.error("IppTag.getOperation(): ippBuf is null");
             return null;
         }
         if (charset == null) {
@@ -114,7 +113,7 @@ public class IppTag {
      */
     public static ByteBuffer getOperationAttributesTag(ByteBuffer ippBuf) {
         if (ippBuf == null) {
-            LOG.error("IppTag.getOperationAttributesTag(): ippBuf is null");
+            log.error("IppTag.getOperationAttributesTag(): ippBuf is null");
             return null;
         }
         ippBuf.put(OPERATION_ATTRIBUTES_TAG);
@@ -127,7 +126,7 @@ public class IppTag {
      */
     public static ByteBuffer getJobAttributesTag(ByteBuffer ippBuf) {
         if (ippBuf == null) {
-            LOG.error("IppTag.getJobAttributesTag(): ippBuf is null");
+            log.error("IppTag.getJobAttributesTag(): ippBuf is null");
             return null;
         }
         ippBuf.put(JOB_ATTRIBUTES_TAG);
@@ -140,7 +139,7 @@ public class IppTag {
      */
     public static ByteBuffer getSubscriptionAttributesTag(ByteBuffer ippBuf) {
         if (ippBuf == null) {
-            LOG.error("IppTag.getSubscriptionAttributesTag(): ippBuf is null");
+            log.error("IppTag.getSubscriptionAttributesTag(): ippBuf is null");
             return null;
         }
         ippBuf.put(SUBSCRIPTION_ATTRIBUTES_TAG);
@@ -153,7 +152,7 @@ public class IppTag {
      */
     public static ByteBuffer getEventNotificationAttributesTag(ByteBuffer ippBuf) {
         if (ippBuf == null) {
-            LOG.error("IppTag.getEventNotificationAttributesTag(): ippBuf is null");
+            log.error("IppTag.getEventNotificationAttributesTag(): ippBuf is null");
             return null;
         }
         ippBuf.put(EVENT_NOTIFICATION_ATTRIBUTES_TAG);
@@ -166,7 +165,7 @@ public class IppTag {
      */
     public static ByteBuffer getUnsupportedAttributesTag(ByteBuffer ippBuf) {
         if (ippBuf == null) {
-            LOG.error("IppTag.getUnsupportedAttributesTag(): ippBuf is null");
+            log.error("IppTag.getUnsupportedAttributesTag(): ippBuf is null");
             return null;
         }
         ippBuf.put(UNSUPPORTED_ATTRIBUTES_TAG);
@@ -179,7 +178,7 @@ public class IppTag {
      */
     public static ByteBuffer getPrinterAttributesTag(ByteBuffer ippBuf) {
         if (ippBuf == null) {
-            LOG.error("IppTag.getPrinterAttributesTag(): ippBuf is null");
+            log.error("IppTag.getPrinterAttributesTag(): ippBuf is null");
             return null;
         }
         ippBuf.put(PRINTER_ATTRIBUTES_TAG);
@@ -321,7 +320,7 @@ public class IppTag {
     public static ByteBuffer getNameWithoutLanguage(ByteBuffer ippBuf, String attributeName, String value)
             throws UnsupportedEncodingException {
         if (ippBuf == null) {
-            LOG.error("IppTag.getNameWithoutLanguage(): ippBuf is null");
+            log.error("IppTag.getNameWithoutLanguage(): ippBuf is null");
             return null;
         }
 
@@ -351,7 +350,7 @@ public class IppTag {
     public static ByteBuffer getTextWithoutLanguage(ByteBuffer ippBuf, String attributeName, String value)
             throws UnsupportedEncodingException {
         if (ippBuf == null) {
-            LOG.error("IppTag.getTextWithoutLanguage(): ippBuf is null");
+            log.error("IppTag.getTextWithoutLanguage(): ippBuf is null");
             return null;
         }
 
@@ -388,7 +387,7 @@ public class IppTag {
      */
     public static ByteBuffer getInteger(ByteBuffer ippBuf, String attributeName) throws UnsupportedEncodingException {
         if (ippBuf == null) {
-            LOG.error("IppTag.getInteger(): ippBuf is null");
+            log.error("IppTag.getInteger(): ippBuf is null");
             return null;
         }
 
@@ -414,7 +413,7 @@ public class IppTag {
     public static ByteBuffer getInteger(ByteBuffer ippBuf, String attributeName, int value)
             throws UnsupportedEncodingException {
         if (ippBuf == null) {
-            LOG.error("IppTag.getInteger(): ippBuf is null");
+            log.error("IppTag.getInteger(): ippBuf is null");
             return null;
         }
 
@@ -447,7 +446,7 @@ public class IppTag {
      */
     public static ByteBuffer getBoolean(ByteBuffer ippBuf, String attributeName) throws UnsupportedEncodingException {
         if (ippBuf == null) {
-            LOG.error("IppTag.getBoolean(): ippBuf is null");
+            log.error("IppTag.getBoolean(): ippBuf is null");
             return null;
         }
 
@@ -472,7 +471,7 @@ public class IppTag {
     public static ByteBuffer getBoolean(ByteBuffer ippBuf, String attributeName, boolean value)
             throws UnsupportedEncodingException {
         if (ippBuf == null) {
-            LOG.error("IppTag.getBoolean(): ippBuf is null");
+            log.error("IppTag.getBoolean(): ippBuf is null");
             return null;
         }
 
@@ -509,7 +508,7 @@ public class IppTag {
      */
     public static ByteBuffer getEnum(ByteBuffer ippBuf, String attributeName) throws UnsupportedEncodingException {
         if (ippBuf == null) {
-            LOG.error("IppTag.getEnum(): ippBuf is null");
+            log.error("IppTag.getEnum(): ippBuf is null");
             return null;
         }
 
@@ -533,7 +532,7 @@ public class IppTag {
     public static ByteBuffer getEnum(ByteBuffer ippBuf, String attributeName, int value)
             throws UnsupportedEncodingException {
         if (ippBuf == null) {
-            LOG.error("IppTag.getEnum(): ippBuf is null");
+            log.error("IppTag.getEnum(): ippBuf is null");
             return null;
         }
 
@@ -565,7 +564,7 @@ public class IppTag {
      */
     public static ByteBuffer getResolution(ByteBuffer ippBuf, String attributeName) throws UnsupportedEncodingException {
         if (ippBuf == null) {
-            LOG.error("IppTag.getResolution(): ippBuf is null");
+            log.error("IppTag.getResolution(): ippBuf is null");
             return null;
         }
 
@@ -591,7 +590,7 @@ public class IppTag {
     public static ByteBuffer getResolution(ByteBuffer ippBuf, String attributeName, int value1, int value2, byte value3)
             throws UnsupportedEncodingException {
         if (ippBuf == null) {
-            LOG.error("IppTag.getResolution(): ippBuf is null");
+            log.error("IppTag.getResolution(): ippBuf is null");
             return null;
         }
 
@@ -626,7 +625,7 @@ public class IppTag {
     public static ByteBuffer getRangeOfInteger(ByteBuffer ippBuf, String attributeName)
             throws UnsupportedEncodingException {
         if (ippBuf == null) {
-            LOG.error("IppTag.getRangeOfInteger(): ippBuf is null");
+            log.error("IppTag.getRangeOfInteger(): ippBuf is null");
             return null;
         }
 
@@ -651,7 +650,7 @@ public class IppTag {
     public static ByteBuffer getRangeOfInteger(ByteBuffer ippBuf, String attributeName, int value1, int value2)
             throws UnsupportedEncodingException {
         if (ippBuf == null) {
-            LOG.error("IppTag.getRangeOfInteger(): ippBuf is null");
+            log.error("IppTag.getRangeOfInteger(): ippBuf is null");
             return null;
         }
 
@@ -736,7 +735,7 @@ public class IppTag {
      */
     public static ByteBuffer getEnd(ByteBuffer ippBuf) {
         if (ippBuf == null) {
-            LOG.error("IppTag.getEnd(): ippBuf is null");
+            log.error("IppTag.getEnd(): ippBuf is null");
             return null;
         }
         ippBuf.put(END_OF_ATTRIBUTES_TAG);
@@ -760,7 +759,7 @@ public class IppTag {
     private static ByteBuffer getUsAscii(ByteBuffer ippBuf, byte tag, String attributeName, String value)
             throws UnsupportedEncodingException {
         if (ippBuf == null) {
-            LOG.error("IppTag.getUsAscii(): ippBuf is null");
+            log.error("IppTag.getUsAscii(): ippBuf is null");
             return null;
         }
 

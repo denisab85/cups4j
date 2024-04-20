@@ -1,14 +1,13 @@
 package org.cups4j.operations.ipp;
 
 import ch.ethz.vppserver.ippclient.IppResult;
+import lombok.extern.slf4j.Slf4j;
 import org.cups4j.CupsPrinter;
 import org.cups4j.CupsPrinterTest;
 import org.cups4j.ipp.attributes.Attribute;
 import org.cups4j.ipp.attributes.AttributeGroup;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
@@ -25,9 +24,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author oboehm
  * @since 0.7.2 (23.03.2018)
  */
+@Slf4j
 public class IppCreateJobOperationTest extends AbstractIppOperationTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(IppCreateJobOperationTest.class);
     private final IppCreateJobOperation operation = new IppCreateJobOperation();
 
     private static byte[] toByteArray(ByteBuffer buffer) {
@@ -39,7 +38,7 @@ public class IppCreateJobOperationTest extends AbstractIppOperationTest {
     private static void checkAttribute(IppResult ippResult, String name) {
         for (AttributeGroup attributeGroup : ippResult.getAttributeGroupList()) {
             if (hasAttribute(attributeGroup.getAttribute(), name)) {
-                LOG.info("Attribute '{}' was found in {}.", name, ippResult.getAttributeGroupList());
+                log.info("Attribute '{}' was found in {}.", name, ippResult.getAttributeGroupList());
                 return;
             }
         }
@@ -49,7 +48,7 @@ public class IppCreateJobOperationTest extends AbstractIppOperationTest {
     private static boolean hasAttribute(List<Attribute> attributes, String name) {
         for (Attribute attr : attributes) {
             if (name.equals(attr.getName())) {
-                LOG.info("{} = {}", name, attr.getAttributeValue());
+                log.info("{} = {}", name, attr.getAttributeValue());
                 return true;
             }
         }
@@ -83,7 +82,7 @@ public class IppCreateJobOperationTest extends AbstractIppOperationTest {
     public void testRequest() throws Exception {
         CupsPrinter cupsPrinter = CupsPrinterTest.getPrinter();
         if (cupsPrinter == null) {
-            LOG.warn("No default printer found for testing - run test with '-Dprinter=...' to define it.");
+            log.warn("No default printer found for testing - run test with '-Dprinter=...' to define it.");
             return;
         }
         IppResult ippResult = operation.request(cupsPrinter, cupsPrinter.getPrinterURL(), null);

@@ -16,6 +16,7 @@ package org.cups4j.operations.cups;
  */
 
 import ch.ethz.vppserver.ippclient.IppResult;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.cups4j.CupsAuthentication;
 import org.cups4j.CupsPrinter;
@@ -24,8 +25,6 @@ import org.cups4j.ipp.attributes.Attribute;
 import org.cups4j.ipp.attributes.AttributeGroup;
 import org.cups4j.ipp.attributes.AttributeValue;
 import org.cups4j.operations.IppOperation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -33,8 +32,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public class CupsGetPrintersOperation extends IppOperation {
-    private static final Logger LOG = LoggerFactory.getLogger(CupsGetPrintersOperation.class);
 
     public CupsGetPrintersOperation() {
         operationID = 0x4002;
@@ -59,7 +58,6 @@ public class CupsGetPrintersOperation extends IppOperation {
         IppResult result = request(null, new URL("http://" + hostname + ":" + port + "/printers"), map, creds);
 
         for (AttributeGroup group : result.getAttributeGroupList()) {
-            CupsPrinter printer = null;
             if (group.getTagName().equals("printer-attributes-tag")) {
                 String printerURI = null;
                 String printerName = null;
@@ -81,68 +79,82 @@ public class CupsGetPrintersOperation extends IppOperation {
                 String printerMakeAndModel = null;
 
                 for (Attribute attr : group.getAttribute()) {
-                    if (attr.getName().equals("printer-uri-supported")) {
-                        printerURI = getAttributeValue(attr).replace("ipp://", "http://");
-                        printerURI = StringUtils.remove(printerURI, "http://");
-                        printerURI = StringUtils.substringAfter(printerURI, "/");
-                        printerURI = "http://" + hostname + ":" + port + "/" + printerURI;
-                    } else if (attr.getName().equals("printer-name")) {
-                        printerName = getAttributeValue(attr);
-                    } else if (attr.getName().equals("printer-location")) {
-                        printerLocation = getAttributeValue(attr);
-                    } else if (attr.getName().equals("printer-info")) {
-                        printerDescription = getAttributeValue(attr);
-                    } else if (attr.getName().equals("device-uri")) {
-                        deviceURI = getAttributeValue(attr);
-                    } else if (attr.getName().equals("printer-state")) {
-                        printerState = PrinterStateEnum.fromStringInteger(getAttributeValue(attr));
-                    } else if (attr.getName().equals("media-default")) {
-                        mediaDefault = getAttributeValue(attr);
-                    } else if (attr.getName().equals("media-supported")) {
-                        mediaSupportedList = getAttributeValues(attr);
-                    } else if (attr.getName().equals("number-up-default")) {
-                        numberUpDefault = getAttributeValue(attr);
-                    } else if (attr.getName().equals("number-up-supported")) {
-                        numberUpSupported = getAttributeValues(attr);
-                    } else if (attr.getName().equals("printer-resolution-default")) {
-                        printerResolutionDefault = getAttributeValue(attr);
-                    } else if (attr.getName().equals("printer-resolution-supported")) {
-                        printerResolutionSupported = getAttributeValues(attr);
-                    } else if (attr.getName().equals("print-color-mode-default")) {
-                        printerColorModeDefault = getAttributeValue(attr);
-                    } else if (attr.getName().equals("print-color-mode-supported")) {
-                        printerColorModeSupported = getAttributeValues(attr);
-                    } else if (attr.getName().equals("document-format-supported")) {
-                        mimeTypesSupported = getAttributeValues(attr);
-                    } else if (attr.getName().equals("sides-supported")) {
-                        sidesSupported = getAttributeValues(attr);
-                    } else if (attr.getName().equals("sides-default")) {
-                        sidesDefault = getAttributeValue(attr);
-                    } else if (attr.getName().equals("printer-state")) {
-                        printerState = PrinterStateEnum.fromStringInteger(getAttributeValue(attr));
-                    } else if (attr.getName().equals("device-uri")) {
-                        deviceURI = getAttributeValue(attr);
-                    } else if (attr.getName().equals("printer-make-and-model")) {
-                        printerMakeAndModel = getAttributeValue(attr);
+                    switch (attr.getName()) {
+                        case "printer-uri-supported":
+                            printerURI = getAttributeValue(attr).replace("ipp://", "http://");
+                            printerURI = StringUtils.remove(printerURI, "http://");
+                            printerURI = StringUtils.substringAfter(printerURI, "/");
+                            printerURI = "http://" + hostname + ":" + port + "/" + printerURI;
+                            break;
+                        case "printer-name":
+                            printerName = getAttributeValue(attr);
+                            break;
+                        case "printer-location":
+                            printerLocation = getAttributeValue(attr);
+                            break;
+                        case "printer-info":
+                            printerDescription = getAttributeValue(attr);
+                            break;
+                        case "device-uri":
+                            deviceURI = getAttributeValue(attr);
+                            break;
+                        case "printer-state":
+                            printerState = PrinterStateEnum.fromStringInteger(getAttributeValue(attr));
+                            break;
+                        case "media-default":
+                            mediaDefault = getAttributeValue(attr);
+                            break;
+                        case "media-supported":
+                            mediaSupportedList = getAttributeValues(attr);
+                            break;
+                        case "number-up-default":
+                            numberUpDefault = getAttributeValue(attr);
+                            break;
+                        case "number-up-supported":
+                            numberUpSupported = getAttributeValues(attr);
+                            break;
+                        case "printer-resolution-default":
+                            printerResolutionDefault = getAttributeValue(attr);
+                            break;
+                        case "printer-resolution-supported":
+                            printerResolutionSupported = getAttributeValues(attr);
+                            break;
+                        case "print-color-mode-default":
+                            printerColorModeDefault = getAttributeValue(attr);
+                            break;
+                        case "print-color-mode-supported":
+                            printerColorModeSupported = getAttributeValues(attr);
+                            break;
+                        case "document-format-supported":
+                            mimeTypesSupported = getAttributeValues(attr);
+                            break;
+                        case "sides-supported":
+                            sidesSupported = getAttributeValues(attr);
+                            break;
+                        case "sides-default":
+                            sidesDefault = getAttributeValue(attr);
+                            break;
+                        case "printer-make-and-model":
+                            printerMakeAndModel = getAttributeValue(attr);
+                            break;
                     }
                 }
-                URL printerUrl = null;
+                URL printerUrl;
                 try {
                     printerUrl = new URL(printerURI);
                 } catch (Throwable t) {
                     t.printStackTrace();
-                    LOG.error("Error encountered building URL from printer uri of printer " + printerName
+                    log.error("Error encountered building URL from printer uri of printer " + printerName
                             + ", uri returned was [" + printerURI + "].  Attribute group tag/description: [" + group.getTagName()
                             + "/" + group.getDescription());
                     throw new Exception(t);
                 }
 
-                printer = new CupsPrinter(creds, printerUrl, printerName);
+                CupsPrinter printer = new CupsPrinter(creds, printerUrl, printerName);
                 printer.setState(printerState);
                 printer.setLocation(printerLocation);
                 printer.setDescription(printerDescription);
                 printer.setDeviceUri(deviceURI);
-                printer.setState(printerState);
                 printer.setMediaDefault(mediaDefault);
                 printer.setMediaSupported(mediaSupportedList);
                 printer.setResolutionDefault(printerResolutionDefault);
@@ -154,7 +166,6 @@ public class CupsGetPrintersOperation extends IppOperation {
                 printer.setSidesSupported(sidesSupported);
                 printer.setNumberUpDefault(numberUpDefault);
                 printer.setNumberUpSupported(numberUpSupported);
-                printer.setDeviceURI(deviceURI);
                 printer.setMakeAndModel(printerMakeAndModel);
 
                 printers.add(printer);
@@ -165,8 +176,8 @@ public class CupsGetPrintersOperation extends IppOperation {
     }
 
     protected List<String> getAttributeValues(Attribute attr) {
-        List<String> values = new ArrayList<String>();
-        if (attr.getAttributeValue() != null && attr.getAttributeValue().size() > 0) {
+        List<String> values = new ArrayList<>();
+        if (attr.getAttributeValue() != null && !attr.getAttributeValue().isEmpty()) {
             for (AttributeValue value : attr.getAttributeValue()) {
                 values.add(value.getValue());
             }

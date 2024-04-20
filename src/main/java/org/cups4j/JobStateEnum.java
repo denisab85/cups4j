@@ -16,18 +16,22 @@
  */
 package org.cups4j;
 
+import lombok.RequiredArgsConstructor;
+
 /**
  * State of print jobs
  */
+@RequiredArgsConstructor
 public enum JobStateEnum {
-    PENDING("pending"), PENDING_HELD("pending-held"), PROCESSING("processing"), PROCESSING_STOPPED(
-            "processing-stopped"), CANCELED("canceled"), ABORTED("aborted"), COMPLETED("completed");
+    PENDING("pending"),
+    PENDING_HELD("pending-held"),
+    PROCESSING("processing"),
+    PROCESSING_STOPPED("processing-stopped"),
+    CANCELED("canceled"),
+    ABORTED("aborted"),
+    COMPLETED("completed");
 
     private final String value;
-
-    JobStateEnum(String value) {
-        this.value = value;
-    }
 
     public static JobStateEnum fromString(String value) {
         if (value != null) {

@@ -1,5 +1,7 @@
 package ch.ethz.vppserver.ippclient;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.cups4j.ipp.attributes.AttributeGroup;
 
 import java.util.ArrayList;
@@ -21,56 +23,14 @@ import java.util.List;
  * received a copy of the GNU Lesser General Public License along with this
  * program; if not, see <http://www.gnu.org/licenses/>.
  */
+@Setter
+@Getter
 public class IppResult {
+
     private String httpStatusResponse = null;
     private String ippStatusResponse = null;
     private List<AttributeGroup> attributeGroupList = new ArrayList<AttributeGroup>();
     private int httpStatusCode;
-
-    public IppResult() {
-    }
-
-    /**
-     * @return
-     */
-    public String getHttpStatusResponse() {
-        return httpStatusResponse;
-    }
-
-    /**
-     * @param statusResponse
-     */
-    public void setHttpStatusResponse(String statusResponse) {
-        httpStatusResponse = statusResponse;
-    }
-
-    /**
-     * @return
-     */
-    public String getIppStatusResponse() {
-        return ippStatusResponse;
-    }
-
-    /**
-     * @param statusResponse
-     */
-    public void setIppStatusResponse(String statusResponse) {
-        ippStatusResponse = statusResponse;
-    }
-
-    /**
-     * @return
-     */
-    public List<AttributeGroup> getAttributeGroupList() {
-        return attributeGroupList;
-    }
-
-    /**
-     * @param group
-     */
-    public void setAttributeGroupList(List<AttributeGroup> group) {
-        attributeGroupList = group;
-    }
 
     public AttributeGroup getAttributeGroup(String tagName) {
         for (AttributeGroup group : attributeGroupList) {
@@ -89,14 +49,6 @@ public class IppResult {
             }
         }
         return false;
-    }
-
-    public int getHttpStatusCode() {
-        return httpStatusCode;
-    }
-
-    public void setHttpStatusCode(int httpStatusCode) {
-        this.httpStatusCode = httpStatusCode;
     }
 
     public boolean isPrintQueueUnavailable() {

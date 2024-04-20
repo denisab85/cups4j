@@ -8,6 +8,9 @@ import org.cups4j.operations.ipp.*;
 import java.net.URL;
 import java.util.List;
 
+import static org.apache.commons.lang.StringUtils.isEmpty;
+import static org.apache.commons.lang.StringUtils.isNotEmpty;
+
 /**
  * Main Client for accessing CUPS features like
  * <p>
@@ -28,11 +31,11 @@ public class CupsClient {
     public static final int DEFAULT_PORT = 631;
     public static final String DEFAULT_USER = System.getProperty("user.name", "anonymous");
 
-    private String host = null;
-    private int port = -1;
+    private final String host;
+    private final int port;
     private String user = null;
 
-    private CupsAuthentication creds = null;
+    private final CupsAuthentication creds;
 
     /**
      * Creates a CupsClient for localhost port 631 with user anonymous
@@ -63,21 +66,7 @@ public class CupsClient {
      * @throws Exception
      */
     public CupsClient(String host, int port, String userName) throws Exception {
-        if (host != null && !"".equals(host)) {
-            this.host = host;
-        } else {
-            throw new Exception("The hostname specified: <" + host + "> is not valid");
-        }
-
-        if (port > 0) {
-            this.port = port;
-        } else {
-            throw new Exception("The specified port number: <" + port + "> is not valid");
-        }
-
-        if (userName != null && !"".equals(userName)) {
-            this.user = userName;
-        }
+        this(host, port, userName, null);
     }
 
     /**
@@ -89,12 +78,11 @@ public class CupsClient {
      * @throws Exception
      */
     public CupsClient(String host, int port, String userName, CupsAuthentication creds) throws Exception {
-        super();
         this.creds = creds;
-        if (host != null && !"".equals(host)) {
-            this.host = host;
-        } else {
+        if (isEmpty(host)) {
             throw new Exception("The hostname specified: <" + host + "> is not valid");
+        } else {
+            this.host = host;
         }
 
         if (port > 0) {
@@ -103,7 +91,7 @@ public class CupsClient {
             throw new Exception("The specified port number: <" + port + "> is not valid");
         }
 
-        if (userName != null && !"".equals(userName)) {
+        if (isNotEmpty(userName)) {
             this.user = userName;
         }
     }
@@ -126,14 +114,13 @@ public class CupsClient {
      */
     public List<CupsPrinter> getPrintersWithoutDefault() throws Exception {
         CupsGetPrintersOperation cgp = new CupsGetPrintersOperation();
-        List<CupsPrinter> result = cgp.getPrinters(host, port, creds);
-        return result;
+        return cgp.getPrinters(host, port, creds);
     }
 
     /**
      * Returns the printer for the provided URL
      *
-     * @param printerURL an URL like http://localhost:631/printers/printername
+     * @param printerURL a URL like http://localhost:631/printers/printername
      * @return printer
      * @throws Exception
      */
@@ -195,8 +182,7 @@ public class CupsClient {
     }
 
     /**
-     * Returns job attributes for the job associated with the provided jobID and
-     * user name
+     * Returns job attributes for the job associated with the provided jobID and username.
      *
      * @param userName
      * @param jobID
@@ -208,8 +194,7 @@ public class CupsClient {
     }
 
     /**
-     * Returns job attributes for the job associated with the provided jobID on
-     * provided host and port
+     * Returns job attributes for the job associated with the provided jobID on provided host and port.
      *
      * @param hostname
      * @param jobID
@@ -217,18 +202,17 @@ public class CupsClient {
      * @throws Exception
      */
     private PrintJobAttributes getJobAttributes(String hostname, String userName, int jobID) throws Exception {
-        if (userName == null || "".equals(userName)) {
+        if (isEmpty(userName)) {
             userName = DEFAULT_USER;
         }
-        if (hostname == null || "".equals(hostname)) {
+        if (isEmpty(hostname)) {
             hostname = DEFAULT_HOST;
         }
-
         return new IppGetJobAttributesOperation(port).getPrintJobAttributes(hostname, userName, port, jobID, creds);
     }
 
     /**
-     * Returns all jobs for given printer and user Name
+     * Returns all jobs for given printer and username
      * <p>
      * Currently all Jobs on the server are returned by this method.
      * </p>
