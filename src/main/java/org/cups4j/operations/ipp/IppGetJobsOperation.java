@@ -69,12 +69,10 @@ public class IppGetJobsOperation extends IppOperation {
 
         if (map.get("requested-attributes") != null) {
             String[] sta = map.get("requested-attributes").split(" ");
-            if (sta != null) {
-                ippBuf = IppTag.getKeyword(ippBuf, "requested-attributes", sta[0]);
-                int l = sta.length;
-                for (int i = 1; i < l; i++) {
-                    ippBuf = IppTag.getKeyword(ippBuf, null, sta[i]);
-                }
+            ippBuf = IppTag.getKeyword(ippBuf, "requested-attributes", sta[0]);
+            int l = sta.length;
+            for (int i = 1; i < l; i++) {
+                ippBuf = IppTag.getKeyword(ippBuf, null, sta[i]);
             }
         }
 
@@ -94,9 +92,9 @@ public class IppGetJobsOperation extends IppOperation {
 
     public List<PrintJobAttributes> getPrintJobs(CupsPrinter printer, WhichJobsEnum whichJobs, String userName,
                                                  boolean myJobs, CupsAuthentication creds) throws Exception {
-        List<PrintJobAttributes> jobs = new ArrayList<PrintJobAttributes>();
-        PrintJobAttributes jobAttributes = null;
-        Map<String, String> map = new HashMap<String, String>();
+        List<PrintJobAttributes> jobs = new ArrayList<>();
+        PrintJobAttributes jobAttributes;
+        Map<String, String> map = new HashMap<>();
 
         if (userName == null)
             userName = CupsClient.DEFAULT_USER;

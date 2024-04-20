@@ -108,7 +108,7 @@ public class IppSendDocumentOperation extends IppPrintJobOperation {
         attributes.put("requesting-user-name", userName);
         attributes.put("job-name", jobName);
 
-        String copiesString = null;
+        String copiesString;
         StringBuffer rangesString = new StringBuffer();
         if (copies > 0) {// other values are considered bad value by CUPS
             copiesString = "copies:integer:" + copies;

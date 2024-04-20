@@ -23,7 +23,6 @@ import java.util.List;
 public interface IIppAttributeProvider {
     String TAG_LIST_FILENAME = "config/ippclient/ipp-list-of-tag.xml";
     String ATTRIBUTE_LIST_FILENAME = "config/ippclient/ipp-list-of-attributes.xml";
-    String CONTEXT = "ch.ethz.vppserver.schema.ippclient";
 
     List<Tag> getTagList();
 

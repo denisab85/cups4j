@@ -23,7 +23,7 @@ public class Attribute {
 
     @Setter
     @Getter
-    @org.simpleframework.xml.Attribute(required = true)
+    @org.simpleframework.xml.Attribute
     protected String name;
 
     @Setter

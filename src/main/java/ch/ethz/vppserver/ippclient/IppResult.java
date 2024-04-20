@@ -29,7 +29,7 @@ public class IppResult {
 
     private String httpStatusResponse = null;
     private String ippStatusResponse = null;
-    private List<AttributeGroup> attributeGroupList = new ArrayList<AttributeGroup>();
+    private List<AttributeGroup> attributeGroupList = new ArrayList<>();
     private int httpStatusCode;
 
     public AttributeGroup getAttributeGroup(String tagName) {

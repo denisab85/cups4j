@@ -9,6 +9,7 @@ package org.cups4j.ipp.attributes;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 
@@ -23,7 +24,7 @@ public class SetOfEnum {
 
     @Setter
     @Getter
-    @org.simpleframework.xml.Attribute(required = false)
+    @Attribute(required = false)
     protected String description;
 
     /**
@@ -48,7 +49,7 @@ public class SetOfEnum {
      */
     public List<Enum> getEnum() {
         if (_enum == null) {
-            _enum = new ArrayList<Enum>();
+            _enum = new ArrayList<>();
         }
         return this._enum;
     }

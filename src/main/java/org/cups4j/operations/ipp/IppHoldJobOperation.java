@@ -96,7 +96,7 @@ public class IppHoldJobOperation extends IppOperation {
     public boolean holdJob(String hostname, String userName, int jobID,
                            CupsPrinter printer, CupsAuthentication creds) throws Exception {
 
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
 
         if (userName == null) {
             userName = CupsClient.DEFAULT_USER;

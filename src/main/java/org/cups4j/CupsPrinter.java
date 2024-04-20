@@ -90,7 +90,7 @@ public class CupsPrinter {
         attributes.put("requesting-user-name", userName);
         attributes.put("job-name", jobName);
 
-        String copiesString = null;
+        String copiesString;
         StringBuffer rangesString = new StringBuffer();
         if (copies > 0) {// other values are considered bad value by CUPS
             copiesString = "copies:integer:" + copies;
@@ -177,7 +177,7 @@ public class CupsPrinter {
     public PrintRequestResult print(PrintJob job1, PrintJob... moreJobs) {
         verifyUser(job1.getUserName(), moreJobs);
         int jobId = createJob(job1);
-        List<PrintJob> printJobs = new ArrayList<PrintJob>();
+        List<PrintJob> printJobs = new ArrayList<>();
         printJobs.add(job1);
         printJobs.addAll(Arrays.asList(moreJobs));
         for (int i = 0; i < printJobs.size() - 1; i++) {
@@ -230,7 +230,7 @@ public class CupsPrinter {
      * @since 0.7.4
      */
     public int createJob(PrintJob job) {
-        Map<String, String> attributes = new HashMap<String, String>();
+        Map<String, String> attributes = new HashMap<>();
         attributes.put("job-name", job.getJobName());
         attributes.put("requesting-user-name", job.getUserName());
         IppCreateJobOperation command = new IppCreateJobOperation(printerURL.getPort());
@@ -312,7 +312,7 @@ public class CupsPrinter {
     public JobStateEnum getJobStatus(String userName, int jobID) throws Exception {
         IppGetJobAttributesOperation command = new IppGetJobAttributesOperation(printerURL.getPort());
         PrintJobAttributes job = command.getPrintJobAttributes(printerURL.getHost(), userName,
-                printerURL.getPort(), jobID, creds);
+                jobID, creds);
 
         return job.getJobState();
     }

@@ -40,7 +40,7 @@ public class CupsGetDefaultOperation extends IppOperation {
         CupsPrinter defaultPrinter = null;
         CupsGetDefaultOperation command = new CupsGetDefaultOperation(port);
 
-        HashMap<String, String> map = new HashMap<String, String>();
+        HashMap<String, String> map = new HashMap<>();
         map.put("requested-attributes", "printer-name printer-uri-supported printer-location");
 
         IppResult result = command.request(null, new URL("http://" + hostname + "/printers"), map, creds);

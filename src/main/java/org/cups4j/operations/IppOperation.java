@@ -98,12 +98,10 @@ public abstract class IppOperation {
 
         if (map.get("requested-attributes") != null) {
             String[] sta = map.get("requested-attributes").split(" ");
-            if (sta != null) {
-                ippBuf = IppTag.getKeyword(ippBuf, "requested-attributes", sta[0]);
-                int l = sta.length;
-                for (int i = 1; i < l; i++) {
-                    ippBuf = IppTag.getKeyword(ippBuf, null, sta[i]);
-                }
+            ippBuf = IppTag.getKeyword(ippBuf, "requested-attributes", sta[0]);
+            int l = sta.length;
+            for (int i = 1; i < l; i++) {
+                ippBuf = IppTag.getKeyword(ippBuf, null, sta[i]);
             }
         }
 
@@ -139,7 +137,7 @@ public abstract class IppOperation {
      * @throws Exception
      */
     private IppResult sendRequest(CupsPrinter printer, URL url, ByteBuffer ippBuf, InputStream documentStream, CupsAuthentication creds) throws Exception {
-        IppResult ippResult = null;
+        IppResult ippResult;
         if (ippBuf == null) {
             return null;
         }

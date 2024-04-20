@@ -208,7 +208,7 @@ public class CupsClient {
         if (isEmpty(hostname)) {
             hostname = DEFAULT_HOST;
         }
-        return new IppGetJobAttributesOperation(port).getPrintJobAttributes(hostname, userName, port, jobID, creds);
+        return new IppGetJobAttributesOperation(port).getPrintJobAttributes(hostname, userName, jobID, creds);
     }
 
     /**

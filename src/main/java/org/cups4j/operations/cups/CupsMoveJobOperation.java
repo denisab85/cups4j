@@ -97,7 +97,7 @@ public class CupsMoveJobOperation extends IppOperation {
      */
     public boolean moveJob(CupsPrinter printer, String hostname, String userName, int jobID,
                            URL targetPrinterURL, CupsAuthentication creds) throws Exception {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
 
         if (userName == null) {
             userName = CupsClient.DEFAULT_USER;

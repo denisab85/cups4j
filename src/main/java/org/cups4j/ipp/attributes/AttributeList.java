@@ -21,12 +21,12 @@ public class AttributeList {
     @Attribute
     protected String schemaLocation;
 
-    @ElementList(entry = "attribute-group", inline = true, required = true)
+    @ElementList(entry = "attribute-group", inline = true)
     protected List<AttributeGroup> attributeGroup;
 
     @Setter
     @Getter
-    @org.simpleframework.xml.Attribute(required = false)
+    @Attribute(required = false)
     protected String description;
 
     /**
@@ -52,7 +52,7 @@ public class AttributeList {
      */
     public List<AttributeGroup> getAttributeGroup() {
         if (attributeGroup == null) {
-            attributeGroup = new ArrayList<AttributeGroup>();
+            attributeGroup = new ArrayList<>();
         }
         return this.attributeGroup;
     }

@@ -75,12 +75,10 @@ public class IppGetJobAttributesOperation extends IppOperation {
 
         if (map.get("requested-attributes") != null) {
             String[] sta = map.get("requested-attributes").split(" ");
-            if (sta != null) {
-                ippBuf = IppTag.getKeyword(ippBuf, "requested-attributes", sta[0]);
-                int l = sta.length;
-                for (int i = 1; i < l; i++) {
-                    ippBuf = IppTag.getKeyword(ippBuf, null, sta[i]);
-                }
+            ippBuf = IppTag.getKeyword(ippBuf, "requested-attributes", sta[0]);
+            int l = sta.length;
+            for (int i = 1; i < l; i++) {
+                ippBuf = IppTag.getKeyword(ippBuf, null, sta[i]);
             }
         }
 
@@ -98,10 +96,10 @@ public class IppGetJobAttributesOperation extends IppOperation {
     }
 
     public PrintJobAttributes getPrintJobAttributes(String hostname, String userName,
-                                                    int port, int jobID, CupsAuthentication creds) throws Exception {
+                                                    int jobID, CupsAuthentication creds) throws Exception {
         PrintJobAttributes job = null;
 
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         // map.put("requested-attributes",
         // "page-ranges print-quality sides job-uri job-id job-state job-printer-uri job-name job-originating-user-name job-k-octets time-at-creation time-at-processing time-at-completed job-media-sheets-completed");
 

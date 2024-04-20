@@ -9,6 +9,7 @@ package org.cups4j.ipp.attributes;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Root;
 
 @Getter
@@ -16,10 +17,10 @@ import org.simpleframework.xml.Root;
 @Root(name = "keyword")
 public class Keyword {
 
-    @org.simpleframework.xml.Attribute(required = true)
+    @Attribute
     protected String value;
 
-    @org.simpleframework.xml.Attribute(required = false)
+    @Attribute(required = false)
     protected String description;
 
 }

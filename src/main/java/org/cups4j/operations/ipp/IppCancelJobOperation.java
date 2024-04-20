@@ -99,7 +99,7 @@ public class IppCancelJobOperation extends IppOperation {
     public boolean cancelJob(String hostname, String userName, int jobID,
                              CupsPrinter printer, CupsAuthentication creds) throws Exception {
 
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
 
         if (userName == null) {
             userName = CupsClient.DEFAULT_USER;

@@ -46,9 +46,9 @@ public class CupsGetPrintersOperation extends IppOperation {
     }
 
     public List<CupsPrinter> getPrinters(String hostname, int port, CupsAuthentication creds) throws Exception {
-        List<CupsPrinter> printers = new ArrayList<CupsPrinter>();
+        List<CupsPrinter> printers = new ArrayList<>();
 
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put(
                 "requested-attributes",
                 "copies-supported page-ranges-supported printer-name printer-info printer-state printer-location printer-make-and-model printer-uri-supported media-supported media-default sides-supported sides-default orientation-requested-supported printer-resolution-supported printer printer-resolution-default number-up-default number-up-supported document-format-supported print-color-mode-supported print-color-mode-default device-uri");
@@ -64,17 +64,17 @@ public class CupsGetPrintersOperation extends IppOperation {
                 String printerLocation = null;
                 String printerDescription = null;
                 PrinterStateEnum printerState = null;
-                List<String> mediaSupportedList = new ArrayList<String>();
+                List<String> mediaSupportedList = new ArrayList<>();
                 String mediaDefault = null;
-                List<String> printerResolutionSupported = new ArrayList<String>();
+                List<String> printerResolutionSupported = new ArrayList<>();
                 String printerResolutionDefault = null;
-                List<String> printerColorModeSupported = new ArrayList<String>();
+                List<String> printerColorModeSupported = new ArrayList<>();
                 String printerColorModeDefault = null;
-                List<String> mimeTypesSupported = new ArrayList<String>();
+                List<String> mimeTypesSupported = new ArrayList<>();
                 String sidesDefault = null;
-                List<String> sidesSupported = new ArrayList<String>();
+                List<String> sidesSupported = new ArrayList<>();
                 String numberUpDefault = null;
-                List<String> numberUpSupported = new ArrayList<String>();
+                List<String> numberUpSupported = new ArrayList<>();
                 String deviceURI = null;
                 String printerMakeAndModel = null;
 

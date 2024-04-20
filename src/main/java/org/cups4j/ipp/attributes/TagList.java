@@ -15,12 +15,13 @@ public class TagList {
     @Getter
     @Attribute
     protected String schemaLocation;
-    @ElementList(entry = "tag", inline = true, required = true)
+
+    @ElementList(entry = "tag", inline = true)
     protected List<Tag> tag;
 
     public List<Tag> getTag() {
         if (tag == null) {
-            tag = new ArrayList<Tag>();
+            tag = new ArrayList<>();
         }
         return this.tag;
     }

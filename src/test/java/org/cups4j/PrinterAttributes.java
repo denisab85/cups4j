@@ -35,7 +35,7 @@ public class PrinterAttributes {
 
             List<CupsPrinter> printers = new CupsClient().getPrinters();
 
-            Map<String, String> map = new HashMap<String, String>();
+            Map<String, String> map = new HashMap<>();
             map.put("requested-attributes", "all");
 
             for (CupsPrinter p : printers) {
@@ -93,7 +93,7 @@ public class PrinterAttributes {
         });
 
         for (Attribute att : group.getAttribute()) {
-            JComponent valueComponent = null;
+            JComponent valueComponent;
             if (att.getAttributeValue().size() > 0) {
                 JPanel panel = new JPanel(new BorderLayout());
 
@@ -117,8 +117,8 @@ public class PrinterAttributes {
     }
 
     private DefaultTableModel getAttributeTableModel(List<AttributeValue> list) {
-        Vector<Vector<String>> data = new Vector<Vector<String>>();
-        Vector<String> names = new Vector<String>();
+        Vector<Vector<String>> data = new Vector<>();
+        Vector<String> names = new Vector<>();
         names.add("Tag Name");
         names.add("Tag (Hex)");
         names.add("Tag Value");
@@ -130,7 +130,7 @@ public class PrinterAttributes {
     }
 
     private Vector<String> getAttributeValue(AttributeValue attrValue) {
-        Vector<String> values = new Vector<String>();
+        Vector<String> values = new Vector<>();
         values.add(attrValue.getTagName());
         values.add(attrValue.getTag());
         values.add(attrValue.getValue());

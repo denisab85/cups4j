@@ -9,6 +9,7 @@ package org.cups4j.ipp.attributes;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 
@@ -23,16 +24,16 @@ public class AttributeValue {
     @Element(name = "set-of-enum", required = false)
     protected SetOfEnum setOfEnum;
 
-    @org.simpleframework.xml.Attribute
+    @Attribute
     protected String tag;
 
-    @org.simpleframework.xml.Attribute(name = "tag-name")
+    @Attribute(name = "tag-name")
     protected String tagName;
 
-    @org.simpleframework.xml.Attribute(required = false)
+    @Attribute(required = false)
     protected String value;
 
-    @org.simpleframework.xml.Attribute(required = false)
+    @Attribute(required = false)
     protected String description;
 
 }

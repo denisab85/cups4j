@@ -46,7 +46,7 @@ public class IppResponse {
         _tagList = ippAttributeProvider.getTagList();
         _attributeGroupList = ippAttributeProvider.getAttributeGroupList();
 
-        _result = new ArrayList<AttributeGroup>();
+        _result = new ArrayList<>();
         _buf = ByteBuffer.allocate(BYTEBUFFER_CAPACITY);
     }
 
@@ -76,7 +76,7 @@ public class IppResponse {
         // see RFC2910, http://www.ietf.org/rfc/rfc2910, page 19
 
         ByteBuffer tmpBuffer = ByteBuffer.allocate(BYTEBUFFER_CAPACITY);
-        ArrayList<ByteBuffer> bufferList = new ArrayList<ByteBuffer>();
+        ArrayList<ByteBuffer> bufferList = new ArrayList<>();
 
         while (channel.read(tmpBuffer) != -1) {
             tmpBuffer.flip();
@@ -125,19 +125,16 @@ public class IppResponse {
         _result.clear();
 
         IppResult result = new IppResult();
-        boolean ippHeaderResponse = false;
 
-        // be careful: HTTP and IPP could be transmitted in different set of
-        // buffers.
+        // be careful: HTTP and IPP could be transmitted in different set of buffers.
         // see RFC2910, http://www.ietf.org/rfc/rfc2910, page 19
         // read IPP header
-        if ((!ippHeaderResponse) && (buffer.hasRemaining())) {
+        if (buffer.hasRemaining()) {
             _buf = buffer;
             if (buffer.get(0) > 0x20) {
                 return parseErrorText();
             } else {
                 result.setIppStatusResponse(getIPPHeader());
-                ippHeaderResponse = true;
             }
         }
 

@@ -22,12 +22,12 @@ public class AttributeGroup {
 
     @Setter
     @Getter
-    @org.simpleframework.xml.Attribute(required = true)
+    @org.simpleframework.xml.Attribute
     protected String tag;
 
     @Setter
     @Getter
-    @org.simpleframework.xml.Attribute(name = "tag-name", required = true)
+    @org.simpleframework.xml.Attribute(name = "tag-name")
     protected String tagName;
 
     @Setter
@@ -57,7 +57,7 @@ public class AttributeGroup {
      */
     public List<Attribute> getAttribute() {
         if (attribute == null) {
-            attribute = new ArrayList<Attribute>();
+            attribute = new ArrayList<>();
         }
         return this.attribute;
     }

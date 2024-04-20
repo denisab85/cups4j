@@ -72,7 +72,7 @@ public class IppCreateJobOperationTest extends AbstractIppOperationTest {
 
     @Test
     public void testGetIppHeaderWithJobName() throws UnsupportedEncodingException {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("job-name", "Test-Job");
         ByteBuffer buffer = operation.getIppHeader(createURL("http://localhost:631/test-printer"), map);
         checkAttribute(buffer, "job-name", "Test-Job");

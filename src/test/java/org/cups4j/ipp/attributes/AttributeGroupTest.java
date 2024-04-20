@@ -19,7 +19,7 @@ public final class AttributeGroupTest {
 
     @Test
     public void testGetAttribute() {
-        attributeGroup.attribute = new ArrayList<Attribute>();
+        attributeGroup.attribute = new ArrayList<>();
         attributeGroup.attribute.add(createAttribute("hello"));
         attributeGroup.attribute.add(createAttribute("world"));
         assertEquals(2, attributeGroup.getAttribute().size());

@@ -24,7 +24,6 @@ import org.simpleframework.xml.Serializer;
 import org.simpleframework.xml.core.Persister;
 
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -32,9 +31,9 @@ public class IppAttributeProvider implements IIppAttributeProvider {
 
     private static final IppAttributeProvider INSTANCE = new IppAttributeProvider();
 
-    private List<Tag> tagList = new ArrayList<Tag>();
+    private final List<Tag> tagList;
 
-    private List<AttributeGroup> attributeGroupList = new ArrayList<AttributeGroup>();
+    private final List<AttributeGroup> attributeGroupList;
 
     private IppAttributeProvider() {
         try {

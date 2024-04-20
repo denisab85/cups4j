@@ -61,7 +61,7 @@ public class IppCreateJobOperation extends IppOperation {
     }
 
     private static Map<String, String> createAttributeMap() {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         map.put("requesting-user-name", CupsClient.DEFAULT_USER);
         return map;
     }
@@ -146,12 +146,10 @@ public class IppCreateJobOperation extends IppOperation {
 
         if (map.get("requested-attributes") != null) {
             String[] sta = map.get("requested-attributes").split(" ");
-            if (sta != null) {
-                ippBuf = IppTag.getKeyword(ippBuf, "requested-attributes", sta[0]);
-                int l = sta.length;
-                for (int i = 1; i < l; i++) {
-                    ippBuf = IppTag.getKeyword(ippBuf, null, sta[i]);
-                }
+            ippBuf = IppTag.getKeyword(ippBuf, "requested-attributes", sta[0]);
+            int l = sta.length;
+            for (int i = 1; i < l; i++) {
+                ippBuf = IppTag.getKeyword(ippBuf, null, sta[i]);
             }
         }
 

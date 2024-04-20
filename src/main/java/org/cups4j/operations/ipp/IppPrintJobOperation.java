@@ -60,7 +60,7 @@ public class IppPrintJobOperation extends IppOperation {
         int l = attributeBlocks.length;
         for (int i = 0; i < l; i++) {
             String[] attr = attributeBlocks[i].split(":");
-            if ((attr == null) || (attr.length != 3)) {
+            if (attr.length != 3) {
                 return ippBuf;
             }
             String name = attr[0];
@@ -109,7 +109,7 @@ public class IppPrintJobOperation extends IppOperation {
                 String[] resolution = value.split(",");
                 int value1 = Integer.parseInt(resolution[0]);
                 int value2 = Integer.parseInt(resolution[1]);
-                byte value3 = Byte.valueOf(resolution[2]);
+                byte value3 = Byte.parseByte(resolution[2]);
                 ippBuf = IppTag.getResolution(ippBuf, name, value1, value2, value3);
             }
         }

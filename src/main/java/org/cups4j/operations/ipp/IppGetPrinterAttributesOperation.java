@@ -38,9 +38,7 @@ public class IppGetPrinterAttributesOperation extends IppOperation {
     }
 
     /**
-     *
-     * @param url
-     *          printer-uri
+     * @param url printer-uri
      * @return IPP header
      * @throws UnsupportedEncodingException
      */
@@ -49,11 +47,9 @@ public class IppGetPrinterAttributesOperation extends IppOperation {
     }
 
     /**
-     * @param url
-     *          printer-uri
-     * @param map
-     *          attributes i.e.
-     *          requesting-user-name,requested-attributes,document-format
+     * @param url printer-uri
+     * @param map attributes i.e.
+     *            requesting-user-name,requested-attributes,document-format
      * @return IPP header
      * @throws UnsupportedEncodingException
      */
@@ -73,12 +69,10 @@ public class IppGetPrinterAttributesOperation extends IppOperation {
         ippBuf = IppTag.getNameWithoutLanguage(ippBuf, "requesting-user-name", map.get("requesting-user-name"));
         if (map.get("requested-attributes") != null) {
             String[] sta = map.get("requested-attributes").split(" ");
-            if (sta != null) {
-                ippBuf = IppTag.getKeyword(ippBuf, "requested-attributes", sta[0]);
-                int l = sta.length;
-                for (int i = 1; i < l; i++) {
-                    ippBuf = IppTag.getKeyword(ippBuf, null, sta[i]);
-                }
+            ippBuf = IppTag.getKeyword(ippBuf, "requested-attributes", sta[0]);
+            int l = sta.length;
+            for (int i = 1; i < l; i++) {
+                ippBuf = IppTag.getKeyword(ippBuf, null, sta[i]);
             }
         }
 

@@ -39,8 +39,6 @@ public final class CupsPrinterTest {
         String name = System.getProperty("printer", new CupsClient().getDefaultPrinter().getName());
         if (name == null) {
             log.info("To specify printer please set system property 'printer'.");
-        } else {
-
         }
         return getPrinter(name);
     }

@@ -49,7 +49,7 @@ public abstract class AbstractIppOperationTest {
     }
 
     protected static Map<String, String> setUpAttributes() {
-        Map<String, String> attributes = new HashMap<String, String>();
+        Map<String, String> attributes = new HashMap<>();
         attributes.put("requested-attributes", "copies-supported page-ranges-supported printer-name " +
                 "printer-info printer-location printer-make-and-model printer-uri-supported media-supported " +
                 "media-default sides-supported sides-default orientation-requested-supported " +

@@ -39,7 +39,7 @@ public class IppSendDocumentOperationTest extends AbstractIppOperationTest {
 
     private static void checkIppRequest(byte[] header) throws IOException {
         IppResult ippResult = new IppResponse().getResponse(ByteBuffer.wrap(header));
-        Set<String> groupTagNames = new HashSet<String>();
+        Set<String> groupTagNames = new HashSet<>();
         for (AttributeGroup group : ippResult.getAttributeGroupList()) {
             String tagName = group.getTagName();
             assertThat("duplicate tag name", groupTagNames, not(hasItem(tagName)));
@@ -58,7 +58,7 @@ public class IppSendDocumentOperationTest extends AbstractIppOperationTest {
     }
 
     private static void checkAttributeGroupList(AttributeGroup ref, AttributeGroup attributeGroup) {
-        Set<String> attributeNames = new HashSet<String>();
+        Set<String> attributeNames = new HashSet<>();
         for (Attribute attr : attributeGroup.getAttribute()) {
             attributeNames.add(attr.getName());
         }
@@ -153,7 +153,7 @@ public class IppSendDocumentOperationTest extends AbstractIppOperationTest {
     }
 
     private void checkRequest(CupsPrinter printer, URL printerURL) throws Exception {
-        Map<String, String> attributes = new HashMap<String, String>();
+        Map<String, String> attributes = new HashMap<>();
         attributes.put("job-attributes", "copies:integer:1#orientation-requested:enum:3#output-mode:keyword:monochrome");
         attributes.put("job-name", "testosteron");
         attributes.put("requesting-user-name", "oboehm");
