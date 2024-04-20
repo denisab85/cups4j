@@ -134,7 +134,6 @@ public class CupsPrinter {
         IppPrintJobOperation command = new IppPrintJobOperation(printerURL.getPort());
         IppResult ippResult = command.request(this, printerURL, attributes, document, creds);
         PrintRequestResult result = new PrintRequestResult(ippResult);
-        // IppResultPrinter.print(result);
 
         for (AttributeGroup group : ippResult.getAttributeGroupList()) {
             if (group.getTagName().equals("job-attributes-tag")) {

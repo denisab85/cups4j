@@ -61,7 +61,6 @@ public class IppHoldJobOperation extends IppOperation {
 
         ByteBuffer ippBuf = ByteBuffer.allocateDirect(bufferSize);
         ippBuf = IppTag.getOperation(ippBuf, operationID);
-        // ippBuf = IppTag.getUri(ippBuf, "job-uri", stripPortNumber(url));
 
         if (map == null) {
             ippBuf = IppTag.getEnd(ippBuf);
@@ -107,7 +106,6 @@ public class IppHoldJobOperation extends IppOperation {
         map.put("job-uri", url.toString());
 
         IppResult result = request(printer, url, map, creds);
-        // IppResultPrinter.print(result);
 
         return new PrintRequestResult(result).isSuccessfulResult();
     }

@@ -92,8 +92,7 @@ public class IppPrintJobOperation extends IppOperation {
                             value2 = Integer.parseInt(values[1]);
                         }
 
-                        // first attribute value needs name, additional values need to get the
-                        // "null" name
+                        // first attribute value needs name, additional values need to get the "null" name
                         ippBuf = IppTag.getRangeOfInteger(ippBuf, name, value1, value2);
                         name = null;
                     }

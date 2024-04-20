@@ -97,14 +97,10 @@ public class IppGetJobAttributesOperation extends IppOperation {
         PrintJobAttributes job = null;
 
         Map<String, String> map = new HashMap<>();
-        // map.put("requested-attributes",
-        // "page-ranges print-quality sides job-uri job-id job-state job-printer-uri job-name job-originating-user-name job-k-octets time-at-creation time-at-processing time-at-completed job-media-sheets-completed");
-
         map.put("requested-attributes", "all");
         map.put("requesting-user-name", userName);
         IppResult result = request(null, new URL("http://" + hostname + "/jobs/" + jobID), map, creds);
 
-        // IppResultPrinter.print(result);
         for (AttributeGroup group : result.getAttributeGroupList()) {
             if ("job-attributes-tag".equals(group.getTagName()) || "unassigned".equals(group.getTagName())) {
                 if (job == null) {
@@ -151,8 +147,6 @@ public class IppGetJobAttributesOperation extends IppOperation {
                 }
             }
         }
-
-        // IppResultPrinter.print(result);
         return job;
     }
 

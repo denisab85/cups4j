@@ -106,8 +106,6 @@ public class IppGetJobsOperation extends IppOperation {
 
         IppResult result = request(printer, printer.getPrinterURL(), map, creds);
 
-        // IppResultPrinter.print(result);
-
         for (AttributeGroup group : result.getAttributeGroupList()) {
             if ("job-attributes-tag".equals(group.getTagName())) {
                 jobAttributes = new PrintJobAttributes();

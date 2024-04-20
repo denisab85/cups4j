@@ -60,7 +60,6 @@ public class CupsMoveJobOperation extends IppOperation {
 
         ByteBuffer ippBuf = ByteBuffer.allocateDirect(bufferSize);
         ippBuf = IppTag.getOperation(ippBuf, operationID);
-        // ippBuf = IppTag.getUri(ippBuf, "job-uri", stripPortNumber(url));
 
         if (map == null) {
             ippBuf = IppTag.getEnd(ippBuf);
@@ -97,19 +96,12 @@ public class CupsMoveJobOperation extends IppOperation {
     public boolean moveJob(CupsPrinter printer, String hostname, String userName, int jobID,
                            URL targetPrinterURL, CupsAuthentication creds) throws Exception {
         Map<String, String> map = new HashMap<>();
-
-        if (userName == null) {
-            userName = CupsClient.DEFAULT_USER;
-        }
-        map.put("requesting-user-name", userName);
-
+        map.put("requesting-user-name", userName == null ? CupsClient.DEFAULT_USER : userName);
         URL url = new URL("http://" + hostname + "/jobs/" + jobID);
         map.put("job-uri", url.toString());
-
         map.put("target-printer-uri", stripPortNumber(targetPrinterURL));
 
         IppResult result = request(printer, url, map, creds);
-        // IppResultPrinter.print(result);
         return new PrintRequestResult(result).isSuccessfulResult();
     }
 

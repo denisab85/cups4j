@@ -42,7 +42,6 @@ public class PrinterAttributes {
             for (CupsPrinter p : printers) {
                 IppGetPrinterAttributesOperation o = new IppGetPrinterAttributesOperation();
                 IppResult result = o.request(p, p.getPrinterURL(), map, new CupsAuthentication("anonymous", "anonymous"));
-                // IppResultPrinter.print(result);
                 addPrinterPanel(p.getName(), result);
             }
 

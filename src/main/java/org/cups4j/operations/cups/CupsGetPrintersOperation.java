@@ -52,10 +52,8 @@ public class CupsGetPrintersOperation extends IppOperation {
         List<CupsPrinter> printers = new ArrayList<>();
 
         Map<String, String> map = new HashMap<>();
-        map.put(
-                "requested-attributes",
+        map.put("requested-attributes",
                 "copies-supported page-ranges-supported printer-name printer-info printer-state printer-location printer-make-and-model printer-uri-supported media-supported media-default sides-supported sides-default orientation-requested-supported printer-resolution-supported printer printer-resolution-default number-up-default number-up-supported document-format-supported print-color-mode-supported print-color-mode-default device-uri");
-        // map.put("requested-attributes", "all");
         this.ippPort = port;
 
         IppResult result = request(null, new URL("http://" + hostname + ':' + port + "/printers"), map, creds);
