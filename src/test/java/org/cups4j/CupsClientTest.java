@@ -2,9 +2,9 @@ package org.cups4j;
 
 import cups4j.TestCups;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
 import org.cups4j.operations.IppHttp;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,7 +49,7 @@ public class CupsClientTest {
         ippHttpMockedStatic.when(IppHttp::createHttpClient).thenReturn(closeableHttpClientMocked);
         InputStream stream = getClass().getResourceAsStream("/ipp/IppResponsePrinters.bin");
         doReturn(IOUtils.toByteArray(stream))
-                .when(closeableHttpClientMocked).execute(any(HttpPost.class), any(ResponseHandler.class));
+                .when(closeableHttpClientMocked).execute(any(HttpPost.class), any(HttpClientResponseHandler.class));
     }
 
     @Test

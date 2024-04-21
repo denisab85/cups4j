@@ -21,12 +21,12 @@ import ch.ethz.vppserver.ippclient.IppResponse;
 import ch.ethz.vppserver.ippclient.IppResult;
 import ch.ethz.vppserver.ippclient.IppTag;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpEntity;
-import org.apache.http.StatusLine;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.entity.InputStreamEntity;
 import org.cups4j.CupsAuthentication;
 import org.cups4j.CupsClient;
 import org.cups4j.CupsPrinter;
@@ -78,9 +78,7 @@ public class IppCreateJobOperation extends IppOperation {
 
         try (ByteArrayInputStream headerStream = new ByteArrayInputStream(bytes)) {
             // set length to -1 to advice the entity to read until EOF
-            InputStreamEntity requestEntity = new InputStreamEntity(headerStream, -1);
-
-            requestEntity.setContentType(IPP_MIME_TYPE);
+            InputStreamEntity requestEntity = new InputStreamEntity(headerStream, -1, IPP_MIME_TYPE);
             httpPost.setEntity(requestEntity);
             try (CloseableHttpResponse httpResponse = client.execute(httpPost)) {
                 result = toIppResult(httpResponse);
@@ -94,9 +92,8 @@ public class IppCreateJobOperation extends IppOperation {
         try {
             IppResponse ippResponse = new IppResponse();
             IppResult ippResult = ippResponse.getResponse(read(httpResponse.getEntity()));
-            StatusLine statusLine = httpResponse.getStatusLine();
-            ippResult.setHttpStatusResponse(statusLine.getReasonPhrase());
-            ippResult.setHttpStatusCode(statusLine.getStatusCode());
+            ippResult.setHttpStatusResponse(httpResponse.getReasonPhrase());
+            ippResult.setHttpStatusCode(httpResponse.getCode());
             return ippResult;
         } finally {
             try {

@@ -1,12 +1,17 @@
 package org.cups4j.operations;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.http.HttpHeaders;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
-import org.apache.http.impl.client.HttpClientBuilder;
+import lombok.experimental.UtilityClass;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.config.ConnectionConfig;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.DefaultHttpRequestRetryStrategy;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.utils.Base64;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.util.Timeout;
 import org.cups4j.CupsAuthentication;
 import org.cups4j.CupsPrinter;
 
@@ -14,26 +19,33 @@ import java.nio.charset.StandardCharsets;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
+@UtilityClass
 public final class IppHttp {
 
     private static final int MAX_CONNECTION_BUFFER = 20;
 
-    private static final int CUPSTIMEOUT = Integer.parseInt(System.getProperty("cups4j.timeout", "10000"));
+    public static final Timeout CUPS_TIMEOUT = Timeout.ofMilliseconds(Integer.parseInt(System.getProperty("cups4j.timeout", "10000")));
 
-    private static final RequestConfig requestConfig = RequestConfig.custom()
-            .setSocketTimeout(CUPSTIMEOUT).setConnectTimeout(CUPSTIMEOUT)
-            .build();
+    private static final RequestConfig requestConfig = RequestConfig.custom().setResponseTimeout(CUPS_TIMEOUT).build();
 
-    private static final CloseableHttpClient client = HttpClientBuilder.create()
-            .disableCookieManagement()
-            .disableRedirectHandling()
-            .evictExpiredConnections()
-            .setMaxConnPerRoute(MAX_CONNECTION_BUFFER)
-            .setMaxConnTotal(MAX_CONNECTION_BUFFER)
-            .setRetryHandler(new DefaultHttpRequestRetryHandler())
-            .build();
+    private static final CloseableHttpClient client;
 
-    private IppHttp() {
+    static {
+        PoolingHttpClientConnectionManager connectionManager = PoolingHttpClientConnectionManagerBuilder.create()
+                .setMaxConnPerRoute(MAX_CONNECTION_BUFFER)
+                .setMaxConnTotal(MAX_CONNECTION_BUFFER)
+                .setDefaultConnectionConfig(ConnectionConfig.custom()
+                        .setConnectTimeout(CUPS_TIMEOUT)
+                        .setSocketTimeout(CUPS_TIMEOUT)
+                        .build())
+                .build();
+        client = HttpClients.custom()
+                .disableRedirectHandling()
+                .disableCookieManagement()
+                .setConnectionManager(connectionManager)
+                .evictExpiredConnections()
+                .setRetryStrategy(DefaultHttpRequestRetryStrategy.INSTANCE)
+                .build();
     }
 
     public static CloseableHttpClient createHttpClient() {

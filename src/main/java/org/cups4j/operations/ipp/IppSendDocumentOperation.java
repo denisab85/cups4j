@@ -22,12 +22,16 @@ import ch.ethz.vppserver.ippclient.IppResult;
 import ch.ethz.vppserver.ippclient.IppTag;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.config.ConnectionConfig;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.core5.http.io.entity.InputStreamEntity;
+import org.apache.hc.core5.http.message.StatusLine;
 import org.cups4j.CupsAuthentication;
 import org.cups4j.CupsClient;
 import org.cups4j.CupsPrinter;
@@ -45,6 +49,7 @@ import java.util.Map;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import static org.cups4j.operations.IppHttp.CUPS_TIMEOUT;
 
 /**
  * The class IppSendDocumentOperation represents the operation for sending
@@ -75,12 +80,12 @@ public class IppSendDocumentOperation extends IppPrintJobOperation {
             byte[] result = IOUtils.toByteArray(istream);
             IppResponse ippResponse = new IppResponse();
             IppResult ippResult = ippResponse.getResponse(ByteBuffer.wrap(result));
-            ippResult.setHttpStatusCode(httpResponse.getStatusLine().getStatusCode());
+            ippResult.setHttpStatusCode(httpResponse.getCode());
             if (ippResult.getHttpStatusCode() == 426) {
                 ippResult.setHttpStatusResponse(new String(result));
                 log.warn("Received {} after send-document.", ippResult);
             } else {
-                ippResult.setHttpStatusResponse(httpResponse.getStatusLine().toString());
+                ippResult.setHttpStatusResponse(new StatusLine(httpResponse).toString());
             }
             return ippResult;
         }
@@ -257,19 +262,26 @@ public class IppSendDocumentOperation extends IppPrintJobOperation {
     private IppResult sendRequest(CupsPrinter printer, URI uri, ByteBuffer ippBuf,
                                   InputStream documentStream, CupsAuthentication creds) throws IOException {
         HttpPost httpPost = new HttpPost(uri);
-        httpPost.setConfig(RequestConfig.custom().setSocketTimeout(10000).setConnectTimeout(10000).build());
+
+        httpPost.setConfig(RequestConfig.custom().setResponseTimeout(CUPS_TIMEOUT).build());
 
         byte[] bytes = new byte[ippBuf.limit()];
         ippBuf.get(bytes);
         ByteArrayInputStream headerStream = new ByteArrayInputStream(bytes);
 
         InputStream inputStream = new SequenceInputStream(headerStream, documentStream);
-        InputStreamEntity requestEntity = new InputStreamEntity(inputStream, -1);
-        requestEntity.setContentType(IPP_MIME_TYPE);
+        InputStreamEntity requestEntity = new InputStreamEntity(inputStream, -1, IPP_MIME_TYPE);
         httpPost.setEntity(requestEntity);
         IppHttp.setHttpHeaders(httpPost, printer, creds);
 
-        try (CloseableHttpClient client = HttpClients.custom().build();
+        ConnectionConfig config = ConnectionConfig.custom()
+                .setConnectTimeout(CUPS_TIMEOUT)
+                .setSocketTimeout(CUPS_TIMEOUT)
+                .build();
+        PoolingHttpClientConnectionManager connectionManager = PoolingHttpClientConnectionManagerBuilder.create()
+                .setDefaultConnectionConfig(config)
+                .build();
+        try (CloseableHttpClient client = HttpClients.custom().setConnectionManager(connectionManager).build();
              CloseableHttpResponse httpResponse = client.execute(httpPost)) {
             log.debug("Received from {}: {}", uri, httpResponse);
             return getIppResult(httpResponse);

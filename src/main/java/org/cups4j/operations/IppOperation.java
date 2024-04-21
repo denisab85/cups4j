@@ -19,12 +19,14 @@ import ch.ethz.vppserver.ippclient.IppResponse;
 import ch.ethz.vppserver.ippclient.IppResult;
 import ch.ethz.vppserver.ippclient.IppTag;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.InputStreamEntity;
+import org.apache.hc.core5.http.message.StatusLine;
 import org.cups4j.CupsAuthentication;
 import org.cups4j.CupsClient;
 import org.cups4j.CupsPrinter;
@@ -38,7 +40,7 @@ import java.util.Map;
 
 @Slf4j
 public abstract class IppOperation {
-    protected final static String IPP_MIME_TYPE = "application/ipp";
+    protected final static ContentType IPP_MIME_TYPE = ContentType.create("application/ipp");
     protected short operationID = -1; // IPP operation ID
     protected short bufferSize = 8192; // BufferSize for this operation
     protected int ippPort = CupsClient.DEFAULT_PORT;
@@ -171,10 +173,10 @@ public abstract class IppOperation {
         ippHttpResult = new IppHttpResult();
         ippHttpResult.setStatusCode(-1);
 
-        ResponseHandler<byte[]> handler = response -> {
+        HttpClientResponseHandler<byte[]> handler = response -> {
             HttpEntity entity = response.getEntity();
-            ippHttpResult.setStatusLine(response.getStatusLine().toString());
-            ippHttpResult.setStatusCode(response.getStatusLine().getStatusCode());
+            ippHttpResult.setStatusLine(new StatusLine(response).toString());
+            ippHttpResult.setStatusCode(response.getCode());
             if (entity != null) {
                 return EntityUtils.toByteArray(entity);
             } else {
@@ -203,10 +205,7 @@ public abstract class IppOperation {
         }
 
         // set length to -1 to advice the entity to read until EOF
-        InputStreamEntity requestEntity = new InputStreamEntity(inputStream, -1);
-
-        requestEntity.setContentType(IPP_MIME_TYPE);
-        return requestEntity;
+        return new InputStreamEntity(inputStream, -1, IPP_MIME_TYPE);
     }
 
     protected String getAttributeValue(Attribute attr) {

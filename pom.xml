@@ -56,6 +56,7 @@
         <jgoodies-forms.version>1.7.1</jgoodies-forms.version>
         <commons-io.version>2.7</commons-io.version>
         <httpclient.version>4.5.13</httpclient.version>
+        <httpclient5.version>5.3.1</httpclient5.version>
         <simple-xml.version>2.7.1</simple-xml.version>
         <commons-collections4.version>4.4</commons-collections4.version>
     </properties>
@@ -68,9 +69,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>${httpclient.version}</version>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>${httpclient5.version}</version>
         </dependency>
 
         <dependency>
