@@ -22,10 +22,8 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 @UtilityClass
 public final class IppHttp {
 
-    private static final int MAX_CONNECTION_BUFFER = 20;
-
     public static final Timeout CUPS_TIMEOUT = Timeout.ofMilliseconds(Integer.parseInt(System.getProperty("cups4j.timeout", "10000")));
-
+    private static final int MAX_CONNECTION_BUFFER = 20;
     private static final RequestConfig requestConfig = RequestConfig.custom().setResponseTimeout(CUPS_TIMEOUT).build();
 
     private static final CloseableHttpClient client;

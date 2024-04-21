@@ -60,6 +60,19 @@ public abstract class IppOperation {
         return protocol + "://" + url.getHost() + url.getPath();
     }
 
+    private static InputStreamEntity getInputStreamEntity(InputStream documentStream, byte[] bytes) {
+        ByteArrayInputStream headerStream = new ByteArrayInputStream(bytes);
+
+        // If we need to send a document, concatenate InputStreams
+        InputStream inputStream = headerStream;
+        if (documentStream != null) {
+            inputStream = new SequenceInputStream(headerStream, documentStream);
+        }
+
+        // set length to -1 to advice the entity to read until EOF
+        return new InputStreamEntity(inputStream, -1, IPP_MIME_TYPE);
+    }
+
     /**
      * Gets the IPP header
      *
@@ -193,19 +206,6 @@ public abstract class IppOperation {
         ippResult.setHttpStatusCode(ippHttpResult.getStatusCode());
 
         return ippResult;
-    }
-
-    private static InputStreamEntity getInputStreamEntity(InputStream documentStream, byte[] bytes) {
-        ByteArrayInputStream headerStream = new ByteArrayInputStream(bytes);
-
-        // If we need to send a document, concatenate InputStreams
-        InputStream inputStream = headerStream;
-        if (documentStream != null) {
-            inputStream = new SequenceInputStream(headerStream, documentStream);
-        }
-
-        // set length to -1 to advice the entity to read until EOF
-        return new InputStreamEntity(inputStream, -1, IPP_MIME_TYPE);
     }
 
     protected String getAttributeValue(Attribute attr) {
