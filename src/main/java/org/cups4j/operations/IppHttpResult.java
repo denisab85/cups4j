@@ -1,25 +1,14 @@
 package org.cups4j.operations;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 class IppHttpResult {
-	
-	private String statusLine;
-	
-	private int statusCode;
 
-	public String getStatusLine() {
-		return statusLine;
-	}
+    private String statusLine;
 
-	public void setStatusLine(String statusLine) {
-		this.statusLine = statusLine;
-	}
+    private int statusCode;
 
-	public int getStatusCode() {
-		return statusCode;
-	}
-
-	public void setStatusCode(int statusCode) {
-		this.statusCode = statusCode;
-	}
-	
 }

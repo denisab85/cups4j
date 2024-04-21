@@ -1,32 +1,24 @@
 package org.cups4j.ipp.attributes;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.simpleframework.xml.Attribute;
-import org.simpleframework.xml.ElementList;
-import org.simpleframework.xml.Root;
-
-@Root(name = "tag-list")
+@Getter
+@JacksonXmlRootElement(localName = "tag-list")
 public class TagList {
-  @Attribute
-  protected String schemaLocation;
-  @ElementList(entry = "tag", inline = true, required = true)
-  protected List<Tag> tag;
 
-  public List<Tag> getTag() {
-    if (tag == null) {
-      tag = new ArrayList<Tag>();
-    }
-    return this.tag;
-  }
+    @JacksonXmlProperty(localName = "tag")
+    @JacksonXmlElementWrapper(useWrapping = false)
+    protected List<Tag> tags = new ArrayList<>();
 
-  public String getSchemaLocation() {
-    return schemaLocation;
-  }
-
-  public void setSchemaLocation(String schemaLocation) {
-    this.schemaLocation = schemaLocation;
-  }
+    @Setter
+    @JacksonXmlProperty(isAttribute = true)
+    protected String schemaLocation;
 
 }

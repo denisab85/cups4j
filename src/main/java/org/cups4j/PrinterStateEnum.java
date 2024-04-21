@@ -1,47 +1,40 @@
 package org.cups4j;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+import java.util.Arrays;
+
+@Getter
+@RequiredArgsConstructor
 public enum PrinterStateEnum {
-    IDLE(3, "idle"), PRINTING(4, "printing"), STOPPED(5, "stopped");
+    IDLE(3, "idle"),
+    PRINTING(4, "printing"),
+    STOPPED(5, "stopped");
 
-    private Integer value;
-    private String stateName;
+    private final Integer value;
+    private final String stateName;
 
-    PrinterStateEnum(Integer value, String stateName) {
-        this.value = value;
-        this.stateName = stateName;
+
+    public static PrinterStateEnum fromInteger(Integer value) {
+        return value == null ? null :
+                Arrays.stream(PrinterStateEnum.values())
+                        .filter(printerState -> value.equals(printerState.getValue()))
+                        .findFirst()
+                        .orElse(null);
+    }
+
+    public static PrinterStateEnum fromStringInteger(String value) {
+        return value == null ? null :
+                Arrays.stream(PrinterStateEnum.values())
+                        .filter(printerState -> value.equalsIgnoreCase(printerState.getValue().toString()))
+                        .findFirst()
+                        .orElse(null);
     }
 
     @Override
     public String toString() {
-        return this.stateName;
-    }
-
-    public Integer getValue() {
-        return value;
-    }
-    public String getStateName() {
         return stateName;
     }
 
-    public static PrinterStateEnum fromInteger(Integer value) {
-        if (value != null) {
-            for (PrinterStateEnum printerState : PrinterStateEnum.values()) {
-                if (value == printerState.getValue()) {
-                    return printerState;
-                }
-            }
-        }
-        return null;
-    }
-
-    public static PrinterStateEnum fromStringInteger(String value) {
-        if (value != null) {
-            for (PrinterStateEnum printerState : PrinterStateEnum.values()) {
-                if (value.equalsIgnoreCase(printerState.getValue().toString())) {
-                    return printerState;
-                }
-            }
-        }
-        return null;
-    }
 }

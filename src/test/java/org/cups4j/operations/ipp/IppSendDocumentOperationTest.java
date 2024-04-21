@@ -2,15 +2,14 @@ package org.cups4j.operations.ipp;
 
 import ch.ethz.vppserver.ippclient.IppResponse;
 import ch.ethz.vppserver.ippclient.IppResult;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.cups4j.CupsPrinter;
 import org.cups4j.CupsPrinterTest;
 import org.cups4j.ipp.attributes.Attribute;
 import org.cups4j.ipp.attributes.AttributeGroup;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -24,7 +23,8 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit-Tests fuer {@link IppSendDocumentOperation}-Klasse.
@@ -32,10 +32,48 @@ import static org.junit.Assert.*;
  * @author oboehm
  * @since 0.7.2 (23.03.2018)
  */
+@Slf4j
 public class IppSendDocumentOperationTest extends AbstractIppOperationTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(IppSendDocumentOperationTest.class);
     private final IppSendDocumentOperation operation = new IppSendDocumentOperation(4711);
+
+    private static void checkIppRequest(byte[] header) throws IOException {
+        IppResult ippResult = new IppResponse().getResponse(ByteBuffer.wrap(header));
+        Set<String> groupTagNames = new HashSet<>();
+        for (AttributeGroup group : ippResult.getAttributeGroupList()) {
+            String tagName = group.getTagName();
+            assertThat("duplicate tag name", groupTagNames, not(hasItem(tagName)));
+            groupTagNames.add(tagName);
+        }
+    }
+
+    private static void checkIppRequestAttributes(byte[] header) throws IOException {
+        IppResponse ippResponse = new IppResponse();
+        IppResult ippResult = new IppResponse().getResponse(ByteBuffer.wrap(header));
+        IppResult ref = ippResponse.getResponse(
+                ByteBuffer.wrap(FileUtils.readFileToByteArray(new File("src/test/resources/ipp/Send-Document.ipp"))));
+        for (AttributeGroup group : ref.getAttributeGroupList()) {
+            checkAttributeGroupList(group, ippResult.getAttributeGroup(group.getTagName()));
+        }
+    }
+
+    private static void checkAttributeGroupList(AttributeGroup ref, AttributeGroup attributeGroup) {
+        Set<String> attributeNames = new HashSet<>();
+        for (Attribute attr : attributeGroup.getAttributes()) {
+            attributeNames.add(attr.getName());
+        }
+        for (Attribute attr : ref.getAttributes()) {
+            if (!attributeNames.contains(attr.getName())) {
+                fail("attribute '" + attr.getName() + "' is missing in " + attributeGroup);
+            }
+        }
+    }
+
+    private static byte[] toByteArray(ByteBuffer buffer) {
+        byte[] bytes = new byte[buffer.limit()];
+        buffer.get(bytes);
+        return bytes;
+    }
 
     /**
      * This is only a basic test to see if the operation tag is set coorect.
@@ -81,46 +119,13 @@ public class IppSendDocumentOperationTest extends AbstractIppOperationTest {
         byte[] header = toByteArray(buffer);
         IppResult ippResult = new IppResponse().getResponse(ByteBuffer.wrap(header));
         AttributeGroup group = ippResult.getAttributeGroupList().get(0);
-        Attribute attribute = group.getAttribute("last-document");
+        Attribute attribute = group.getAttributes("last-document");
         assertNotNull(attribute);
         assertEquals("true", attribute.getValue());
     }
 
-    private static void checkIppRequest(byte[] header) throws IOException {
-        IppResult ippResult = new IppResponse().getResponse(ByteBuffer.wrap(header));
-        Set<String> groupTagNames = new HashSet<String>();
-        for (AttributeGroup group : ippResult.getAttributeGroupList()) {
-            String tagName = group.getTagName();
-            assertThat("duplicate tag name", groupTagNames, not(hasItem(tagName)));
-            groupTagNames.add(tagName);
-        }
-    }
-
-    private static void checkIppRequestAttributes(byte[] header) throws IOException {
-        IppResponse ippResponse = new IppResponse();
-        IppResult ippResult = new IppResponse().getResponse(ByteBuffer.wrap(header));
-        IppResult ref = ippResponse.getResponse(
-                ByteBuffer.wrap(FileUtils.readFileToByteArray(new File("src/test/resources/ipp/Send-Document.ipp"))));
-        for (AttributeGroup group : ref.getAttributeGroupList()) {
-            checkAttributeGroupList(group, ippResult.getAttributeGroup(group.getTagName()));
-        }
-    }
-
-    private static void checkAttributeGroupList(AttributeGroup ref, AttributeGroup attributeGroup) {
-        Set<String> attributeNames = new HashSet<String>();
-        for (Attribute attr : attributeGroup.getAttribute()) {
-            attributeNames.add(attr.getName());
-        }
-        for (Attribute attr : ref.getAttribute()) {
-            if (!attributeNames.contains(attr.getName())) {
-                fail("attribute '" + attr.getName() + "' is missing in " + attributeGroup);
-            }
-        }
-    }
-
     /**
-     * We should see the login user in the header. Otherwise we may get a
-     * 401-response (forbidden).
+     * We should see the login user in the header. Otherwise, we may get a 401-response (forbidden).
      *
      * @throws UnsupportedEncodingException in case of encoding problemss
      */
@@ -134,26 +139,20 @@ public class IppSendDocumentOperationTest extends AbstractIppOperationTest {
         assertThat(new String(header), containsString(user));
     }
 
-    private static byte[] toByteArray(ByteBuffer buffer) {
-        byte[] bytes = new byte[buffer.limit()];
-        buffer.get(bytes);
-        return bytes;
-    }
-
     @Test
-    @Ignore
+    @Disabled
     public void testRequest() throws Exception {
         CupsPrinter printer = CupsPrinterTest.getPrinter();
         if (printer == null) {
-            LOG.info("You must set system property 'printer' to activate this test!");
-            LOG.info("testRequest() is SKIPPED.");
+            log.info("You must set system property 'printer' to activate this test!");
+            log.info("testRequest() is SKIPPED.");
         } else {
             checkRequest(printer, printer.getPrinterURL());
         }
     }
 
     private void checkRequest(CupsPrinter printer, URL printerURL) throws Exception {
-        Map<String, String> attributes = new HashMap<String, String>();
+        Map<String, String> attributes = new HashMap<>();
         attributes.put("job-attributes", "copies:integer:1#orientation-requested:enum:3#output-mode:keyword:monochrome");
         attributes.put("job-name", "testosteron");
         attributes.put("requesting-user-name", "oboehm");
