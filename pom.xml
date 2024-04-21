@@ -53,12 +53,12 @@
         <hamcrest.version>2.2</hamcrest.version>
         <junit-jupiter-api.version>5.10.2</junit-jupiter-api.version>
         <commons-lang.version>2.6</commons-lang.version>
-        <jgoodies-forms.version>1.7.1</jgoodies-forms.version>
-        <commons-io.version>2.7</commons-io.version>
-        <httpclient.version>4.5.13</httpclient.version>
+        <jgoodies-forms.version>1.9.0</jgoodies-forms.version>
+        <commons-io.version>2.16.1</commons-io.version>
         <httpclient5.version>5.3.1</httpclient5.version>
         <simple-xml.version>2.7.1</simple-xml.version>
         <commons-collections4.version>4.4</commons-collections4.version>
+        <lombok.version>1.18.32</lombok.version>
     </properties>
 
     <dependencies>
@@ -95,17 +95,16 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.32</version>
+            <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.jgoodies/jgoodies-forms -->
         <dependency>
             <groupId>com.jgoodies</groupId>
             <artifactId>jgoodies-forms</artifactId>
             <version>${jgoodies-forms.version}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/commons-lang/commons-lang -->
+
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
