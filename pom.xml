@@ -56,16 +56,16 @@
         <jgoodies-forms.version>1.9.0</jgoodies-forms.version>
         <commons-io.version>2.16.1</commons-io.version>
         <httpclient5.version>5.3.1</httpclient5.version>
-        <simple-xml.version>2.7.1</simple-xml.version>
         <commons-collections4.version>4.4</commons-collections4.version>
         <lombok.version>1.18.32</lombok.version>
+        <jackson-dataformat-xml.version>2.17.0</jackson-dataformat-xml.version>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>org.simpleframework</groupId>
-            <artifactId>simple-xml</artifactId>
-            <version>${simple-xml.version}</version>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
+            <version>${jackson-dataformat-xml.version}</version>
         </dependency>
 
         <dependency>

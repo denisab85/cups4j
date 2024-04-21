@@ -1,22 +1,22 @@
 package org.cups4j.ipp.attributes;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import lombok.Getter;
 import lombok.Setter;
-import org.simpleframework.xml.Attribute;
-import org.simpleframework.xml.Root;
 
 @Getter
 @Setter
-@Root(name = "enum")
+@JacksonXmlRootElement(localName = "enum")
 public class Enum {
 
-    @Attribute
+    @JacksonXmlProperty(isAttribute = true)
     protected String name;
 
-    @Attribute
+    @JacksonXmlProperty(isAttribute = true)
     protected String value;
 
-    @Attribute(required = false)
+    @JacksonXmlProperty(isAttribute = true)
     protected String description;
 
 }

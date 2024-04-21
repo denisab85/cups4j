@@ -1,23 +1,24 @@
 package org.cups4j.ipp.attributes;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import lombok.Getter;
 import lombok.Setter;
-import org.simpleframework.xml.Attribute;
-import org.simpleframework.xml.ElementList;
-import org.simpleframework.xml.Root;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Getter
-@Root(name = "set-of-enum")
+@JacksonXmlRootElement(localName = "set-of-enum")
 public class SetOfEnum {
 
-    @ElementList(entry = "enum", inline = true)
+    @JacksonXmlProperty(localName = "enum")
+    @JacksonXmlElementWrapper(useWrapping = false)
     protected Set<Enum> enums = new LinkedHashSet<>();
 
     @Setter
-    @Attribute(required = false)
+    @JacksonXmlProperty(isAttribute = true)
     protected String description;
 
 }

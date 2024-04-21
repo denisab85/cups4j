@@ -1,25 +1,25 @@
 package org.cups4j.ipp.attributes;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import lombok.Getter;
 import lombok.Setter;
-import org.simpleframework.xml.Attribute;
-import org.simpleframework.xml.Root;
 
 @Getter
 @Setter
-@Root(name = "tag")
+@JacksonXmlRootElement(localName = "tag")
 public class Tag {
 
-    @Attribute
+    @JacksonXmlProperty(isAttribute = true)
     protected String value;
 
-    @Attribute
+    @JacksonXmlProperty(isAttribute = true)
     protected String name;
 
-    @Attribute(required = false)
+    @JacksonXmlProperty(isAttribute = true)
     protected String description;
 
-    @Attribute(required = false)
+    @JacksonXmlProperty(isAttribute = true)
     protected Short max;
 
 }

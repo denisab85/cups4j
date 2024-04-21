@@ -1,32 +1,31 @@
 package org.cups4j.ipp.attributes;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import lombok.Getter;
 import lombok.Setter;
-import org.simpleframework.xml.Attribute;
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.Root;
 
 @Setter
 @Getter
-@Root(name = "attribute-value")
+@JacksonXmlRootElement(localName = "attribute-value")
 public class AttributeValue {
 
-    @Element(name = "set-of-keyword", required = false)
+    @JacksonXmlProperty(localName = "set-of-keyword")
     protected SetOfKeyword setOfKeyword;
 
-    @Element(name = "set-of-enum", required = false)
+    @JacksonXmlProperty(localName = "set-of-enum")
     protected SetOfEnum setOfEnum;
 
-    @Attribute
+    @JacksonXmlProperty(isAttribute = true)
     protected String tag;
 
-    @Attribute(name = "tag-name")
+    @JacksonXmlProperty(isAttribute = true, localName = "tag-name")
     protected String tagName;
 
-    @Attribute(required = false)
+    @JacksonXmlProperty(isAttribute = true)
     protected String value;
 
-    @Attribute(required = false)
+    @JacksonXmlProperty(isAttribute = true)
     protected String description;
 
 }

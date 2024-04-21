@@ -1,30 +1,32 @@
 package org.cups4j.ipp.attributes;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import lombok.Getter;
 import lombok.Setter;
-import org.simpleframework.xml.ElementList;
-import org.simpleframework.xml.Root;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Root(name = "attribute-group")
+@JacksonXmlRootElement(localName = "attribute-group")
 public class AttributeGroup {
 
-    @ElementList(entry = "attribute", inline = true)
+    @JacksonXmlProperty(localName = "attribute")
+    @JacksonXmlElementWrapper(useWrapping = false)
     protected List<Attribute> attributes = new ArrayList<>();
 
     @Setter
-    @org.simpleframework.xml.Attribute
+    @JacksonXmlProperty(isAttribute = true)
     protected String tag;
 
     @Setter
-    @org.simpleframework.xml.Attribute(name = "tag-name")
+    @JacksonXmlProperty(isAttribute = true, localName = "tag-name")
     protected String tagName;
 
     @Setter
-    @org.simpleframework.xml.Attribute(required = false)
+    @JacksonXmlProperty(isAttribute = true)
     protected String description;
 
     /**

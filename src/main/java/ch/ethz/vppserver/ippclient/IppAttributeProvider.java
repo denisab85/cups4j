@@ -15,13 +15,12 @@ package ch.ethz.vppserver.ippclient;
  * <http://www.gnu.org/licenses/>.
  */
 
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import lombok.Getter;
 import org.cups4j.ipp.attributes.AttributeGroup;
 import org.cups4j.ipp.attributes.AttributeList;
 import org.cups4j.ipp.attributes.Tag;
 import org.cups4j.ipp.attributes.TagList;
-import org.simpleframework.xml.Serializer;
-import org.simpleframework.xml.core.Persister;
 
 import java.io.InputStream;
 import java.util.List;
@@ -38,14 +37,13 @@ public class IppAttributeProvider implements IIppAttributeProvider {
     private IppAttributeProvider() {
         try {
             InputStream tagListStream = IIppAttributeProvider.class.getClassLoader().getResourceAsStream(TAG_LIST_FILENAME);
-            InputStream attListStream = IIppAttributeProvider.class.getClassLoader().getResourceAsStream(
-                    ATTRIBUTE_LIST_FILENAME);
+            InputStream attListStream = IIppAttributeProvider.class.getClassLoader().getResourceAsStream(ATTRIBUTE_LIST_FILENAME);
 
-            Serializer serializer = new Persister();
-            TagList tList = serializer.read(TagList.class, tagListStream);
+            XmlMapper xmlMapper = new XmlMapper();
+            TagList tList = xmlMapper.readValue(tagListStream, TagList.class);
             tagList = tList.getTags();
 
-            AttributeList aList = serializer.read(AttributeList.class, attListStream);
+            AttributeList aList = xmlMapper.readValue(attListStream, AttributeList.class);
             attributeGroupList = aList.getAttributeGroups();
         } catch (Exception e) {
             throw new RuntimeException(e);
