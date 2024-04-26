@@ -1,5 +1,6 @@
 package ch.ethz.vppserver.ippclient;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.cups4j.ipp.attributes.Enum;
 import org.cups4j.ipp.attributes.*;
@@ -683,16 +684,7 @@ public class IppResponse {
      * @param nameOfAttribute
      * @return
      */
-    private String getEnumName(String value, String nameOfAttribute) {
-        if (value == null) {
-            log.error("IppResponse.getEnumName(String,String): value is null");
-            return null;
-        }
-        if (nameOfAttribute == null) {
-            log.error("IppResponse.getEnumName(String,String): nameOfAttribute is null");
-            return null;
-        }
-
+    private String getEnumName(@NonNull String value, @NonNull String nameOfAttribute) {
         int enumValue;
         if (value.contains("0x")) {
             value = value.replace("0x", "");
@@ -708,11 +700,7 @@ public class IppResponse {
      * @return
      * @nameOfAttribute
      */
-    private String getEnumName(int value, String nameOfAttribute) {
-        if (nameOfAttribute == null) {
-            log.error("IppResponse.getEnumName(int,String): nameOfAttribute is null");
-            return null;
-        }
+    private String getEnumName(int value, @NonNull String nameOfAttribute) {
         for (AttributeGroup attributeGroup : _attributeGroupList) {
             List<Attribute> attributeList = attributeGroup.getAttributes();
             for (Attribute attribute : attributeList) {

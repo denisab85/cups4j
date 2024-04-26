@@ -15,8 +15,8 @@ package org.cups4j.operations.ipp;
  * <http://www.gnu.org/licenses/>.
  */
 
+import ch.ethz.vppserver.ippclient.IppBuffer;
 import ch.ethz.vppserver.ippclient.IppResult;
-import ch.ethz.vppserver.ippclient.IppTag;
 import org.cups4j.CupsAuthentication;
 import org.cups4j.JobStateEnum;
 import org.cups4j.PrintJobAttributes;
@@ -34,8 +34,7 @@ import java.util.Map;
 public class IppGetJobAttributesOperation extends IppOperation {
 
     public IppGetJobAttributesOperation() {
-        operationID = 0x0009;
-        bufferSize = 8192;
+        operationID = GET_JOB_ATTRIBUTES;
     }
 
     public IppGetJobAttributesOperation(int port) {
@@ -50,46 +49,40 @@ public class IppGetJobAttributesOperation extends IppOperation {
      * @throws UnsupportedEncodingException
      */
     public ByteBuffer getIppHeader(URL uri, Map<String, String> map) throws UnsupportedEncodingException {
-        ByteBuffer ippBuf = ByteBuffer.allocateDirect(bufferSize);
-        ippBuf = IppTag.getOperation(ippBuf, operationID);
+        IppBuffer ippBuf = new IppBuffer(operationID);
 
         if (map == null) {
-            ippBuf = IppTag.getUri(ippBuf, "job-uri", stripPortNumber(uri));
-            ippBuf = IppTag.getEnd(ippBuf);
-            ippBuf.flip();
-            return ippBuf;
-        }
-
-        if (map.containsKey("job-id")) {
-            ippBuf = IppTag.getUri(ippBuf, "printer-uri", stripPortNumber(uri));
-            int jobId = Integer.parseInt(map.get("job-id"));
-            ippBuf = IppTag.getInteger(ippBuf, "job-id", jobId);
+            ippBuf.putUri("job-uri", stripPortNumber(uri));
         } else {
-            ippBuf = IppTag.getUri(ippBuf, "job-uri", stripPortNumber(uri));
-        }
+            if (map.containsKey("job-id")) {
+                ippBuf.putUri("printer-uri", stripPortNumber(uri));
+                int jobId = Integer.parseInt(map.get("job-id"));
+                ippBuf.putInteger("job-id", jobId);
+            } else {
+                ippBuf.putUri("job-uri", stripPortNumber(uri));
+            }
 
-        ippBuf = IppTag.getNameWithoutLanguage(ippBuf, "requesting-user-name", map.get("requesting-user-name"));
+            ippBuf.putNameWithoutLanguage("requesting-user-name", map.get("requesting-user-name"));
 
-        if (map.containsKey("requested-attributes")) {
-            String[] sta = map.get("requested-attributes").split(" ");
-            ippBuf = IppTag.getKeyword(ippBuf, "requested-attributes", sta[0]);
-            int l = sta.length;
-            for (int i = 1; i < l; i++) {
-                ippBuf = IppTag.getKeyword(ippBuf, null, sta[i]);
+            if (map.containsKey("requested-attributes")) {
+                String[] sta = map.get("requested-attributes").split(" ");
+                ippBuf.putKeyword("requested-attributes", sta[0]);
+                int l = sta.length;
+                for (int i = 1; i < l; i++) {
+                    ippBuf.putKeyword(null, sta[i]);
+                }
+            }
+
+            if (map.containsKey("which-jobs")) {
+                ippBuf.putKeyword("which-jobs", map.get("which-jobs"));
+            }
+
+            if (map.containsKey("my-jobs")) {
+                boolean value = map.get("my-jobs").equals("true");
+                ippBuf.putBoolean("my-jobs", value);
             }
         }
-
-        if (map.containsKey("which-jobs")) {
-            ippBuf = IppTag.getKeyword(ippBuf, "which-jobs", map.get("which-jobs"));
-        }
-
-        if (map.containsKey("my-jobs")) {
-            boolean value = map.get("my-jobs").equals("true");
-            ippBuf = IppTag.getBoolean(ippBuf, "my-jobs", value);
-        }
-        ippBuf = IppTag.getEnd(ippBuf);
-        ippBuf.flip();
-        return ippBuf;
+        return ippBuf.getData();
     }
 
     public PrintJobAttributes getPrintJobAttributes(String hostname, String userName,

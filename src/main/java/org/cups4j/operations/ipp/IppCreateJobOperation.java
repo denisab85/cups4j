@@ -17,9 +17,9 @@
  */
 package org.cups4j.operations.ipp;
 
+import ch.ethz.vppserver.ippclient.IppBuffer;
 import ch.ethz.vppserver.ippclient.IppResponse;
 import ch.ethz.vppserver.ippclient.IppResult;
-import ch.ethz.vppserver.ippclient.IppTag;
 import org.apache.commons.io.IOUtils;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -51,7 +51,7 @@ import java.util.Map;
 public class IppCreateJobOperation extends IppOperation {
 
     public IppCreateJobOperation() {
-        operationID = 0x0005;
+        operationID = CREATE_JOB;
     }
 
     public IppCreateJobOperation(int port) {
@@ -129,33 +129,30 @@ public class IppCreateJobOperation extends IppOperation {
      */
     @Override
     public ByteBuffer getIppHeader(URL url, Map<String, String> map) throws UnsupportedEncodingException {
-        ByteBuffer ippBuf = ByteBuffer.allocateDirect(bufferSize);
-        ippBuf = IppTag.getOperation(ippBuf, operationID);
-        ippBuf = IppTag.getUri(ippBuf, "printer-uri", url.toString());
-        ippBuf = IppTag.getNameWithoutLanguage(ippBuf, "requesting-user-name",
+        IppBuffer ippBuf = new IppBuffer(operationID);
+        ippBuf.putUri("printer-uri", url.toString());
+        ippBuf.putNameWithoutLanguage("requesting-user-name",
                 map.get("requesting-user-name"));
 
         if (map.containsKey("limit")) {
             int value = Integer.parseInt(map.get("limit"));
-            ippBuf = IppTag.getInteger(ippBuf, "limit", value);
+            ippBuf.putInteger("limit", value);
         }
 
         if (map.containsKey("requested-attributes")) {
             String[] sta = map.get("requested-attributes").split(" ");
-            ippBuf = IppTag.getKeyword(ippBuf, "requested-attributes", sta[0]);
+            ippBuf.putKeyword("requested-attributes", sta[0]);
             int l = sta.length;
             for (int i = 1; i < l; i++) {
-                ippBuf = IppTag.getKeyword(ippBuf, null, sta[i]);
+                ippBuf.putKeyword(null, sta[i]);
             }
         }
 
         if (map.containsKey("job-name")) {
-            ippBuf = IppTag.getNameWithoutLanguage(ippBuf, "job-name", map.get("job-name"));
+            ippBuf.putNameWithoutLanguage("job-name", map.get("job-name"));
         }
 
-        ippBuf = IppTag.getEnd(ippBuf);
-        ippBuf.flip();
-        return ippBuf;
+        return ippBuf.getData();
     }
 
     public IppResult request(CupsPrinter printer, URL url, CupsAuthentication creds) {

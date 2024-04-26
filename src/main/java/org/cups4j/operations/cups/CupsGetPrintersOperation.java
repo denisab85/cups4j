@@ -35,12 +35,64 @@ import java.util.stream.Collectors;
 
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
+/**
+ * CUPS-Get-Printers operation (0x4002) returns the printer attributes for every printer known to the system.
+ * This may include printers that are not served directly by the server.
+ * <p>
+ * <h6>CUPS-Get-Printers Request</h6>
+ * <p>
+ * The following groups of attributes are supplied as part of the CUPS-Get-Printers request: <p>
+ * <h7>Group 1: Operation Attributes</h7>
+ *          <ul>
+ *              <li>Natural Language and Character Set: <p>
+ *                  The "attributes-charset" and "attributes-natural-language" attributes as described in
+ *                  section 3.1.4.1 of the IPP Model and Semantics document.</li>
+ *              <li>"first-printer-name" (name(127)): CUPS 1.2/macOS 10.5 <p>
+ *                  The client OPTIONALLY supplies this
+ *                  attribute to select the first printer that is returned.</li>
+ *              <li>"limit" (integer (1:MAX)): <p>
+ *                  The client OPTIONALLY supplies this attribute
+ *                  limiting the number of printers that are returned.</li>
+ *              <li>"printer-id" (integer(0:65535)): CUPS 2.2 <p>
+ *                  The client OPTIONALLY supplies this
+ *                  attribute to select which printer is returned.</li>
+ *              <li>"printer-location" (text(127)): CUPS 1.1.7 <p>
+ *                  The client OPTIONALLY supplies this
+ *                  attribute to select which printers are returned.</li>
+ *              <li>"printer-type" (type2 enum): CUPS 1.1.7 -  <p>
+ *                  The client OPTIONALLY supplies a printer type
+ *                  enumeration to select which printers are returned.</li>
+ *              <li>"printer-type-mask" (type2 enum): CUPS 1.1.7 <p>
+ *                  The client OPTIONALLY supplies a printer type
+ *                  mask enumeration to select which bits are used in the "printer-type" attribute.</li>
+ *              <li>"requested-attributes" (1setOf keyword):  <p>
+ *                  The client OPTIONALLY supplies a set of attribute names
+ *                  and/or attribute group names in whose values the requester is interested. If the client omits this
+ *                  attribute, the server responds as if this attribute had been supplied with a value of 'all'.</li>
+ *              <li>"requested-user-name" (name(127)): CUPS 1.2/macOS 10.5 <p>
+ *                  The client OPTIONALLY supplies a
+ *                  user name that is used to filter the returned printers.</li>
+ *          </ul>
+ *
+ * <h6>CUPS-Get-Printers Response</h6>
+ * The following groups of attributes are send as part of the CUPS-Get-Printers Response: <p>
+ *      <h7>Group 1: Operation Attributes</h7>
+ *          <ul>
+ *              <li>Natural Language and Character Set: The "attributes-charset" and
+ *                  "attributes-natural-language" attributes as described in section 3.1.4.2 of the
+ *                  IPP Model and Semantics document.</li>
+ *              <li>Status Message: The standard response status message.</li>
+ *          </ul>
+ *      <h7>Group 2: Printer Object Attributes</h7>
+ *          <ul>
+ *              <li>The set of requested attributes and their current values for each printer.</li>
+ *          </ul>
+ */
 @Slf4j
 public class CupsGetPrintersOperation extends IppOperation {
 
     public CupsGetPrintersOperation() {
-        operationID = 0x4002;
-        bufferSize = 8192;
+        operationID = CUPS_GET_PRINTERS;
     }
 
     public CupsGetPrintersOperation(int port) {

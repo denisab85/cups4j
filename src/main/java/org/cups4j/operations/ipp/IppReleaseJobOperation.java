@@ -15,8 +15,9 @@ package org.cups4j.operations.ipp;
  * <http://www.gnu.org/licenses/>.
  */
 
+import ch.ethz.vppserver.ippclient.IppBuffer;
 import ch.ethz.vppserver.ippclient.IppResult;
-import ch.ethz.vppserver.ippclient.IppTag;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.cups4j.CupsAuthentication;
 import org.cups4j.CupsClient;
@@ -34,8 +35,7 @@ import java.util.Map;
 public class IppReleaseJobOperation extends IppOperation {
 
     public IppReleaseJobOperation() {
-        operationID = 0x000D;
-        bufferSize = 8192;
+        operationID = RELEASE_JOB;
     }
 
     public IppReleaseJobOperation(int port) {
@@ -52,34 +52,20 @@ public class IppReleaseJobOperation extends IppOperation {
      * @return IPP header
      * @throws UnsupportedEncodingException
      */
+    public ByteBuffer getIppHeader(@NonNull URL uri, Map<String, String> map) throws UnsupportedEncodingException {
+        IppBuffer ippBuf = new IppBuffer(operationID);
 
-    public ByteBuffer getIppHeader(URL uri, Map<String, String> map) throws UnsupportedEncodingException {
-        if (uri == null) {
-            log.error("IppReleaseJobOperation.getIppHeader(): uri is null");
-            return null;
+        if (map != null) {
+            if (map.containsKey("job-id")) {
+                ippBuf.putUri("printer-uri", stripPortNumber(uri));
+                int jobId = Integer.parseInt(map.get("job-id"));
+                ippBuf.putInteger("job-id", jobId);
+            } else {
+                ippBuf.putUri("job-uri", stripPortNumber(uri));
+            }
+            ippBuf.putNameWithoutLanguage("requesting-user-name", map.get("requesting-user-name"));
         }
-
-        ByteBuffer ippBuf = ByteBuffer.allocateDirect(bufferSize);
-        ippBuf = IppTag.getOperation(ippBuf, operationID);
-
-        if (map == null) {
-            ippBuf = IppTag.getEnd(ippBuf);
-            ippBuf.flip();
-            return ippBuf;
-        }
-
-        if (map.containsKey("job-id")) {
-            ippBuf = IppTag.getUri(ippBuf, "printer-uri", stripPortNumber(uri));
-            int jobId = Integer.parseInt(map.get("job-id"));
-            ippBuf = IppTag.getInteger(ippBuf, "job-id", jobId);
-        } else {
-            ippBuf = IppTag.getUri(ippBuf, "job-uri", stripPortNumber(uri));
-        }
-        ippBuf = IppTag.getNameWithoutLanguage(ippBuf, "requesting-user-name", map.get("requesting-user-name"));
-
-        ippBuf = IppTag.getEnd(ippBuf);
-        ippBuf.flip();
-        return ippBuf;
+        return ippBuf.getData();
     }
 
     /**

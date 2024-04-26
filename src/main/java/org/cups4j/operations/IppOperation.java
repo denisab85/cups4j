@@ -15,10 +15,10 @@ package org.cups4j.operations;
  * <http://www.gnu.org/licenses/>.
  */
 
+import ch.ethz.vppserver.ippclient.IppBuffer;
 import ch.ethz.vppserver.ippclient.IppResponse;
 import ch.ethz.vppserver.ippclient.IppResult;
-import ch.ethz.vppserver.ippclient.IppTag;
-import lombok.extern.slf4j.Slf4j;
+import lombok.NonNull;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.core5.http.ContentType;
@@ -38,8 +38,53 @@ import java.net.URL;
 import java.nio.ByteBuffer;
 import java.util.Map;
 
-@Slf4j
 public abstract class IppOperation {
+    protected static final short PRINT_JOB = 0x0002;                   // Print a file.
+    protected static final short VALIDATE_JOB = 0x0004;                // Validate job attributes.
+    protected static final short CREATE_JOB = 0x0005;                  // Create a print job.
+    protected static final short SEND_DOCUMENT = 0x0006;               // Send a file for a print job.
+    protected static final short CANCEL_JOB = 0x0008;                  // Cancel a print job.
+    protected static final short GET_JOB_ATTRIBUTES = 0x0009;          // Get job attributes.
+    protected static final short GET_JOBS = 0x000A;                    // Get all jobs.
+    protected static final short GET_PRINTER_ATTRIBUTES = 0x000B;      // Get printer attributes.
+    protected static final short HOLD_JOB = 0x000C;                    // Hold a job for printing.
+    protected static final short RELEASE_JOB = 0x000D;                 // Release a job for printing.
+    protected static final short RESTART_JOB = 0x000E;                 // Restarts a print job.
+    protected static final short PAUSE_PRINTER = 0x0010;               // Pause printing on a printer.
+    protected static final short RESUME_PRINTER = 0x0011;              // Resume printing on a printer.
+    protected static final short PURGE_JOBS = 0x0012;                  // Purge all jobs.
+    protected static final short SET_PRINTER_ATTRIBUTES = 0x0013;      // Set attributes for a printer.
+    protected static final short SET_JOB_ATTRIBUTES = 0x0014;          // Set attributes for a pending or held job.
+    protected static final short CREATE_PRINTER_SUBSCRIPTION = 0x0016; // Creates a subscription associated with a printer or the server.
+    protected static final short CREATE_JOB_SUBSCRIPTION = 0x0017;     // Creates a subscription associated with a job.
+    protected static final short GET_SUBSCRIPTION_ATTRIBUTES = 0x0018; // Gets the attributes for a subscription.
+    protected static final short GET_SUBSCRIPTIONS = 0x0019;           // Gets the attributes for zero or more subscriptions.
+    protected static final short RENEW_SUBSCRIPTION = 0x001A;          // Renews a subscription.
+    protected static final short CANCEL_SUBSCRIPTION = 0x001B;         // Cancels a subscription.
+    protected static final short GET_NOTIFICATIONS = 0x001C;           // Get notification events for ippget subscriptions.
+    protected static final short ENABLE_PRINTER = 0x0022;              // Accepts jobs on a printer.
+    protected static final short DISABLE_PRINTER = 0x0023;             // Rejects jobs on a printer.
+    protected static final short HOLD_NEW_JOBS = 0x0025;               // Hold new jobs by default.
+    protected static final short RELEASE_HELD_NEW_JOBS = 0x0026;       // Releases all jobs that were previously held.
+    protected static final short CANCEL_JOBS = 0x0038;                 // Cancel all jobs (administrator).
+    protected static final short CANCEL_MY_JOBS = 0x0039;              // Cancel all jobs (user).
+    protected static final short CLOSE_JOB = 0x003b;                   // Close a created job.
+    protected static final short CUPS_GET_DEFAULT = 0x4001;            // Get the default destination.
+    protected static final short CUPS_GET_PRINTERS = 0x4002;           // Get all the available printers.
+    protected static final short CUPS_ADD_MODIFY_PRINTER = 0x4003;     // Add or modify a printer.
+    protected static final short CUPS_DELETE_PRINTER = 0x4004;         // Delete a printer.
+    protected static final short CUPS_GET_CLASSES = 0x4005;            // Get all the available printer classes.
+    protected static final short CUPS_ADD_MODIFY_CLASS = 0x4006;       // Add or modify a printer class.
+    protected static final short CUPS_DELETE_CLASS = 0x4007;           // Delete a printer class.
+    protected static final short CUPS_SET_DEFAULT = 0x400A;            // Set the default destination.
+    protected static final short CUPS_GET_DEVICES = 0x400B;            // Get all the available devices.
+    protected static final short CUPS_GET_PPDS = 0x400C;               // Get all the available PPDs.
+    protected static final short CUPS_MOVE_JOB = 0x400D;               // Move a job to a different printer.
+    protected static final short CUPS_AUTHENTICATE_JOB = 0x400E;       // Authenticate a job for printing.
+    protected static final short CUPS_GET_PPD = 0x400F;                // Get a PPD file.
+    protected static final short CUPS_GET_DOCUMENT = 0x4027;           // Get a document file from a job.
+    protected static final short CUPS_CREATE_LOCAL_PRINTER = 0x4028;   // Creates a local (temporary) print queue pointing to a remote IPP Everywhere printer.
+
     protected final static ContentType IPP_MIME_TYPE = ContentType.create("application/ipp");
     protected short operationID = -1; // IPP operation ID
     protected short bufferSize = 8192; // BufferSize for this operation
@@ -102,41 +147,29 @@ public abstract class IppOperation {
      * @return IPP header
      * @throws UnsupportedEncodingException
      */
-    public ByteBuffer getIppHeader(URL url, Map<String, String> map) throws UnsupportedEncodingException {
-        if (url == null) {
-            log.error("IppGetJObsOperation.getIppHeader(): uri is null");
-            return null;
-        }
+    public ByteBuffer getIppHeader(@NonNull URL url, Map<String, String> map) throws UnsupportedEncodingException {
+        IppBuffer ippBuf = new IppBuffer(operationID);
+        ippBuf.putUri("printer-uri", stripPortNumber(url));
 
-        ByteBuffer ippBuf = ByteBuffer.allocateDirect(bufferSize);
-        ippBuf = IppTag.getOperation(ippBuf, operationID);
-        ippBuf = IppTag.getUri(ippBuf, "printer-uri", stripPortNumber(url));
+        if (map != null) {
+            ippBuf.putNameWithoutLanguage("requesting-user-name", map.get("requesting-user-name"));
 
-        if (map == null) {
-            ippBuf = IppTag.getEnd(ippBuf);
-            ippBuf.flip();
-            return ippBuf;
-        }
+            if (map.containsKey("limit")) {
+                int value = Integer.parseInt(map.get("limit"));
+                ippBuf.putInteger("limit", value);
+            }
 
-        ippBuf = IppTag.getNameWithoutLanguage(ippBuf, "requesting-user-name", map.get("requesting-user-name"));
-
-        if (map.containsKey("limit")) {
-            int value = Integer.parseInt(map.get("limit"));
-            ippBuf = IppTag.getInteger(ippBuf, "limit", value);
-        }
-
-        if (map.containsKey("requested-attributes")) {
-            String[] sta = map.get("requested-attributes").split(" ");
-            ippBuf = IppTag.getKeyword(ippBuf, "requested-attributes", sta[0]);
-            int l = sta.length;
-            for (int i = 1; i < l; i++) {
-                ippBuf = IppTag.getKeyword(ippBuf, null, sta[i]);
+            if (map.containsKey("requested-attributes")) {
+                String[] sta = map.get("requested-attributes").split(" ");
+                ippBuf.putKeyword("requested-attributes", sta[0]);
+                int l = sta.length;
+                for (int i = 1; i < l; i++) {
+                    ippBuf.putKeyword(null, sta[i]);
+                }
             }
         }
 
-        ippBuf = IppTag.getEnd(ippBuf);
-        ippBuf.flip();
-        return ippBuf;
+        return ippBuf.getData();
     }
 
     /**

@@ -15,8 +15,8 @@ package org.cups4j.operations.ipp;
  * <http://www.gnu.org/licenses/>.
  */
 
-import ch.ethz.vppserver.ippclient.IppTag;
-import lombok.extern.slf4j.Slf4j;
+import ch.ethz.vppserver.ippclient.IppBuffer;
+import lombok.NonNull;
 import org.cups4j.operations.IppOperation;
 
 import java.io.UnsupportedEncodingException;
@@ -24,98 +24,15 @@ import java.net.URL;
 import java.nio.ByteBuffer;
 import java.util.Map;
 
-@Slf4j
 public class IppPrintJobOperation extends IppOperation {
 
     public IppPrintJobOperation() {
-        operationID = 0x0002;
-        bufferSize = 8192;
+        operationID = PRINT_JOB;
     }
 
     public IppPrintJobOperation(int port) {
         this();
         this.ippPort = port;
-    }
-
-    /**
-     * TODO: not all possibilities implemented
-     *
-     * @param ippBuf
-     * @param attributeBlocks
-     * @return
-     * @throws UnsupportedEncodingException
-     */
-    protected static ByteBuffer getJobAttributes(ByteBuffer ippBuf, String[] attributeBlocks)
-            throws UnsupportedEncodingException {
-        if (ippBuf == null) {
-            log.error("IppPrintJobOperation.getJobAttributes(): ippBuf is null");
-            return null;
-        }
-        if (attributeBlocks == null) {
-            return ippBuf;
-        }
-
-        ippBuf = IppTag.getJobAttributesTag(ippBuf);
-
-        for (String attributeBlock : attributeBlocks) {
-            String[] attr = attributeBlock.split(":");
-            if (attr.length != 3) {
-                return ippBuf;
-            }
-            String name = attr[0];
-            String tagName = attr[1];
-            String value = attr[2];
-
-            switch (tagName) {
-                case "boolean":
-                    ippBuf = IppTag.getBoolean(ippBuf, name, value.equals("true"));
-                    break;
-                case "integer":
-                    ippBuf = IppTag.getInteger(ippBuf, name, Integer.parseInt(value));
-                    break;
-                case "rangeOfInteger":
-                    String[] range = value.split("-");
-                    int low = Integer.parseInt(range[0]);
-                    int high = Integer.parseInt(range[1]);
-                    ippBuf = IppTag.getRangeOfInteger(ippBuf, name, low, high);
-                    break;
-                case "setOfRangeOfInteger":
-                    String[] ranges = value.split(",");
-                    for (String r : ranges) {
-                        r = r.trim();
-                        String[] values = r.split("-");
-
-                        int value1 = Integer.parseInt(values[0]);
-                        int value2 = value1;
-                        // two values provided?
-                        if (values.length == 2) {
-                            value2 = Integer.parseInt(values[1]);
-                        }
-
-                        // first attribute value needs name, additional values need to get the "null" name
-                        ippBuf = IppTag.getRangeOfInteger(ippBuf, name, value1, value2);
-                        name = null;
-                    }
-                    break;
-                case "keyword":
-                    ippBuf = IppTag.getKeyword(ippBuf, name, value);
-                    break;
-                case "name":
-                    ippBuf = IppTag.getNameWithoutLanguage(ippBuf, name, value);
-                    break;
-                case "enum":
-                    ippBuf = IppTag.getEnum(ippBuf, name, Integer.parseInt(value));
-                    break;
-                case "resolution":
-                    String[] resolution = value.split(",");
-                    int value1 = Integer.parseInt(resolution[0]);
-                    int value2 = Integer.parseInt(resolution[1]);
-                    byte value3 = Byte.parseByte(resolution[2]);
-                    ippBuf = IppTag.getResolution(ippBuf, name, value1, value2, value3);
-                    break;
-            }
-        }
-        return ippBuf;
     }
 
     /**
@@ -128,63 +45,50 @@ public class IppPrintJobOperation extends IppOperation {
      * @throws UnsupportedEncodingException
      */
 
-    public ByteBuffer getIppHeader(URL url, Map<String, String> map) throws UnsupportedEncodingException {
-        if (url == null) {
-            log.error("IppPrintJobOperation.getIppHeader(): uri is null");
-            return null;
-        }
+    public ByteBuffer getIppHeader(@NonNull URL url, Map<String, String> map) throws UnsupportedEncodingException {
+        IppBuffer ippBuf = new IppBuffer(operationID);
+        ippBuf.putUri("printer-uri", stripPortNumber(url));
 
-        ByteBuffer ippBuf = ByteBuffer.allocateDirect(bufferSize);
-        ippBuf = IppTag.getOperation(ippBuf, operationID);
-        ippBuf = IppTag.getUri(ippBuf, "printer-uri", stripPortNumber(url));
+        if (map != null) {
+            ippBuf.putNameWithoutLanguage("requesting-user-name", map.get("requesting-user-name"));
 
-        if (map == null) {
-            ippBuf = IppTag.getEnd(ippBuf);
-            ippBuf.flip();
-            return ippBuf;
+            if (map.containsKey("job-name")) {
+                ippBuf.putNameWithoutLanguage("job-name", map.get("job-name"));
+            }
+            if (map.containsKey("ipp-attribute-fidelity")) {
+                boolean value = map.get("ipp-attribute-fidelity").equals("true");
+                ippBuf.putBoolean("ipp-attribute-fidelity", value);
+            }
+            if (map.containsKey("document-name")) {
+                ippBuf.putNameWithoutLanguage("document-name", map.get("document-name"));
+            }
+            if (map.containsKey("compression")) {
+                ippBuf.putKeyword("compression", map.get("compression"));
+            }
+            if (map.containsKey("document-format")) {
+                ippBuf.putMimeMediaType("document-format", map.get("document-format"));
+            }
+            if (map.containsKey("document-natural-language")) {
+                ippBuf.putNaturalLanguage("document-natural-language", map.get("document-natural-language"));
+            }
+            if (map.containsKey("job-k-octets")) {
+                int value = Integer.parseInt(map.get("job-k-octets"));
+                ippBuf.putInteger("job-k-octets", value);
+            }
+            if (map.containsKey("job-impressions")) {
+                int value = Integer.parseInt(map.get("job-impressions"));
+                ippBuf.putInteger("job-impressions", value);
+            }
+            if (map.containsKey("job-media-sheets")) {
+                int value = Integer.parseInt(map.get("job-media-sheets"));
+                ippBuf.putInteger("job-media-sheets", value);
+            }
+            if (map.containsKey("job-attributes")) {
+                String[] attributeBlocks = map.get("job-attributes").split("#");
+                ippBuf.putJobAttributes(attributeBlocks);
+            }
         }
-
-        ippBuf = IppTag.getNameWithoutLanguage(ippBuf, "requesting-user-name", map.get("requesting-user-name"));
-
-        if (map.containsKey("job-name")) {
-            ippBuf = IppTag.getNameWithoutLanguage(ippBuf, "job-name", map.get("job-name"));
-        }
-        if (map.containsKey("ipp-attribute-fidelity")) {
-            boolean value = map.get("ipp-attribute-fidelity").equals("true");
-            ippBuf = IppTag.getBoolean(ippBuf, "ipp-attribute-fidelity", value);
-        }
-        if (map.containsKey("document-name")) {
-            ippBuf = IppTag.getNameWithoutLanguage(ippBuf, "document-name", map.get("document-name"));
-        }
-        if (map.containsKey("compression")) {
-            ippBuf = IppTag.getKeyword(ippBuf, "compression", map.get("compression"));
-        }
-        if (map.containsKey("document-format")) {
-            ippBuf = IppTag.getMimeMediaType(ippBuf, "document-format", map.get("document-format"));
-        }
-        if (map.containsKey("document-natural-language")) {
-            ippBuf = IppTag.getNaturalLanguage(ippBuf, "document-natural-language", map.get("document-natural-language"));
-        }
-        if (map.containsKey("job-k-octets")) {
-            int value = Integer.parseInt(map.get("job-k-octets"));
-            ippBuf = IppTag.getInteger(ippBuf, "job-k-octets", value);
-        }
-        if (map.containsKey("job-impressions")) {
-            int value = Integer.parseInt(map.get("job-impressions"));
-            ippBuf = IppTag.getInteger(ippBuf, "job-impressions", value);
-        }
-        if (map.containsKey("job-media-sheets")) {
-            int value = Integer.parseInt(map.get("job-media-sheets"));
-            ippBuf = IppTag.getInteger(ippBuf, "job-media-sheets", value);
-        }
-        if (map.containsKey("job-attributes")) {
-            String[] attributeBlocks = map.get("job-attributes").split("#");
-            ippBuf = getJobAttributes(ippBuf, attributeBlocks);
-        }
-
-        ippBuf = IppTag.getEnd(ippBuf);
-        ippBuf.flip();
-        return ippBuf;
+        return ippBuf.getData();
     }
 
 }

@@ -27,10 +27,47 @@ import java.util.HashMap;
 
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
+/**
+ * CUPS-Get-Default operation (0x4001) returns the default printer URI and attributes.
+ * <p>
+ * <h6>CUPS-Get-Default Request</h6>
+ * <p>
+ * The following groups of attributes are supplied as part of the CUPS-Get-Default request:
+ * <p/>
+ * <h7>Group 1: Operation Attributes</h7>
+ * <ul>
+ *     <li> Natural Language and Character Set: <p>
+ *          The "attributes-charset" and "attributes-natural-language" attributes as described in section 3.1.4.1
+ *          of the IPP Model and Semantics document.</li>
+ *     <li> "requested-attributes" (1setOf keyword): <p>
+ *          The client OPTIONALLY supplies a set of attribute names
+ *          and/or attribute group names in whose values the requester is interested. If the client omits this
+ *          attribute, the server responds as if this attribute had been supplied with a value of 'all'.
+ *     </li>
+ *  </ul>
+ * <h6>CUPS-Get-Default Response</h6>
+ * <p>
+ * The following groups of attributes are sent as part of the CUPS-Get-Default Response:
+ * <p/>
+ * <h7>Group 1:  Operation Attributes</h7>
+ * <ul>
+ *      <li> Natural Language and Character Set: <p>
+ *           The "attributes-charset" and "attributes-natural-language" attributes as described in section 3.1.4.2
+ *           of the IPP Model and Semantics document.
+ *      </li>
+ *      <li> Status Message: <p>
+ *          The standard response status message.
+ *      </li>
+ * </ul>
+ * <h7>Group 2: Printer Object Attributes</h7>
+ *              <ul>
+ *                  <li> The set of requested attributes and their current values.
+ *                </li>
+ *           </ul>
+ */
 public class CupsGetDefaultOperation extends IppOperation {
     public CupsGetDefaultOperation() {
-        operationID = 0x4001;
-        bufferSize = 8192;
+        operationID = CUPS_GET_DEFAULT;
     }
 
     public CupsGetDefaultOperation(int port) {

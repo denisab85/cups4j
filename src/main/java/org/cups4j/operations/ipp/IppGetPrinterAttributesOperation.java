@@ -17,7 +17,7 @@ package org.cups4j.operations.ipp;
  * program; if not, see <http://www.gnu.org/licenses/>.
  */
 
-import ch.ethz.vppserver.ippclient.IppTag;
+import ch.ethz.vppserver.ippclient.IppBuffer;
 import org.cups4j.operations.IppOperation;
 
 import java.io.UnsupportedEncodingException;
@@ -27,8 +27,7 @@ import java.util.Map;
 public class IppGetPrinterAttributesOperation extends IppOperation {
 
     public IppGetPrinterAttributesOperation() {
-        operationID = 0x000b;
-        bufferSize = 8192;
+        operationID = GET_PRINTER_ATTRIBUTES;
     }
 
 
@@ -54,32 +53,25 @@ public class IppGetPrinterAttributesOperation extends IppOperation {
      * @throws UnsupportedEncodingException
      */
     public ByteBuffer getIppHeader(String url, Map<String, String> map) throws UnsupportedEncodingException {
-        ByteBuffer ippBuf = ByteBuffer.allocateDirect(bufferSize);
-
-        ippBuf = IppTag.getOperation(ippBuf, operationID);
-        ippBuf = IppTag.getUri(ippBuf, "printer-uri", url);
+        IppBuffer ippBuf = new IppBuffer(operationID);
+        ippBuf.putUri("printer-uri", url);
 
         if (map == null) {
-            ippBuf = IppTag.getKeyword(ippBuf, "requested-attributes", "all");
-            ippBuf = IppTag.getEnd(ippBuf);
-            ippBuf.flip();
-            return ippBuf;
-        }
-
-        ippBuf = IppTag.getNameWithoutLanguage(ippBuf, "requesting-user-name", map.get("requesting-user-name"));
-        if (map.containsKey("requested-attributes")) {
-            String[] sta = map.get("requested-attributes").split(" ");
-            ippBuf = IppTag.getKeyword(ippBuf, "requested-attributes", sta[0]);
-            int l = sta.length;
-            for (int i = 1; i < l; i++) {
-                ippBuf = IppTag.getKeyword(ippBuf, null, sta[i]);
+            ippBuf.putKeyword("requested-attributes", "all");
+        } else {
+            ippBuf.putNameWithoutLanguage("requesting-user-name", map.get("requesting-user-name"));
+            if (map.containsKey("requested-attributes")) {
+                String[] sta = map.get("requested-attributes").split(" ");
+                ippBuf.putKeyword("requested-attributes", sta[0]);
+                int l = sta.length;
+                for (int i = 1; i < l; i++) {
+                    ippBuf.putKeyword(null, sta[i]);
+                }
             }
+
+            ippBuf.putNameWithoutLanguage("document-format", map.get("document-format"));
         }
-
-        ippBuf = IppTag.getNameWithoutLanguage(ippBuf, "document-format", map.get("document-format"));
-
-        ippBuf = IppTag.getEnd(ippBuf);
-        ippBuf.flip();
-        return ippBuf;
+        return ippBuf.getData();
     }
+
 }
