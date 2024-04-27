@@ -62,18 +62,13 @@ import static org.cups4j.operations.IppHttp.CUPS_TIMEOUT;
 @Slf4j
 public class IppSendDocumentOperation extends IppPrintJobOperation {
 
-    private final int jobId;
-    private final boolean lastDocument;
-
-    public IppSendDocumentOperation(int jobId) {
-        this(CupsClient.DEFAULT_PORT, jobId, true);
+    public IppSendDocumentOperation() {
+        operationID = SEND_DOCUMENT;
     }
 
-    public IppSendDocumentOperation(int port, int jobId, boolean lastDocument) {
-        super(port);
-        this.operationID = SEND_DOCUMENT;
-        this.jobId = jobId;
-        this.lastDocument = lastDocument;
+    public IppSendDocumentOperation(int port) {
+        this();
+        ippPort = port;
     }
 
     private static IppResult getIppResult(CloseableHttpResponse httpResponse) throws IOException {
@@ -92,7 +87,8 @@ public class IppSendDocumentOperation extends IppPrintJobOperation {
         }
     }
 
-    public IppResult request(CupsPrinter printer, URL printerURL, PrintJob printJob, CupsAuthentication creds) {
+    public IppResult request(CupsPrinter printer, URL printerURL, PrintJob printJob, CupsAuthentication creds,
+                             int jobId, boolean lastDocument) {
         InputStream document = printJob.getDocument();
         String userName = printJob.getUserName();
         String jobName = printJob.getJobName();
@@ -105,6 +101,9 @@ public class IppSendDocumentOperation extends IppPrintJobOperation {
         boolean portrait = printJob.isPortrait();
 
         Map<String, String> attributes = printJob.getAttributes();
+
+        attributes.put("job-id", String.valueOf(jobId));
+        attributes.put("last-document", String.valueOf(lastDocument));
 
         if (userName == null) {
             userName = CupsClient.DEFAULT_USER;
@@ -211,7 +210,11 @@ public class IppSendDocumentOperation extends IppPrintJobOperation {
     public ByteBuffer getIppHeader(@NonNull URL url, Map<String, String> map) throws UnsupportedEncodingException {
         IppBuffer ippBuf = new IppBuffer(operationID);
         ippBuf.putUri("printer-uri", url.toString());
+
+        int jobId = Integer.parseInt(map.get("job-id"));
         ippBuf.putInteger("job-id", jobId);
+
+        boolean lastDocument = map.get("last-document").equalsIgnoreCase("true");
         ippBuf.putBoolean("last-document", lastDocument);
 
         String userName = map.get("requesting-user-name");

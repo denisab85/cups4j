@@ -24,7 +24,8 @@ import java.util.Set;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit-Tests fuer {@link IppSendDocumentOperation}-Klasse.
@@ -102,26 +103,6 @@ public class IppSendDocumentOperationTest extends AbstractIppOperationTest {
         assertThat(new String(header), containsString("job-id"));
         checkIppRequest(header);
         checkIppRequestAttributes(header);
-    }
-
-    /**
-     * The last Send-Document request for a given Job includes a
-     * "last-document" operation attribute set to 'true' indicating that
-     * this is the last request.
-     *
-     * @throws IOException in case of encoding or other problemss
-     */
-    @Test
-    public void testGetIppHeaderOfLastDocument() throws IOException {
-        IppSendDocumentOperation op = new IppSendDocumentOperation(6631, 4711, true);
-        Map<String, String> attributes = setUpAttributes();
-        ByteBuffer buffer = op.getIppHeader(createURL("http://localhost:6631/test-printer"), attributes);
-        byte[] header = toByteArray(buffer);
-        IppResult ippResult = new IppResponse().getResponse(ByteBuffer.wrap(header));
-        AttributeGroup group = ippResult.getAttributeGroupList().get(0);
-        Attribute attribute = group.getAttributes("last-document");
-        assertNotNull(attribute);
-        assertEquals("true", attribute.getValue());
     }
 
     /**

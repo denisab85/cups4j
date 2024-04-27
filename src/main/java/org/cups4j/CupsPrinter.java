@@ -244,8 +244,8 @@ public class CupsPrinter {
      * @since 0.7.2
      */
     public PrintRequestResult print(PrintJob job, int jobId, boolean lastDocument) {
-        IppSendDocumentOperation op = new IppSendDocumentOperation(printerURL.getPort(), jobId, lastDocument);
-        IppResult ippResult = op.request(this, printerURL, job, creds);
+        IppSendDocumentOperation op = new IppSendDocumentOperation(printerURL.getPort());
+        IppResult ippResult = op.request(this, printerURL, job, creds, jobId, lastDocument);
         PrintRequestResult result = new PrintRequestResult(ippResult);
         result.setJobId(jobId);
         return result;
