@@ -63,8 +63,7 @@ public class IppGetPrinterAttributesOperation extends IppOperation {
             if (map.containsKey("requested-attributes")) {
                 String[] sta = map.get("requested-attributes").split(" ");
                 ippBuf.putKeyword("requested-attributes", sta[0]);
-                int l = sta.length;
-                for (int i = 1; i < l; i++) {
+                for (int i = 1; i < sta.length; i++) {
                     ippBuf.putKeyword(null, sta[i]);
                 }
             }

@@ -131,8 +131,7 @@ public class IppCreateJobOperation extends IppOperation {
     public ByteBuffer getIppHeader(URL url, Map<String, String> map) throws UnsupportedEncodingException {
         IppBuffer ippBuf = new IppBuffer(operationID);
         ippBuf.putUri("printer-uri", url.toString());
-        ippBuf.putNameWithoutLanguage("requesting-user-name",
-                map.get("requesting-user-name"));
+        ippBuf.putNameWithoutLanguage("requesting-user-name", map.get("requesting-user-name"));
 
         if (map.containsKey("limit")) {
             int value = Integer.parseInt(map.get("limit"));
@@ -142,8 +141,7 @@ public class IppCreateJobOperation extends IppOperation {
         if (map.containsKey("requested-attributes")) {
             String[] sta = map.get("requested-attributes").split(" ");
             ippBuf.putKeyword("requested-attributes", sta[0]);
-            int l = sta.length;
-            for (int i = 1; i < l; i++) {
+            for (int i = 1; i < sta.length; i++) {
                 ippBuf.putKeyword(null, sta[i]);
             }
         }
