@@ -20,6 +20,7 @@ package org.cups4j.operations.ipp;
 import ch.ethz.vppserver.ippclient.IppBuffer;
 import ch.ethz.vppserver.ippclient.IppResponse;
 import ch.ethz.vppserver.ippclient.IppResult;
+import lombok.NonNull;
 import org.apache.commons.io.IOUtils;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
@@ -115,7 +116,7 @@ public class IppCreateJobOperation extends IppOperation {
      * @throws UnsupportedEncodingException if encoding is not supported.
      */
     @Override
-    public ByteBuffer getIppHeader(URL url) throws UnsupportedEncodingException {
+    public ByteBuffer getIppHeader(@NonNull URL url) throws UnsupportedEncodingException {
         return getIppHeader(url, createAttributeMap());
     }
 
@@ -128,7 +129,7 @@ public class IppCreateJobOperation extends IppOperation {
      * @throws UnsupportedEncodingException if encoding is not supported.
      */
     @Override
-    public ByteBuffer getIppHeader(URL url, Map<String, String> map) throws UnsupportedEncodingException {
+    public ByteBuffer getIppHeader(@NonNull URL url, Map<String, String> map) throws UnsupportedEncodingException {
         IppBuffer ippBuf = new IppBuffer(operationID);
         ippBuf.putUri("printer-uri", url.toString());
         ippBuf.putNameWithoutLanguage("requesting-user-name", map.get("requesting-user-name"));

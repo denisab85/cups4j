@@ -96,7 +96,7 @@ public abstract class IppOperation {
      * @param url
      * @return url without port number
      */
-    protected static String stripPortNumber(URL url) {
+    protected static String stripPortNumber(@NonNull URL url) {
         String protocol = url.getProtocol();
         if ("ipp".equals(protocol)) {
             protocol = "http";

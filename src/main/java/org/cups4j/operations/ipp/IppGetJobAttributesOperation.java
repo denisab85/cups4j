@@ -17,6 +17,7 @@ package org.cups4j.operations.ipp;
 
 import ch.ethz.vppserver.ippclient.IppBuffer;
 import ch.ethz.vppserver.ippclient.IppResult;
+import lombok.NonNull;
 import org.cups4j.CupsAuthentication;
 import org.cups4j.JobStateEnum;
 import org.cups4j.PrintJobAttributes;
@@ -48,7 +49,7 @@ public class IppGetJobAttributesOperation extends IppOperation {
      * @return ByteBuffer IPP header
      * @throws UnsupportedEncodingException
      */
-    public ByteBuffer getIppHeader(URL uri, Map<String, String> map) throws UnsupportedEncodingException {
+    public ByteBuffer getIppHeader(@NonNull URL uri, Map<String, String> map) throws UnsupportedEncodingException {
         IppBuffer ippBuf = new IppBuffer(operationID);
 
         if (map == null) {
