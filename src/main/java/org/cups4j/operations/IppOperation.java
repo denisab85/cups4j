@@ -36,6 +36,7 @@ import java.io.*;
 import java.net.URI;
 import java.net.URL;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.Map;
 
 public abstract class IppOperation {
@@ -125,8 +126,8 @@ public abstract class IppOperation {
      * @return IPP header
      * @throws UnsupportedEncodingException
      */
-    public ByteBuffer getIppHeader(URL url) throws UnsupportedEncodingException {
-        return getIppHeader(url, null);
+    public ByteBuffer getIppHeader(@NonNull URL url) throws UnsupportedEncodingException {
+        return getIppHeader(url, new HashMap<>());
     }
 
     public IppResult request(CupsPrinter printer, URL url, Map<String, String> map, CupsAuthentication creds)
