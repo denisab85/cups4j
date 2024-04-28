@@ -63,24 +63,10 @@ public class IppTag {
 
     private static int requestID = 0; // required attribute within operations (will increase with every request)
 
-    /**
-     * @param ippBuf
-     * @param operation
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putOperation(@NonNull ByteBuffer ippBuf, short operation) throws UnsupportedEncodingException {
         putOperation(ippBuf, operation, null, null);
     }
 
-    /**
-     * @param ippBuf
-     * @param operation
-     * @param charset
-     * @param naturalLanguage
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putOperation(@NonNull ByteBuffer ippBuf, short operation, String charset, String naturalLanguage)
             throws UnsupportedEncodingException {
         if (charset == null) {
@@ -103,186 +89,83 @@ public class IppTag {
         return ++requestID;
     }
 
-    /**
-     * @param ippBuf
-     * @return
-     */
     public static void putOperationAttributesTag(@NonNull ByteBuffer ippBuf) {
         ippBuf.put(OPERATION_ATTRIBUTES_TAG);
     }
 
-    /**
-     * @param ippBuf
-     * @return
-     */
     public static void putJobAttributesTag(@NonNull ByteBuffer ippBuf) {
         ippBuf.put(JOB_ATTRIBUTES_TAG);
     }
 
-    /**
-     * @param ippBuf
-     * @return
-     */
     public static void putSubscriptionAttributesTag(@NonNull ByteBuffer ippBuf) {
         ippBuf.put(SUBSCRIPTION_ATTRIBUTES_TAG);
     }
 
-    /**
-     * @param ippBuf
-     * @return
-     */
     public static void putEventNotificationAttributesTag(@NonNull ByteBuffer ippBuf) {
         ippBuf.put(EVENT_NOTIFICATION_ATTRIBUTES_TAG);
     }
 
-    /**
-     * @param ippBuf
-     * @return
-     */
     public static void putUnsupportedAttributesTag(@NonNull ByteBuffer ippBuf) {
         ippBuf.put(UNSUPPORTED_ATTRIBUTES_TAG);
     }
 
-    /**
-     * @param ippBuf
-     * @return
-     */
     public static void putPrinterAttributesTag(@NonNull ByteBuffer ippBuf) {
         ippBuf.put(PRINTER_ATTRIBUTES_TAG);
     }
 
-    /**
-     * @param ippBuf
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putCharset(@NonNull ByteBuffer ippBuf) throws UnsupportedEncodingException {
         putCharset(ippBuf, null, null);
     }
 
-    /**
-     * @param ippBuf
-     * @param attributeName
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putCharset(@NonNull ByteBuffer ippBuf, String attributeName) throws UnsupportedEncodingException {
         putCharset(ippBuf, attributeName, null);
     }
 
-    /**
-     * @param ippBuf
-     * @param attributeName
-     * @param value
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putCharset(@NonNull ByteBuffer ippBuf, String attributeName, String value)
             throws UnsupportedEncodingException {
         putUsAscii(ippBuf, CHARSET_TAG, attributeName, value);
     }
 
-    /**
-     * @param ippBuf
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putNaturalLanguage(@NonNull ByteBuffer ippBuf) throws UnsupportedEncodingException {
         putNaturalLanguage(ippBuf, null, null);
     }
 
-    /**
-     * @param ippBuf
-     * @param attributeName
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putNaturalLanguage(@NonNull ByteBuffer ippBuf, String attributeName)
             throws UnsupportedEncodingException {
         putNaturalLanguage(ippBuf, attributeName, null);
     }
 
-    /**
-     * @param ippBuf
-     * @param attributeName
-     * @param value
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putNaturalLanguage(@NonNull ByteBuffer ippBuf, String attributeName, String value)
             throws UnsupportedEncodingException {
         putUsAscii(ippBuf, NATURAL_LANGUAGE_TAG, attributeName, value);
     }
 
-    /**
-     * @param ippBuf
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putUri(@NonNull ByteBuffer ippBuf) throws UnsupportedEncodingException {
         putUri(ippBuf, null, null);
     }
 
-    /**
-     * @param ippBuf
-     * @param attributeName
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putUri(@NonNull ByteBuffer ippBuf, String attributeName) throws UnsupportedEncodingException {
         putUri(ippBuf, attributeName, null);
     }
 
-    /**
-     * @param ippBuf
-     * @param attributeName
-     * @param value
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putUri(@NonNull ByteBuffer ippBuf, String attributeName, String value)
             throws UnsupportedEncodingException {
         putUsAscii(ippBuf, URI_TAG, attributeName, value);
     }
 
-    /**
-     * @param ippBuf
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putUriScheme(@NonNull ByteBuffer ippBuf) throws UnsupportedEncodingException {
         putUriScheme(ippBuf, null, null);
     }
 
-    /**
-     * @param ippBuf
-     * @param attributeName
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putUriScheme(@NonNull ByteBuffer ippBuf, String attributeName) throws UnsupportedEncodingException {
         putUriScheme(ippBuf, attributeName, null);
     }
 
-    /**
-     * @param ippBuf
-     * @param attributeName
-     * @param value
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putUriScheme(@NonNull ByteBuffer ippBuf, String attributeName, String value)
             throws UnsupportedEncodingException {
         putUsAscii(ippBuf, URI_SCHEME_TAG, attributeName, value);
     }
 
-    /**
-     * @param ippBuf
-     * @param attributeName
-     * @param value
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putNameWithoutLanguage(@NonNull ByteBuffer ippBuf, String attributeName, String value)
             throws UnsupportedEncodingException {
         ippBuf.put(NAME_WITHOUT_LANGUAGE_TAG);
@@ -300,13 +183,6 @@ public class IppTag {
         }
     }
 
-    /**
-     * @param ippBuf
-     * @param attributeName
-     * @param value
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putTextWithoutLanguage(@NonNull ByteBuffer ippBuf, String attributeName, String value)
             throws UnsupportedEncodingException {
         ippBuf.put(TEXT_WITHOUT_LANGUAGE_TAG);
@@ -324,21 +200,10 @@ public class IppTag {
         }
     }
 
-    /**
-     * @param ippBuf
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putInteger(@NonNull ByteBuffer ippBuf) throws UnsupportedEncodingException {
         putInteger(ippBuf, null);
     }
 
-    /**
-     * @param ippBuf
-     * @param attributeName
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putInteger(@NonNull ByteBuffer ippBuf, String attributeName) throws UnsupportedEncodingException {
         ippBuf.put(INTEGER_TAG);
         if (attributeName != null) {
@@ -350,13 +215,6 @@ public class IppTag {
         ippBuf.putShort(NULL_LENGTH);
     }
 
-    /**
-     * @param ippBuf
-     * @param attributeName
-     * @param value
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putInteger(@NonNull ByteBuffer ippBuf, String attributeName, int value)
             throws UnsupportedEncodingException {
         ippBuf.put(INTEGER_TAG);
@@ -370,21 +228,10 @@ public class IppTag {
         ippBuf.putInt(value);
     }
 
-    /**
-     * @param ippBuf
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putBoolean(@NonNull ByteBuffer ippBuf) throws UnsupportedEncodingException {
         putBoolean(ippBuf, null);
     }
 
-    /**
-     * @param ippBuf
-     * @param attributeName
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putBoolean(@NonNull ByteBuffer ippBuf, String attributeName) throws UnsupportedEncodingException {
         ippBuf.put(BOOLEAN_TAG);
         if (attributeName != null) {
@@ -396,13 +243,6 @@ public class IppTag {
         ippBuf.putShort(NULL_LENGTH);
     }
 
-    /**
-     * @param ippBuf
-     * @param attributeName
-     * @param value
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putBoolean(@NonNull ByteBuffer ippBuf, String attributeName, boolean value)
             throws UnsupportedEncodingException {
         ippBuf.put(BOOLEAN_TAG);
@@ -420,21 +260,10 @@ public class IppTag {
         }
     }
 
-    /**
-     * @param ippBuf
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putEnum(@NonNull ByteBuffer ippBuf) throws UnsupportedEncodingException {
         putEnum(ippBuf, null);
     }
 
-    /**
-     * @param ippBuf
-     * @param attributeName
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putEnum(@NonNull ByteBuffer ippBuf, String attributeName) throws UnsupportedEncodingException {
         ippBuf.put(ENUM_TAG);
         if (attributeName != null) {
@@ -445,13 +274,6 @@ public class IppTag {
         ippBuf.putShort(NULL_LENGTH);
     }
 
-    /**
-     * @param ippBuf
-     * @param attributeName
-     * @param value
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putEnum(@NonNull ByteBuffer ippBuf, String attributeName, int value)
             throws UnsupportedEncodingException {
         ippBuf.put(ENUM_TAG);
@@ -464,21 +286,10 @@ public class IppTag {
         ippBuf.putInt(value);
     }
 
-    /**
-     * @param ippBuf
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putResolution(@NonNull ByteBuffer ippBuf) throws UnsupportedEncodingException {
         putResolution(ippBuf, null);
     }
 
-    /**
-     * @param ippBuf
-     * @param attributeName
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putResolution(@NonNull ByteBuffer ippBuf, String attributeName) throws UnsupportedEncodingException {
         ippBuf.put(RESOLUTION_TAG);
         if (attributeName != null) {
@@ -489,15 +300,6 @@ public class IppTag {
         ippBuf.putShort(NULL_LENGTH);
     }
 
-    /**
-     * @param ippBuf
-     * @param attributeName
-     * @param value1
-     * @param value2
-     * @param value3
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putResolution(@NonNull ByteBuffer ippBuf, String attributeName, int value1, int value2, byte value3)
             throws UnsupportedEncodingException {
         ippBuf.put(RESOLUTION_TAG);
@@ -512,21 +314,10 @@ public class IppTag {
         ippBuf.put(value3);
     }
 
-    /**
-     * @param ippBuf
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putRangeOfInteger(@NonNull ByteBuffer ippBuf) throws UnsupportedEncodingException {
         putRangeOfInteger(ippBuf, null);
     }
 
-    /**
-     * @param ippBuf
-     * @param attributeName
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putRangeOfInteger(@NonNull ByteBuffer ippBuf, String attributeName)
             throws UnsupportedEncodingException {
         ippBuf.put(RANGE_OF_INTEGER_TAG);
@@ -538,14 +329,6 @@ public class IppTag {
         ippBuf.putShort(NULL_LENGTH);
     }
 
-    /**
-     * @param ippBuf
-     * @param attributeName
-     * @param value1
-     * @param value2
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putRangeOfInteger(@NonNull ByteBuffer ippBuf, String attributeName, int value1, int value2)
             throws UnsupportedEncodingException {
         ippBuf.put(RANGE_OF_INTEGER_TAG);
@@ -559,72 +342,32 @@ public class IppTag {
         ippBuf.putInt(value2);
     }
 
-    /**
-     * @param ippBuf
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putMimeMediaType(@NonNull ByteBuffer ippBuf) throws UnsupportedEncodingException {
         putMimeMediaType(ippBuf, null, null);
     }
 
-    /**
-     * @param ippBuf
-     * @param attributeName
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putMimeMediaType(@NonNull ByteBuffer ippBuf, String attributeName) throws UnsupportedEncodingException {
         putMimeMediaType(ippBuf, attributeName, null);
     }
 
-    /**
-     * @param ippBuf
-     * @param attributeName
-     * @param value
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putMimeMediaType(@NonNull ByteBuffer ippBuf, String attributeName, String value)
             throws UnsupportedEncodingException {
         putUsAscii(ippBuf, MIME_MEDIA_TYPE_TAG, attributeName, value);
     }
 
-    /**
-     * @param ippBuf
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putKeyword(@NonNull ByteBuffer ippBuf) throws UnsupportedEncodingException {
         putKeyword(ippBuf, null, null);
     }
 
-    /**
-     * @param ippBuf
-     * @param attributeName
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putKeyword(@NonNull ByteBuffer ippBuf, String attributeName) throws UnsupportedEncodingException {
         putKeyword(ippBuf, attributeName, null);
     }
 
-    /**
-     * @param ippBuf
-     * @param attributeName
-     * @param value
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     public static void putKeyword(@NonNull ByteBuffer ippBuf, String attributeName, String value)
             throws UnsupportedEncodingException {
         putUsAscii(ippBuf, KEYWORD_TAG, attributeName, value);
     }
 
-    /**
-     * @param ippBuf
-     * @return
-     */
     public static void putEnd(@NonNull ByteBuffer ippBuf) {
         ippBuf.put(END_OF_ATTRIBUTES_TAG);
     }
@@ -635,17 +378,10 @@ public class IppTag {
         ippBuf.put(bytes);
     }
 
-    /**
-     * @param ippBuf
-     * @param tag
-     * @param attributeName
-     * @param value
-     * @return
-     * @throws UnsupportedEncodingException
-     */
     private static void putUsAscii(@NonNull ByteBuffer ippBuf, byte tag, String attributeName, String value)
             throws UnsupportedEncodingException {
         ippBuf.put(tag);
+
         if (attributeName != null) {
             putAttName(ippBuf, attributeName);
         } else {
