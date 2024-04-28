@@ -23,7 +23,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 @ExtendWith(MockitoExtension.class)
-public class IppTagTest {
+public class OperationTest {
 
     @Mock(answer = Answers.CALLS_REAL_METHODS)
     private MockedStatic<IppTag> ippTagMocked;
