@@ -168,36 +168,12 @@ public class IppTag {
 
     public static void putNameWithoutLanguage(@NonNull ByteBuffer ippBuf, String attributeName, String value)
             throws UnsupportedEncodingException {
-        ippBuf.put(NAME_WITHOUT_LANGUAGE_TAG);
-
-        if (attributeName != null) {
-            putAttName(ippBuf, attributeName);
-        } else {
-            ippBuf.putShort(NULL_LENGTH);
-        }
-
-        if (value != null) {
-            putAttName(ippBuf, value);
-        } else {
-            ippBuf.putShort(NULL_LENGTH);
-        }
+        putUsAscii(ippBuf, NAME_WITHOUT_LANGUAGE_TAG, attributeName, value);
     }
 
     public static void putTextWithoutLanguage(@NonNull ByteBuffer ippBuf, String attributeName, String value)
             throws UnsupportedEncodingException {
-        ippBuf.put(TEXT_WITHOUT_LANGUAGE_TAG);
-
-        if (attributeName != null) {
-            putAttName(ippBuf, attributeName);
-        } else {
-            ippBuf.putShort(NULL_LENGTH);
-        }
-
-        if (value != null) {
-            putAttName(ippBuf, value);
-        } else {
-            ippBuf.putShort(NULL_LENGTH);
-        }
+        putUsAscii(ippBuf, TEXT_WITHOUT_LANGUAGE_TAG, attributeName, value);
     }
 
     public static void putInteger(@NonNull ByteBuffer ippBuf) throws UnsupportedEncodingException {
