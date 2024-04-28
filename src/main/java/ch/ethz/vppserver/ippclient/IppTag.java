@@ -92,11 +92,15 @@ public class IppTag {
         ippBuf.put(MAJOR_VERSION);
         ippBuf.put(MINOR_VERSION);
         ippBuf.putShort(operation);
-        ippBuf.putInt(++requestID);
+        ippBuf.putInt(getNextRequestID());
         ippBuf.put(OPERATION_ATTRIBUTES_TAG);
 
         putCharset(ippBuf, ATTRIBUTES_CHARSET, charset);
         putNaturalLanguage(ippBuf, ATTRIBUTES_NATURAL_LANGUAGE, naturalLanguage);
+    }
+
+    public static int getNextRequestID() {
+        return ++requestID;
     }
 
     /**
